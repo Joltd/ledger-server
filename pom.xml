@@ -144,10 +144,21 @@
             <version>${telegram-bot-api.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.github.xabgesagtx</groupId>
-            <artifactId>telegram-spring-boot-starter</artifactId>
-            <version>0.22</version>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-spring-boot-starter</artifactId>
+            <version>${telegram-bot-api.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots-abilities</artifactId>
+            <version>${telegram-bot-api.version}</version>
+        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.telegram</groupId>-->
+<!--            <artifactId>telegrambotsextensions</artifactId>-->
+<!--            <version>${telegram-bot-api.version}</version>-->
+<!--        </dependency>-->
+
 
     </dependencies>
 

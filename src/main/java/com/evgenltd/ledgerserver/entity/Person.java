@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "persons")
-public class Person {
+public class Person implements Reference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

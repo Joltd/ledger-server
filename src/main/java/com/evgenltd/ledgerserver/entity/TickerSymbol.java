@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "ticker_symbols")
-public class TickerSymbol {
+public class TickerSymbol implements Reference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

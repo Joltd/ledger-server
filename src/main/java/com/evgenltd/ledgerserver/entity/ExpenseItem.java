@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "expense_items")
-public class ExpenseItem {
+public class ExpenseItem implements Reference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "accounts")
-public class Account {
+public class Account implements Reference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +20,11 @@ public class Account {
         this.id = id;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 }
