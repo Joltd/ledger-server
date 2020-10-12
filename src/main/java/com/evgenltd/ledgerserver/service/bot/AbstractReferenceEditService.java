@@ -1,16 +1,10 @@
-package com.evgenltd.ledgerserver.service;
+package com.evgenltd.ledgerserver.service.bot;
 
 import com.evgenltd.ledgerserver.Utils;
 import com.evgenltd.ledgerserver.entity.Reference;
-import org.springframework.data.domain.Example;
-import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public abstract class AbstractReferenceEditService<R extends Reference> {

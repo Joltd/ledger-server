@@ -1,9 +1,7 @@
-package com.evgenltd.ledgerserver.service;
+package com.evgenltd.ledgerserver.service.bot;
 
 import com.evgenltd.ledgerserver.entity.Account;
-import com.evgenltd.ledgerserver.entity.Person;
 import com.evgenltd.ledgerserver.repository.AccountRepository;
-import com.evgenltd.ledgerserver.repository.PersonRepository;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;

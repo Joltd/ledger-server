@@ -24,6 +24,10 @@ public class JournalEntry {
     // dimensions
 
     @ManyToOne
+    @JoinColumn(name = "account_id")
+    private Account account;
+
+    @ManyToOne
     @JoinColumn(name = "person_id")
     private Person person;
 
@@ -34,7 +38,17 @@ public class JournalEntry {
 
     private BigDecimal currencyAmount;
 
+    private BigDecimal price;
+
     private Long count;
+
+    @ManyToOne
+    @JoinColumn(name = "expense_item_id")
+    private ExpenseItem expenseItem;
+
+    @ManyToOne
+    @JoinColumn(name = "income_item_id")
+    private IncomeItem incomeItem;
 
     @ManyToOne
     @JoinColumn(name = "ticker_symbol_id")
@@ -47,9 +61,166 @@ public class JournalEntry {
     @Enumerated(EnumType.STRING)
     private ProductType productType;
 
-    enum Type {
+    private Integer position;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
+    public void setDate(final LocalDateTime date) {
+        this.date = date;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(final Type type) {
+        this.type = type;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public Account getAccount() {
+        return account;
+    }
+
+    public void setAccount(final Account account) {
+        this.account = account;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(final Person person) {
+        this.person = person;
+    }
+
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(final Currency currency) {
+        this.currency = currency;
+    }
+
+    public BigDecimal getCurrencyRate() {
+        return currencyRate;
+    }
+
+    public void setCurrencyRate(final BigDecimal currencyRate) {
+        this.currencyRate = currencyRate;
+    }
+
+    public BigDecimal getCurrencyAmount() {
+        return currencyAmount;
+    }
+
+    public void setCurrencyAmount(final BigDecimal currencyAmount) {
+        this.currencyAmount = currencyAmount;
+    }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
+
+    public void setPrice(final BigDecimal price) {
+        this.price = price;
+    }
+
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(final Long count) {
+        this.count = count;
+    }
+
+    public ExpenseItem getExpenseItem() {
+        return expenseItem;
+    }
+
+    public void setExpenseItem(final ExpenseItem expenseItem) {
+        this.expenseItem = expenseItem;
+    }
+
+    public IncomeItem getIncomeItem() {
+        return incomeItem;
+    }
+
+    public void setIncomeItem(final IncomeItem incomeItem) {
+        this.incomeItem = incomeItem;
+    }
+
+    public TickerSymbol getTickerSymbol() {
+        return tickerSymbol;
+    }
+
+    public void setTickerSymbol(final TickerSymbol tickerSymbol) {
+        this.tickerSymbol = tickerSymbol;
+    }
+
+    public Document getDocument() {
+        return document;
+    }
+
+    public void setDocument(final Document document) {
+        this.document = document;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setProductType(final ProductType productType) {
+        this.productType = productType;
+    }
+
+    public Integer getPosition() {
+        return position;
+    }
+
+    public void setPosition(final Integer position) {
+        this.position = position;
+    }
+
+    public enum Type {
         DEBIT,
         CREDIT
+    }
+
+    public static class Codes {
+        public static final String C51 = "51";
+        public static final String C52 = "52";
+        public static final String C58 = "58";
+        public static final String C76 = "76";
+        public static final String C91 = "91";
+        public static final String C91_1 = "91.1";
+        public static final String C91_2 = "91.2";
+
     }
 
 }

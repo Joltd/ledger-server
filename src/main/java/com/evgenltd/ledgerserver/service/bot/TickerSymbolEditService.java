@@ -1,8 +1,6 @@
-package com.evgenltd.ledgerserver.service;
+package com.evgenltd.ledgerserver.service.bot;
 
-import com.evgenltd.ledgerserver.entity.Person;
 import com.evgenltd.ledgerserver.entity.TickerSymbol;
-import com.evgenltd.ledgerserver.repository.PersonRepository;
 import com.evgenltd.ledgerserver.repository.TickerSymbolRepository;
 import org.springframework.stereotype.Service;
 

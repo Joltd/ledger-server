@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.service;
+package com.evgenltd.ledgerserver.service.bot;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

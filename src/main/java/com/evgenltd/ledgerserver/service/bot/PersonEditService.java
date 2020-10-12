@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.service;
+package com.evgenltd.ledgerserver.service.bot;
 
 import com.evgenltd.ledgerserver.entity.Person;
 import com.evgenltd.ledgerserver.repository.PersonRepository;
