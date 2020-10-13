@@ -6,6 +6,14 @@ import java.util.Optional;
 
 public class Utils {
 
+    public static <T> Class<T> classForName(final String name) {
+        try {
+            return (Class<T>) Class.forName(name);
+        } catch (final ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static <T> T newInstance(final Class<T> type) {
         try {
             final Constructor<T> constructor = type.getConstructor();

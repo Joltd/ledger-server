@@ -4,8 +4,10 @@ import com.evgenltd.ledgerserver.builder.JournalEntryBuilder;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.record.CurrencyAmount;
 import com.evgenltd.ledgerserver.service.brocker.TinkoffInvestorCommissionCalculator;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,17 +20,20 @@ public class StockService {
     private final JournalService journalService;
     private final TinkoffInvestorCommissionCalculator commissionCalculator;
     private final CurrencyService currencyService;
+    private final ApplicationContext applicationContext;
 
     public StockService(
             final SettingService settingService,
             final JournalService journalService,
             final TinkoffInvestorCommissionCalculator commissionCalculator,
-            final CurrencyService currencyService
+            final CurrencyService currencyService,
+            final ApplicationContext applicationContext
     ) {
         this.settingService = settingService;
         this.journalService = journalService;
         this.commissionCalculator = commissionCalculator;
         this.currencyService = currencyService;
+        this.applicationContext = applicationContext;
     }
 
     public void moveToAccount(final LocalDateTime date, final Account from, final Account to, final BigDecimal amount) {

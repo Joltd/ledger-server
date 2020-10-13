@@ -1,7 +1,8 @@
-package com.evgenltd.ledgerserver.service.bot;
+package com.evgenltd.ledgerserver.service.bot.reference;
 
 import com.evgenltd.ledgerserver.Utils;
 import com.evgenltd.ledgerserver.entity.Reference;
+import com.evgenltd.ledgerserver.service.bot.BotService;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
