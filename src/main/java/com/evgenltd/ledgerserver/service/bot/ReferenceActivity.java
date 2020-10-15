@@ -37,14 +37,13 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
     public void onMessageReceived(final String message) {
         final FirstWord wordAndMessage = splitFirstWord(message);
         switch (wordAndMessage.word()) {
-            case "new": {
+            case "new" -> {
                 final T reference = Utils.newInstance(type);
                 reference.setName(wordAndMessage.message());
                 repository.save(reference);
                 read();
-                return;
             }
-            case "edit": {
+            case "edit" -> {
                 final FirstWord idAndName = splitFirstWord(wordAndMessage.message());
                 parseLong(idAndName.word()).flatMap(id -> repository.findById(id))
                         .ifPresent(reference -> {
@@ -52,18 +51,12 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
                             repository.save(reference);
                             read();
                         });
-                return;
             }
-            case "remove": {
-                parseLong(wordAndMessage.message()).ifPresent(id -> {
-                    repository.deleteById(id);
-                    read();
-                });
-                return;
-            }
-            default: {
+            case "remove" -> parseLong(wordAndMessage.message()).ifPresent(id -> {
+                repository.deleteById(id);
                 read();
-            }
+            });
+            default -> read();
         }
     }
 
@@ -78,9 +71,9 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
                 .map(reference -> String.format("%s | %s", reference.getId(), reference.getName()))
                 .collect(Collectors.joining("\n"));
         if (all.isBlank()) {
-            sendMessage("No references");
+            sendMessage("new,edit,remove\n" + "No references");
         } else {
-            sendMessage(all);
+            sendMessage("new,edit,remove\n" + all);
         }
     }
 

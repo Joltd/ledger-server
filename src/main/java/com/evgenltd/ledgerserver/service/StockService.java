@@ -1,6 +1,7 @@
 package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.builder.JournalEntryBuilder;
+import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.record.CurrencyAmount;
 import com.evgenltd.ledgerserver.service.brocker.TinkoffInvestorCommissionCalculator;
@@ -53,8 +54,8 @@ public class StockService {
             final BigDecimal currencyAmount,
             final BigDecimal currencyRate
     ) {
-        final Person broker = settingService.broker();
-        final ExpenseItem commissionExpense = settingService.brokerCommissionExpenseItem();
+        final Person broker = settingService.get(Settings.BROKER);
+        final ExpenseItem commissionExpense = settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM);
 
         final BigDecimal amount = currencyAmount.multiply(currencyRate);
         final BigDecimal commission = commissionCalculator.calculate(date, amount);
@@ -81,10 +82,10 @@ public class StockService {
 
         final BigDecimal diff = actualBalance.subtract(balance.amount());
         if (diff.compareTo(BigDecimal.ZERO) > 0) {
-            final IncomeItem reassessment = settingService.currencyReassessmentIncomeItem();
+            final IncomeItem reassessment = settingService.get(Settings.CURRENCY_REASSESSMENT_EXPENSE_ITEM);
             currencyReassessmentIncrease(date, diff.abs(), account, currency, currencyRate, reassessment);
         } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-            final ExpenseItem reassessment = settingService.currencyReassessmentExpenseItem();
+            final ExpenseItem reassessment = settingService.get(Settings.CURRENCY_REASSESSMENT_INCOME_ITEM);
             currencyReassessmentDecrease(date, diff.abs(), account, currency, currencyRate, reassessment);
         }
     }
@@ -98,8 +99,8 @@ public class StockService {
     ) {
         final BigDecimal amount = price.multiply(new BigDecimal(count));
 
-        final Person broker = settingService.broker();
-        final ExpenseItem commissionExpense = settingService.brokerCommissionExpenseItem();
+        final Person broker = settingService.get(Settings.BROKER);
+        final ExpenseItem commissionExpense = settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM);
 
         final BigDecimal commission = commissionCalculator.calculate(date, amount);
 

@@ -20,8 +20,6 @@ public class BotService extends TelegramLongPollingBot {
 
     private final BeanFactory beanFactory;
 
-    private final Map<String, Handler> handlers = new HashMap<>();
-
     private final Map<Long, ActivityStack> activities = new HashMap<>();
 
     public BotService(final BeanFactory beanFactory) {
@@ -38,16 +36,6 @@ public class BotService extends TelegramLongPollingBot {
         return "LedgerBot";
     }
 
-    public void registerHandler(final String command, final Handler handler) {
-//        handlers.put(command, handler);
-//        execute(new SetMyCommands(
-//                handlers.keySet()
-//                        .stream()
-//                        .map(c -> new BotCommand(c, "stub"))
-//                        .collect(Collectors.toList())
-//        ));
-    }
-
     @Override
     public void onUpdateReceived(final Update update) {
         if (update.getMessage() == null) {
@@ -59,25 +47,6 @@ public class BotService extends TelegramLongPollingBot {
 
         final ActivityStack activityStack = getActivityStack(chatId);
         activityStack.current().messageReceived(text);
-
-//        if (chatId == null || text == null || text.isBlank()) {
-//            return;
-//        }
-//
-//        final String[] tokens = text.split(" ");
-//        if (tokens.length == 0) {
-//            return;
-//        }
-//
-//        final String command = tokens[0];
-//        final String[] arguments = Arrays.copyOfRange(tokens, 1, tokens.length);
-//        final Handler handler = handlers.get(command);
-//        if (handler == null) {
-//            sendMessage(chatId, "Unknown command [%s]", command);
-//            return;
-//        }
-//
-//        handler.handle(update, chatId, arguments);
     }
 
     private ActivityStack getActivityStack(final Long chatId) {
@@ -98,7 +67,8 @@ public class BotService extends TelegramLongPollingBot {
     }
 
     public void activityBack(final Long chatId) {
-        getActivityStack(chatId).back().hello();
+        getActivityStack(chatId).back();
+        getActivityStack(chatId).current().hello();
     }
 
     public void sendMessage(final Long chatId, final String message, final Object... args) {
@@ -114,10 +84,6 @@ public class BotService extends TelegramLongPollingBot {
         }
     }
 
-    public interface Handler {
-        void handle(final Update update, final Long chatId, final String... args);
-    }
-
     private static final class ActivityStack {
         private final Deque<BotActivity> stack = new LinkedList<>();
 
@@ -129,12 +95,12 @@ public class BotService extends TelegramLongPollingBot {
             stack.push(activity);
         }
 
-        public BotActivity back() {
+        public void back() {
             if (stack.size() <= 1) {
-                return stack.peek();
+                return;
             }
 
-            return stack.pop();
+            stack.pop();
         }
 
     }

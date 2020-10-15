@@ -1,10 +1,6 @@
 package com.evgenltd.ledgerserver.entity;
 
-import com.evgenltd.ledgerserver.ApplicationException;
-
 import javax.persistence.*;
-import java.util.Optional;
-import java.util.function.Function;
 
 @Entity
 @Table(name = "settings")
@@ -40,25 +36,6 @@ public class Setting {
 
     public void setValue(final String value) {
         this.value = value;
-    }
-
-    public Optional<Integer> asInt() {
-        return as(Integer::parseInt);
-    }
-
-    public Optional<Long> asLong() {
-        return as(Long::parseLong);
-    }
-
-    private <T> Optional<T> as(final Function<String,T> converter) {
-        if (getValue() == null) {
-            return Optional.empty();
-        }
-        try {
-            return Optional.of(converter.apply(getValue()));
-        } catch (final NumberFormatException e) {
-            throw new ApplicationException("[%s, %s], unable to parse", getName(), getValue());
-        }
     }
 
 }

@@ -1,5 +1,6 @@
 package com.evgenltd.ledgerserver.service.brocker;
 
+import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.ExpenseItem;
 import com.evgenltd.ledgerserver.entity.JournalEntry;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;
@@ -29,7 +30,7 @@ public class TinkoffInvestorCommissionCalculator implements CommissionCalculator
     @Override
     public BigDecimal calculate(final LocalDateTime date, final BigDecimal amount) {
 
-        final Integer settlementDay = settingService.brokerCommissionSettlementDay();
+        final Integer settlementDay = settingService.get(Settings.BROKER_COMMISSION_SETTLEMENT_DAY);
 
         LocalDate from;
         LocalDate to;
@@ -48,7 +49,7 @@ public class TinkoffInvestorCommissionCalculator implements CommissionCalculator
     @Override
     public BigDecimal calculate(final LocalDate from, final LocalDate to, final BigDecimal amount) {
 
-        final ExpenseItem commission = settingService.brokerCommissionExpenseItem();
+        final ExpenseItem commission = settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM);
 
         final boolean hasCommissionInPeriod = journalEntryRepository.findByDateGreaterThanEqualAndDateLessThanAndCodeAndType(
                 from.atStartOfDay(),
