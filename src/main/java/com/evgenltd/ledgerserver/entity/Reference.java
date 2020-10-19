@@ -10,4 +10,8 @@ public interface Reference {
 
     void setName(final String name);
 
+    default String asString() {
+        return String.format("%s | %s", getId(), getName());
+    }
+
 }

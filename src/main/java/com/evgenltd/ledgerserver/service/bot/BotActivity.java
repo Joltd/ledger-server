@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.service.bot;
 
-import org.springframework.beans.factory.BeanFactory;
+import com.evgenltd.ledgerserver.Utils;
 
 public abstract class BotActivity {
 
@@ -28,15 +28,14 @@ public abstract class BotActivity {
         botService.activityBack(chatId);
     }
 
-    public void messageReceived(final String message) {
-        if (message.toLowerCase().contains("where am i")) {
-            sendMessage(getClass().getSimpleName());
-            return;
-        } else if (message.toLowerCase().contains("done")) {
+    void messageReceived(final String message) {
+        if (Utils.isSimilar(message, "hey", "?")) {
+            hello();
+        } else if (Utils.isSimilar(message, "done", "back")) {
             activityBack();
-            return;
+        } else {
+            onMessageReceived(message);
         }
-        onMessageReceived(message);
     }
 
     protected abstract void onMessageReceived(final String message);
@@ -51,7 +50,7 @@ public abstract class BotActivity {
             return new FirstWord(message, "");
         }
 
-        return new FirstWord(message.substring(0, index).toLowerCase(), message.substring(index + 1));
+        return new FirstWord(message.substring(0, index), message.substring(index + 1));
     }
 
     public static record FirstWord(String word, String message) {}

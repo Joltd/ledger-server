@@ -1,14 +1,14 @@
 package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.builder.JournalEntryBuilder;
+import com.evgenltd.ledgerserver.constants.Codes;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.record.CurrencyAmount;
-import com.evgenltd.ledgerserver.service.brocker.TinkoffInvestorCommissionCalculator;
+import com.evgenltd.ledgerserver.service.brocker.TinkoffTraderCommissionCalculator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -19,14 +19,14 @@ public class StockService {
 
     private final SettingService settingService;
     private final JournalService journalService;
-    private final TinkoffInvestorCommissionCalculator commissionCalculator;
+    private final TinkoffTraderCommissionCalculator commissionCalculator;
     private final CurrencyService currencyService;
     private final ApplicationContext applicationContext;
 
     public StockService(
             final SettingService settingService,
             final JournalService journalService,
-            final TinkoffInvestorCommissionCalculator commissionCalculator,
+            final TinkoffTraderCommissionCalculator commissionCalculator,
             final CurrencyService currencyService,
             final ApplicationContext applicationContext
     ) {
@@ -35,16 +35,6 @@ public class StockService {
         this.commissionCalculator = commissionCalculator;
         this.currencyService = currencyService;
         this.applicationContext = applicationContext;
-    }
-
-    public void moveToAccount(final LocalDateTime date, final Account from, final Account to, final BigDecimal amount) {
-        final JournalEntry debit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C51, amount);
-        debit.setAccount(to);
-
-        final JournalEntry credit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C51, amount);
-        credit.setAccount(from);
-
-        journalService.persistDoubleJournalEntry(debit, credit);
     }
 
     public void buyCurrency(
@@ -140,13 +130,13 @@ public class StockService {
             final BigDecimal price,
             final Long count
     ) {
-        final JournalEntry debit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C58, amount);
+        final JournalEntry debit = JournalEntryBuilder.debit(date, Codes.C58, amount);
         debit.setAccount(account);
         debit.setTickerSymbol(ticker);
         debit.setPrice(price);
         debit.setCount(count);
 
-        final JournalEntry credit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C51, amount);
+        final JournalEntry credit = JournalEntryBuilder.credit(date, Codes.C51, amount);
         credit.setAccount(account);
 
         journalService.persistDoubleJournalEntry(debit, credit);
@@ -163,7 +153,7 @@ public class StockService {
             final BigDecimal price,
             final Long count
     ) {
-        final JournalEntry debit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C58, amount);
+        final JournalEntry debit = JournalEntryBuilder.debit(date, Codes.C58, amount);
         debit.setAccount(account);
         debit.setTickerSymbol(ticker);
         debit.setPrice(price);
@@ -172,7 +162,7 @@ public class StockService {
         debit.setCurrency(currency);
         debit.setCurrencyRate(currencyRate);
 
-        final JournalEntry credit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C52, amount);
+        final JournalEntry credit = JournalEntryBuilder.credit(date, Codes.C52, amount);
         credit.setAccount(account);
         credit.setCurrencyAmount(currencyAmount);
         credit.setCurrency(currency);
@@ -189,45 +179,45 @@ public class StockService {
             final BigDecimal currencyAmount,
             final BigDecimal currencyRate
     ) {
-        final JournalEntry debit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C52, amount);
+        final JournalEntry debit = JournalEntryBuilder.debit(date, Codes.C52, amount);
         debit.setAccount(account);
         debit.setCurrency(currency);
         debit.setCurrencyRate(currencyRate);
         debit.setCurrencyAmount(currencyAmount);
 
-        final JournalEntry credit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C51, amount);
+        final JournalEntry credit = JournalEntryBuilder.credit(date, Codes.C51, amount);
         credit.setAccount(account);
 
         journalService.persistDoubleJournalEntry(debit, credit);
     }
 
     private void moveToPerson(final LocalDateTime date, final BigDecimal amount, final Account account, final Person person) {
-        final JournalEntry debit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C76, amount);
+        final JournalEntry debit = JournalEntryBuilder.debit(date, Codes.C76, amount);
         debit.setPerson(person);
 
-        final JournalEntry credit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C51, amount);
+        final JournalEntry credit = JournalEntryBuilder.credit(date, Codes.C51, amount);
         credit.setAccount(account);
 
         journalService.persistDoubleJournalEntry(debit, credit);
     }
 
     private void personAsExpense(final LocalDateTime date, final BigDecimal amount, final Person person, final ExpenseItem expenseItem) {
-        final JournalEntry debit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C91_2, amount);
+        final JournalEntry debit = JournalEntryBuilder.debit(date, Codes.C91_2, amount);
         debit.setExpenseItem(expenseItem);
 
-        final JournalEntry credit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C76, amount);
+        final JournalEntry credit = JournalEntryBuilder.credit(date, Codes.C76, amount);
         credit.setPerson(person);
 
         journalService.persistDoubleJournalEntry(debit, credit);
     }
 
     private void currencyReassessmentIncrease(final LocalDateTime date, final BigDecimal amount, final Account account, final Currency currency, final BigDecimal currencyRate, final IncomeItem reassessment) {
-        final JournalEntry debit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C52, amount);
+        final JournalEntry debit = JournalEntryBuilder.debit(date, Codes.C52, amount);
         debit.setAccount(account);
         debit.setCurrency(currency);
         debit.setCurrencyRate(currencyRate);
 
-        final JournalEntry credit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C91_1, amount);
+        final JournalEntry credit = JournalEntryBuilder.credit(date, Codes.C91_1, amount);
         credit.setAccount(account);
         credit.setIncomeItem(reassessment);
 
@@ -235,11 +225,11 @@ public class StockService {
     }
 
     private void currencyReassessmentDecrease(final LocalDateTime date, final BigDecimal amount, final Account account, final Currency currency, final BigDecimal currencyRate, final ExpenseItem reassessment) {
-        final JournalEntry debit = JournalEntryBuilder.credit(date, JournalEntry.Codes.C91_2, amount);
+        final JournalEntry debit = JournalEntryBuilder.credit(date, Codes.C91_2, amount);
         debit.setAccount(account);
         debit.setExpenseItem(reassessment);
 
-        final JournalEntry credit = JournalEntryBuilder.debit(date, JournalEntry.Codes.C52, amount);
+        final JournalEntry credit = JournalEntryBuilder.debit(date, Codes.C52, amount);
         credit.setAccount(account);
         credit.setCurrency(currency);
         credit.setCurrencyRate(currencyRate);

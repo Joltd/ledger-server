@@ -12,18 +12,22 @@ import java.util.List;
 @Repository
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
 
+    List<JournalEntry> findByDocumentId(Long id);
+
     List<JournalEntry> findByDateGreaterThanEqualAndDateLessThanAndCodeAndType(
-            final LocalDateTime from,
-            final LocalDateTime to,
-            final String code,
-            final JournalEntry.Type type
+            LocalDateTime from,
+            LocalDateTime to,
+            String code,
+            JournalEntry.Type type
     );
 
     List<JournalEntry> findByDateLessThanAndCodeAndAccountAndCurrency(
-            final LocalDateTime date,
-            final String code,
-            final Account account,
-            final Currency currency
+            LocalDateTime date,
+            String code,
+            Account account,
+            Currency currency
     );
+
+    void deleteByDocumentId(Long documentId);
 
 }

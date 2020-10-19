@@ -36,53 +36,47 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
     @Override
     public void onMessageReceived(final String message) {
         final FirstWord wordAndMessage = splitFirstWord(message);
-        switch (wordAndMessage.word()) {
-            case "new" -> {
-                final T reference = Utils.newInstance(type);
-                reference.setName(wordAndMessage.message());
-                repository.save(reference);
-                read();
-            }
-            case "edit" -> {
-                final FirstWord idAndName = splitFirstWord(wordAndMessage.message());
-                parseLong(idAndName.word()).flatMap(id -> repository.findById(id))
-                        .ifPresent(reference -> {
-                            reference.setName(idAndName.message());
-                            repository.save(reference);
-                            read();
-                        });
-            }
-            case "remove" -> parseLong(wordAndMessage.message()).ifPresent(id -> {
-                repository.deleteById(id);
-                read();
-            });
-            default -> read();
+        if (Utils.isSimilar(wordAndMessage.word(), "new", "add")) {
+            final T reference = Utils.newInstance(type);
+            reference.setName(wordAndMessage.message());
+            repository.save(reference);
+            hello();
+        } else if (Utils.isSimilar(wordAndMessage.word(), "edit")) {
+            final FirstWord idAndName = splitFirstWord(wordAndMessage.message());
+            Utils.asLongNoThrow(idAndName.word())
+                    .flatMap(repository::findById)
+                    .ifPresentOrElse(
+                            reference -> {
+                                reference.setName(idAndName.message());
+                                repository.save(reference);
+                                hello();
+                            },
+                            () -> sendMessage("Unable to parse id [%s]", idAndName.word())
+                    );
+        } else if (Utils.isSimilar(wordAndMessage.word(), "remove")) {
+            Utils.asLongNoThrow(wordAndMessage.message())
+                    .ifPresentOrElse(
+                            id -> {
+                                repository.deleteById(id);
+                                hello();
+                            },
+                            () -> sendMessage("Unable to parse id [%s]", wordAndMessage.message())
+                    );
+        } else {
+            hello();
         }
     }
 
     @Override
     protected void hello() {
-        read();
-    }
-
-    private void read() {
         final String all = repository.findAll()
                 .stream()
                 .map(reference -> String.format("%s | %s", reference.getId(), reference.getName()))
                 .collect(Collectors.joining("\n"));
         if (all.isBlank()) {
-            sendMessage("new,edit,remove\n" + "No references");
+            sendMessage("No references");
         } else {
-            sendMessage("new,edit,remove\n" + all);
-        }
-    }
-
-    private Optional<Long> parseLong(final String value) {
-        try {
-            return Optional.of(Long.parseLong(value));
-        } catch (final NumberFormatException e) {
-            sendMessage("Unable to parse [%s]", value);
-            return Optional.empty();
+            sendMessage(all);
         }
     }
 
