@@ -1,13 +1,11 @@
-package com.evgenltd.ledgerserver.service.bot.document;
+package com.evgenltd.ledgerserver.service.bot.activity.document;
 
 import com.evgenltd.ledgerserver.ApplicationException;
 import com.evgenltd.ledgerserver.Utils;
 import com.evgenltd.ledgerserver.builder.DocumentBuilder;
 import com.evgenltd.ledgerserver.builder.ValueInfoBuilder;
+import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.entity.Currency;
-import com.evgenltd.ledgerserver.entity.Document;
-import com.evgenltd.ledgerserver.entity.JournalEntry;
-import com.evgenltd.ledgerserver.entity.Reference;
 import com.evgenltd.ledgerserver.record.ValueInfo;
 import com.evgenltd.ledgerserver.repository.*;
 import com.evgenltd.ledgerserver.service.JournalService;
@@ -17,7 +15,6 @@ import org.springframework.beans.factory.BeanFactory;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -170,6 +167,14 @@ public abstract class DocumentActivity extends BotActivity {
         primitiveField(field, Utils::asDateTimeNoThrow, "2020-06-12 12:34:56");
     }
 
+    protected void intField(final String field) {
+        primitiveField(field, Utils::asIntNoThrow, "1,2,3");
+    }
+
+    protected void longField(final String field) {
+        primitiveField(field, Utils::asLongNoThrow, "1,2,3");
+    }
+
     protected void currencyField(final String field) {
         primitiveField(field, value -> Utils.asEnumNoThrow(value, Currency.class), "USD,RUB");
     }
@@ -188,6 +193,10 @@ public abstract class DocumentActivity extends BotActivity {
 
     protected void incomeItemField(final String field) {
         referenceField(field, beanFactory.getBean(IncomeItemRepository.class));
+    }
+
+    protected void tickerField(final String field) {
+        referenceField(field, beanFactory.getBean(TickerSymbolRepository.class));
     }
 
     private <T> void primitiveField(final String field, final Function<String, Optional<T>> converter, final String example) {

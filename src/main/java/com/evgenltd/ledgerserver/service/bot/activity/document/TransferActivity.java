@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.service.bot.document;
+package com.evgenltd.ledgerserver.service.bot.activity.document;
 
 import com.evgenltd.ledgerserver.builder.JournalEntryBuilder;
 import com.evgenltd.ledgerserver.constants.Codes;

@@ -1,13 +1,10 @@
 package com.evgenltd.ledgerserver.entity;
 
 
-import com.evgenltd.ledgerserver.service.bot.document.BuyCurrencyActivity;
-import com.evgenltd.ledgerserver.service.bot.document.DocumentActivity;
-import com.evgenltd.ledgerserver.service.bot.document.TransferActivity;
+import com.evgenltd.ledgerserver.service.bot.activity.document.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Entity
 @Table(name = "documents")
@@ -48,7 +45,9 @@ public class Document {
 
     public enum Type {
         TRANSFER(TransferActivity.class),
-        BUY_CURRENCY(BuyCurrencyActivity.class);
+        BUY_CURRENCY(BuyCurrencyActivity.class),
+        BUY_STOCK(BuyStockActivity.class),
+        BUY_CURRENCY_STOCK(BuyCurrencyStockActivity.class);
 
         private final Class<? extends DocumentActivity> activity;
 

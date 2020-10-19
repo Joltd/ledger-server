@@ -1,7 +1,9 @@
-package com.evgenltd.ledgerserver.service.bot;
+package com.evgenltd.ledgerserver.service.bot.activity;
 
 import com.evgenltd.ledgerserver.Utils;
 import com.evgenltd.ledgerserver.entity.Reference;
+import com.evgenltd.ledgerserver.service.bot.BotActivity;
+import com.evgenltd.ledgerserver.service.bot.BotService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;

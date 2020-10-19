@@ -1,5 +1,6 @@
 package com.evgenltd.ledgerserver.service.bot;
 
+import com.evgenltd.ledgerserver.service.bot.activity.MainActivity;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
