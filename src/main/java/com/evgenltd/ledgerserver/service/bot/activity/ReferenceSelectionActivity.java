@@ -1,9 +1,9 @@
 package com.evgenltd.ledgerserver.service.bot.activity;
 
-import com.evgenltd.ledgerserver.Utils;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.entity.Reference;
+import com.evgenltd.ledgerserver.service.bot.BotState;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import static com.evgenltd.ledgerserver.service.bot.BotState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -25,11 +27,7 @@ public class ReferenceSelectionActivity<T extends Reference> extends BotActivity
     private Consumer<T> callback;
     private List<T> data;
 
-    public ReferenceSelectionActivity(
-            final BotService botService,
-            final BeanFactory beanFactory
-    ) {
-        super(botService);
+    public ReferenceSelectionActivity(final BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
     }
 
@@ -56,11 +54,6 @@ public class ReferenceSelectionActivity<T extends Reference> extends BotActivity
                         },
                         () -> sendMessage("Not found")
                 );
-    }
-
-    @Override
-    protected void hello() {
-        read();
     }
 
     private void read() {

@@ -19,6 +19,8 @@ public class Document {
     @Enumerated(EnumType.STRING)
     private Type type;
 
+    private String content;
+
     public Long getId() {
         return id;
     }
@@ -41,6 +43,14 @@ public class Document {
 
     public void setType(final Type type) {
         this.type = type;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(final String content) {
+        this.content = content;
     }
 
     public enum Type {

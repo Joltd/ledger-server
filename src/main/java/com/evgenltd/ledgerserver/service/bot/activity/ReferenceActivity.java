@@ -1,17 +1,19 @@
 package com.evgenltd.ledgerserver.service.bot.activity;
 
-import com.evgenltd.ledgerserver.Utils;
+import com.evgenltd.ledgerserver.util.Tokenizer;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.entity.Reference;
+import com.evgenltd.ledgerserver.service.bot.BotState;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.evgenltd.ledgerserver.service.bot.BotState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -22,12 +24,12 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
     private Class<T> type;
     private JpaRepository<T, Long> repository;
 
-    public ReferenceActivity(
-            final BotService botService,
-            final BeanFactory beanFactory
-    ) {
-        super(botService);
+    public ReferenceActivity(final BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
+        command(t -> all(), "all");
+        command(this::create, "new", "add");
+        command(this::edit, "edit");
+        command(this::remove, "remove", "rem", "del", "delete");
     }
 
     public void setupReference(final String name) {
@@ -35,42 +37,7 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
         repository = beanFactory.getBean(Utils.classForName("com.evgenltd.ledgerserver.repository." + name + "Repository"));
     }
 
-    @Override
-    public void onMessageReceived(final String message) {
-        final FirstWord wordAndMessage = splitFirstWord(message);
-        if (Utils.isSimilar(wordAndMessage.word(), "new", "add")) {
-            final T reference = Utils.newInstance(type);
-            reference.setName(wordAndMessage.message());
-            repository.save(reference);
-            hello();
-        } else if (Utils.isSimilar(wordAndMessage.word(), "edit")) {
-            final FirstWord idAndName = splitFirstWord(wordAndMessage.message());
-            Utils.asLongNoThrow(idAndName.word())
-                    .flatMap(repository::findById)
-                    .ifPresentOrElse(
-                            reference -> {
-                                reference.setName(idAndName.message());
-                                repository.save(reference);
-                                hello();
-                            },
-                            () -> sendMessage("Unable to parse id [%s]", idAndName.word())
-                    );
-        } else if (Utils.isSimilar(wordAndMessage.word(), "remove")) {
-            Utils.asLongNoThrow(wordAndMessage.message())
-                    .ifPresentOrElse(
-                            id -> {
-                                repository.deleteById(id);
-                                hello();
-                            },
-                            () -> sendMessage("Unable to parse id [%s]", wordAndMessage.message())
-                    );
-        } else {
-            hello();
-        }
-    }
-
-    @Override
-    protected void hello() {
+    protected void all() {
         final String all = repository.findAll()
                 .stream()
                 .map(reference -> String.format("%s | %s", reference.getId(), reference.getName()))
@@ -80,6 +47,40 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
         } else {
             sendMessage(all);
         }
+    }
+
+    private void create(final Tokenizer tokenizer) {
+        final T reference = Utils.newInstance(type);
+        reference.setName(tokenizer.whole());
+        repository.save(reference);
+        all();
+    }
+
+    private void edit(final Tokenizer tokenizer) {
+        final String id = tokenizer.next();
+        final String name = tokenizer.whole();
+        Utils.asLongNoThrow(id)
+                .flatMap(repository::findById)
+                .ifPresentOrElse(
+                        reference -> {
+                            reference.setName(name);
+                            repository.save(reference);
+                            all();
+                        },
+                        () -> sendMessage("Unable to parse id [%s]", name)
+                );
+    }
+
+    private void remove(final Tokenizer tokenizer) {
+        final String idValue = tokenizer.next();
+        Utils.asLongNoThrow(idValue)
+                .ifPresentOrElse(
+                        id -> {
+                            repository.deleteById(id);
+                            all();
+                        },
+                        () -> sendMessage("Unable to parse id [%s]", idValue)
+                );
     }
 
 }

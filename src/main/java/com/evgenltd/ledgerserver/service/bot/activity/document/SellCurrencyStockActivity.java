@@ -2,6 +2,8 @@ package com.evgenltd.ledgerserver.service.bot.activity.document;
 
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.Currency;
+import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.record.StockBalance;
 import com.evgenltd.ledgerserver.service.JournalService;
 import com.evgenltd.ledgerserver.service.SettingService;
 import com.evgenltd.ledgerserver.service.bot.BotService;
@@ -16,7 +18,7 @@ import static com.evgenltd.ledgerserver.state.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class BuyCurrencyStockActivity extends DocumentActivity {
+public class SellCurrencyStockActivity extends DocumentActivity {
 
     private static final String AMOUNT = "amount";
     private static final String ACCOUNT = "account";
@@ -27,11 +29,14 @@ public class BuyCurrencyStockActivity extends DocumentActivity {
     private static final String CURRENCY_RATE = "currencyRate";
     private static final String CURRENCY_AMOUNT = "currencyAmount";
     private static final String BROKER = "broker";
+    private static final String COMMISSION = "commission";
+    private static final String COMMISSION_AMOUNT = "commissionAmount";
+    private static final String STOCK_SALE_INCOME = "stockSaleIncome";
+    private static final String STOCK_SALE_EXPENSE = "stockSaleExpense";
 
     private final SettingService settingService;
 
-
-    public BuyCurrencyStockActivity(
+    public SellCurrencyStockActivity(
             final BeanFactory beanFactory,
             final SettingService settingService
     ) {
@@ -49,6 +54,9 @@ public class BuyCurrencyStockActivity extends DocumentActivity {
         moneyField(CURRENCY_RATE);
         moneyField(CURRENCY_AMOUNT);
 
+        incomeItemField(STOCK_SALE_INCOME);
+        expenseItemField(STOCK_SALE_EXPENSE);
+
         on(CURRENCY_RATE, this::recalculateAmount);
         on(CURRENCY_AMOUNT, this::recalculateAmount);
     }
@@ -60,6 +68,9 @@ public class BuyCurrencyStockActivity extends DocumentActivity {
         set(AMOUNT, BigDecimal.ZERO);
         set(CURRENCY_RATE, BigDecimal.ZERO);
         set(CURRENCY_AMOUNT, BigDecimal.ZERO);
+        set(COUNT, 0L);
+        set(STOCK_SALE_INCOME, settingService.get(Settings.STOCK_SALE_INCOME_ITEM));
+        set(STOCK_SALE_EXPENSE, settingService.get(Settings.STOCK_SALE_EXPENSE_ITEM));
     }
 
     @Override
@@ -67,8 +78,14 @@ public class BuyCurrencyStockActivity extends DocumentActivity {
         reassessment52(ACCOUNT, CURRENCY, CURRENCY_RATE);
         reassessment58(ACCOUNT, TICKER, CURRENCY, CURRENCY_RATE, PRICE);
 
-        dt58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT, CURRENCY, CURRENCY_RATE, CURRENCY_AMOUNT);
-        ct52(AMOUNT, ACCOUNT, CURRENCY, CURRENCY_RATE, CURRENCY_AMOUNT);
+        dt91(AMOUNT, STOCK_SALE_EXPENSE);
+        ct58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT, CURRENCY, CURRENCY_RATE, CURRENCY_AMOUNT);
+
+        dt51(AMOUNT, ACCOUNT);
+        ct91(AMOUNT, STOCK_SALE_INCOME);
+
+        dt91(COMMISSION_AMOUNT, COMMISSION);
+        ct51(COMMISSION_AMOUNT, ACCOUNT);
     }
 
     private void recalculateAmount() {

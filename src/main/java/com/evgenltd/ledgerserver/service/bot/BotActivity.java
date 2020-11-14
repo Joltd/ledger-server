@@ -1,58 +1,54 @@
 package com.evgenltd.ledgerserver.service.bot;
 
-import com.evgenltd.ledgerserver.Utils;
+import com.evgenltd.ledgerserver.util.Tokenizer;
+import com.evgenltd.ledgerserver.util.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static com.evgenltd.ledgerserver.service.bot.BotState.*;
 
 public abstract class BotActivity {
 
-    private final BotService botService;
+    private final List<Command> commands = new ArrayList<>();
 
-    private Long chatId;
-
-    public BotActivity(final BotService botService) {
-        this.botService = botService;
-    }
-
-    public void setChatId(final Long chatId) {
-        this.chatId = chatId;
-    }
-
-    protected void sendMessage(final String message, final Object... args) {
-        botService.sendMessage(chatId, String.format(message, args));
-    }
-
-    protected void activityNew(final BotActivity botActivity) {
-        botService.activityNew(chatId, botActivity);
-    }
-
-    protected void activityBack() {
-        botService.activityBack(chatId);
+    public BotActivity() {
+        command(message -> done(), "done", "back");
+        command(message -> help(), "help", "man");
     }
 
     void messageReceived(final String message) {
-        if (Utils.isSimilar(message, "hey", "?")) {
-            hello();
-        } else if (Utils.isSimilar(message, "done", "back")) {
-            activityBack();
-        } else {
-            onMessageReceived(message);
-        }
-    }
-
-    protected abstract void onMessageReceived(final String message);
-
-    protected void hello() {
-        sendMessage(getClass().getSimpleName());
-    }
-
-    protected FirstWord splitFirstWord(final String message) {
-        final int index = message.indexOf(" ");
-        if (index < 0) {
-            return new FirstWord(message, "");
+        final Tokenizer tokenizer = Tokenizer.of(message);
+        final String token = tokenizer.next();
+        for (final Command command : commands) {
+            if (Utils.isSimilar(token, command.tokens())) {
+                command.handler().accept(tokenizer);
+                return;
+            }
         }
 
-        return new FirstWord(message.substring(0, index), message.substring(index + 1));
+        onMessageReceived(message);
     }
 
-    public static record FirstWord(String word, String message) {}
+    protected void onMessageReceived(final String message) {}
+
+    public void done() {
+        activityBack();
+    }
+
+    public void help() {
+        final String help = commands.stream()
+                .map(command -> "- " + String.join(",", command.tokens()))
+                .collect(Collectors.joining("\n"));
+        sendMessage(help);
+    }
+
+    protected void command(final Consumer<Tokenizer> command, final String... tokens) {
+        commands.add(new Command(tokens, command));
+    }
+
+    private static record Command(String[] tokens, Consumer<Tokenizer> handler) {}
 
 }

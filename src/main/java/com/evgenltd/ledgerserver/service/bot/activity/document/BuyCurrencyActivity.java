@@ -1,12 +1,10 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.Utils;
-import com.evgenltd.ledgerserver.constants.Codes;
+import com.evgenltd.ledgerserver.util.Tokenizer;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
-import com.evgenltd.ledgerserver.service.JournalService;
 import com.evgenltd.ledgerserver.service.SettingService;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import com.evgenltd.ledgerserver.service.brocker.CommissionCalculator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -14,106 +12,81 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.util.List;
+
+import static com.evgenltd.ledgerserver.state.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BuyCurrencyActivity extends DocumentActivity {
 
+    private static final String DATE = "date";
+    private static final String AMOUNT = "amount";
+    private static final String ACCOUNT = "account";
+    private static final String CURRENCY = "currency";
+    private static final String CURRENCY_RATE = "currencyRate";
+    private static final String CURRENCY_AMOUNT = "currencyAmount";
+    private static final String COMMISSION = "commission";
+    private static final String COMMISSION_AMOUNT = "commissionAmount";
+
     private final SettingService settingService;
-    private final JournalService journalService;
 
     public BuyCurrencyActivity(
-            final BotService botService,
             final SettingService settingService,
-            final BeanFactory beanFactory,
-            final JournalService journalService
+            final BeanFactory beanFactory
     ) {
-        super(botService, beanFactory);
+        super(beanFactory);
         this.settingService = settingService;
-        this.journalService = journalService;
 
-        moneyField("amount");
-        accountField("account");
-        personField("broker");
-        currencyField("currency");
-        moneyField("currencyRate");
-        moneyField("currencyAmount");
-        expenseItemField("commission");
-        moneyField("commissionAmount");
+        moneyField(AMOUNT);
+        accountField(ACCOUNT);
+        currencyField(CURRENCY);
+        moneyField(CURRENCY_RATE);
+        moneyField(CURRENCY_AMOUNT);
+        expenseItemField(COMMISSION);
+        moneyField(COMMISSION_AMOUNT);
 
-        on("currencyRate", this::recalculateAmount);
-        on("currencyAmount", this::recalculateAmount);
-    }
-
-    @Override
-    protected void onSetup() {
-        final JournalEntry currencyEntry = byDebitCode(Codes.C52);
-        set("amount", currencyEntry.getAmount());
-        set("account", currencyEntry.getAccount());
-        set("currency", currencyEntry.getCurrency());
-        set("currencyRate", currencyEntry.getCurrencyRate());
-        set("currencyAmount", currencyEntry.getCurrencyAmount());
-
-        final JournalEntry personEntry = byDebitCode(Codes.C76);
-        set("broker", personEntry.getPerson());
-
-        final JournalEntry commissionEntry = byDebitCode(Codes.C91_2);
-        set("commission", commissionEntry.getExpenseItem());
-        set("commissionAmount", commissionEntry.getAmount());
+        on(CURRENCY_RATE, this::recalculateAmount);
+        on(CURRENCY_AMOUNT, this::recalculateAmount);
     }
 
     @Override
     protected void onDefaults() {
-        set("currency", Currency.USD);
-        set("broker", settingService.get(Settings.BROKER));
-        set("commission", settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM));
-        set("amount", BigDecimal.ZERO);
-        set("currencyRate", BigDecimal.ZERO);
-        set("currencyAmount", BigDecimal.ZERO);
+        set(CURRENCY, Currency.USD);
+        set(COMMISSION, settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM));
+        set(AMOUNT, BigDecimal.ZERO);
+        set(CURRENCY_RATE, BigDecimal.ZERO);
+        set(CURRENCY_AMOUNT, BigDecimal.ZERO);
     }
 
     @Override
     protected void onSave() {
-        final List<JournalEntry> convertToCurrency = journalService.convertToCurrency(
-                get("date"),
-                get("amount"),
-                get("account"),
-                get("currency"),
-                get("currencyRate"),
-                get("currencyAmount")
-        );
-        final List<JournalEntry> transferToPerson = journalService.transferToPerson(
-                get("date"),
-                get("commissionAmount"),
-                get("account"),
-                get("broker"),
-                get("commission")
-        );
-        getJournalEntries().addAll(convertToCurrency);
-        getJournalEntries().addAll(transferToPerson);
+        dt52(AMOUNT, ACCOUNT, CURRENCY, CURRENCY_RATE, CURRENCY_AMOUNT);
+        ct51(AMOUNT, ACCOUNT);
+
+        dt91(COMMISSION_AMOUNT, COMMISSION);
+        ct51(COMMISSION_AMOUNT, ACCOUNT);
     }
 
     @Override
     protected void onMessageReceived(final String message) {
         super.onMessageReceived(message);
-        final String command = splitFirstWord(message).word();
+        final String command = Tokenizer.of(message).next();
         if (Utils.isSimilar(command, "comCalc")) {
             recalculateCommissionAmount();
         }
     }
 
     private void recalculateAmount() {
-        final BigDecimal currencyRate = get("currencyRate");
-        final BigDecimal currencyAmount = get("currencyAmount");
-        set("amount", currencyAmount.multiply(currencyRate));
+        final BigDecimal currencyRate = get(CURRENCY_RATE, BigDecimal.ZERO);
+        final BigDecimal currencyAmount = get(CURRENCY_AMOUNT, BigDecimal.ZERO);
+        set(AMOUNT, currencyAmount.multiply(currencyRate));
     }
 
     private void recalculateCommissionAmount() {
         final CommissionCalculator calculator = settingService.get(Settings.BROKER_COMMISSION_CALCULATOR);
-        final BigDecimal amount = get("amount");
-        final BigDecimal commission = calculator.calculate(get("date"), amount);
-        set("commissionAmount", commission);
+        final BigDecimal amount = get(AMOUNT, BigDecimal.ZERO);
+        final BigDecimal commission = calculator.calculate(get(DATE), amount);
+        set(COMMISSION_AMOUNT, commission);
     }
 
 }

@@ -10,8 +10,12 @@ import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import javax.annotation.PostConstruct;
 import java.io.Serializable;
-import java.util.*;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
 
 @Service
 public class BotService extends TelegramLongPollingBot {
@@ -25,6 +29,11 @@ public class BotService extends TelegramLongPollingBot {
 
     public BotService(final BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        BotState.setup(this);
     }
 
     @Override
@@ -44,36 +53,16 @@ public class BotService extends TelegramLongPollingBot {
         }
 
         final Long chatId = update.getMessage().getChatId();
+        BotState.setup(chatId);
+
         final String text = update.getMessage().getText();
+        getActivityStack(chatId).current().messageReceived(text);
 
-        final ActivityStack activityStack = getActivityStack(chatId);
-        activityStack.current().messageReceived(text);
-    }
-
-    private ActivityStack getActivityStack(final Long chatId) {
-        return activities.computeIfAbsent(chatId, id -> {
-            final MainActivity activity = beanFactory.getBean(MainActivity.class);
-            activity.setChatId(chatId);
-
-            final ActivityStack newActivityStack = new ActivityStack();
-            newActivityStack.push(activity);
-            return newActivityStack;
-        });
-    }
-
-    public void activityNew(final Long chatId, final BotActivity activity) {
-        activity.setChatId(chatId);
-        getActivityStack(chatId).push(activity);
-        activity.hello();
-    }
-
-    public void activityBack(final Long chatId) {
-        getActivityStack(chatId).back();
-        getActivityStack(chatId).current().hello();
+        BotState.reset();
     }
 
     public void sendMessage(final Long chatId, final String message, final Object... args) {
-        execute(new SendMessage(chatId, String.format(message, args)));
+        execute(new SendMessage(chatId.toString(), String.format(message, args)));
     }
 
     @Override
@@ -83,6 +72,24 @@ public class BotService extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void activityNew(final Long chatId, final BotActivity activity) {
+        final ActivityStack activityStack = getActivityStack(chatId);
+        activityStack.push(activity);
+    }
+
+    public void activityBack(final Long chatId) {
+        final ActivityStack activityStack = getActivityStack(chatId);
+        activityStack.back();
+    }
+
+    private ActivityStack getActivityStack(final Long chatId) {
+        return activities.computeIfAbsent(chatId, id -> {
+            final ActivityStack activityStack = new ActivityStack();
+            activityStack.push(beanFactory.getBean(MainActivity.class));
+            return activityStack;
+        });
     }
 
     private static final class ActivityStack {
@@ -100,10 +107,8 @@ public class BotService extends TelegramLongPollingBot {
             if (stack.size() <= 1) {
                 return;
             }
-
             stack.pop();
         }
-
     }
 
 }

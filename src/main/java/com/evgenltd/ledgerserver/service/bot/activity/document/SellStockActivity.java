@@ -4,6 +4,7 @@ import com.evgenltd.ledgerserver.util.Tokenizer;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.service.SettingService;
+import com.evgenltd.ledgerserver.service.bot.BotService;
 import com.evgenltd.ledgerserver.service.brocker.CommissionCalculator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -16,7 +17,7 @@ import static com.evgenltd.ledgerserver.state.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public class BuyStockActivity extends DocumentActivity {
+public class SellStockActivity extends DocumentActivity {
 
     private static final String AMOUNT = "amount";
     private static final String ACCOUNT = "account";
@@ -25,14 +26,16 @@ public class BuyStockActivity extends DocumentActivity {
     private static final String COUNT = "count";
     private static final String COMMISSION = "commission";
     private static final String COMMISSION_AMOUNT = "commissionAmount";
+    private static final String STOCK_SALE_INCOME = "stockSaleIncome";
+    private static final String STOCK_SALE_EXPENSE = "stockSaleExpense";
 
     private final SettingService settingService;
 
-    public BuyStockActivity(
+    public SellStockActivity(
             final BeanFactory beanFactory,
             final SettingService settingService
     ) {
-        super(beanFactory);
+        super( beanFactory);
         this.settingService = settingService;
 
         moneyField(AMOUNT);
@@ -42,6 +45,8 @@ public class BuyStockActivity extends DocumentActivity {
         longField(COUNT);
         expenseItemField(COMMISSION);
         moneyField(COMMISSION_AMOUNT);
+        incomeItemField(STOCK_SALE_INCOME);
+        expenseItemField(STOCK_SALE_EXPENSE);
 
         on(PRICE, this::recalculateAmount);
         on(COUNT, this::recalculateAmount);
@@ -53,12 +58,19 @@ public class BuyStockActivity extends DocumentActivity {
         set(PRICE, BigDecimal.ZERO);
         set(COMMISSION, settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM));
         set(COUNT, 0L);
+        set(STOCK_SALE_INCOME, settingService.get(Settings.STOCK_SALE_INCOME_ITEM));
+        set(STOCK_SALE_EXPENSE, settingService.get(Settings.STOCK_SALE_EXPENSE_ITEM));
     }
 
     @Override
     protected void onSave() {
-        dt58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT, null, null, null);
-        ct51(AMOUNT, ACCOUNT);
+        reassessment58(ACCOUNT, TICKER, PRICE);
+
+        dt91(AMOUNT, STOCK_SALE_EXPENSE);
+        ct58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT, null, null, null);
+
+        dt51(AMOUNT, ACCOUNT);
+        ct91(AMOUNT, STOCK_SALE_INCOME);
 
         dt91(COMMISSION_AMOUNT, COMMISSION);
         ct51(COMMISSION_AMOUNT, ACCOUNT);
@@ -85,5 +97,4 @@ public class BuyStockActivity extends DocumentActivity {
         final BigDecimal commission = calculator.calculate(get("date"), amount);
         set(COMMISSION_AMOUNT, commission);
     }
-
 }

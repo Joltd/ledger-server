@@ -5,6 +5,7 @@ import com.evgenltd.ledgerserver.entity.JournalEntry;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Deprecated
 public class JournalEntryBuilder {
 
     public static JournalEntry debit(final LocalDateTime date, final String code, final BigDecimal amount) {

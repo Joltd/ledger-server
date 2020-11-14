@@ -1,19 +1,21 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.Utils;
+import com.evgenltd.ledgerserver.util.Tokenizer;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.entity.Document;
 import com.evgenltd.ledgerserver.repository.DocumentRepository;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.evgenltd.ledgerserver.service.bot.BotState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -24,54 +26,73 @@ public class DocumentListActivity extends BotActivity {
     private final BeanFactory beanFactory;
 
     public DocumentListActivity(
-            final BotService botService,
             final DocumentRepository documentRepository,
             final JournalEntryRepository journalEntryRepository,
             final BeanFactory beanFactory
     ) {
-        super(botService);
         this.documentRepository = documentRepository;
         this.journalEntryRepository = journalEntryRepository;
         this.beanFactory = beanFactory;
+
+        command(this::create, "new", "add");
+        command(this::edit, "edit");
+        command(this::remove, "remove", "rem", "delete", "del");
+        command(tokenizer -> all(), "all");
     }
 
-    @Override
-    protected void onMessageReceived(final String message) {
-        final FirstWord wordAndMessage = splitFirstWord(message);
+    private void create(final Tokenizer tokenizer) {
+        final String typeToken = tokenizer.next();
+        Stream.of(Document.Type.values())
+                .filter(type -> Utils.isSimilar(typeToken, type.name()))
+                .findFirst()
+                .ifPresentOrElse(
+                        type -> {
+                            final Document document = new Document();
+                            document.setType(type);
+                            document.setDate(LocalDateTime.now());
 
-        if (Utils.isSimilar(wordAndMessage.word(), "new","add")) {
-            buildDocumentActivity(wordAndMessage.message(), null)
-                    .ifPresentOrElse(
-                            this::activityNew,
-                            () -> sendMessage("Unknown document type [%s]", wordAndMessage.message())
-                    );
-        } else if (Utils.isSimilar(wordAndMessage.word(), "edit")) {
-            Utils.asLongNoThrow(wordAndMessage.message())
-                    .flatMap(documentRepository::findById)
-                    .flatMap(document -> buildDocumentActivity(document.getType().name(), document.getId()))
-                    .ifPresentOrElse(
-                            this::activityNew,
-                            () -> sendMessage("Unknown document [%s]", wordAndMessage.message())
-                    );
-        } else if (Utils.isSimilar(wordAndMessage.word(), "remove", "rem", "delete", "del")) {
-            Utils.asLongNoThrow(wordAndMessage.message())
-                    .ifPresentOrElse(
-                            id -> {
-                                journalEntryRepository.deleteByDocumentId(id);
-                                documentRepository.deleteById(id);
-                                sendMessage("Done");
-                                hello();
-                            },
-                            () -> sendMessage("Unable to parse id [%s]", wordAndMessage.message())
-                    );
-        } else {
-            hello();
-        }
+                            final DocumentActivity documentActivity = beanFactory.getBean(type.getActivity());
+                            documentActivity.setup(document);
+                            activityNew(documentActivity);
+                        },
+                        () -> {
+                            final String allowedDocumentTypes = Stream.of(Document.Type.values())
+                                    .map(Enum::name)
+                                    .collect(Collectors.joining("\n"));
+                            sendMessage("Allowed types: \n" + allowedDocumentTypes);
+                        }
+                );
 
     }
 
-    @Override
-    protected void hello() {
+    private void edit(final Tokenizer tokenizer) {
+        final String idToken = tokenizer.next();
+        Utils.asLongNoThrow(idToken)
+                .flatMap(documentRepository::findById)
+                .ifPresentOrElse(
+                        document -> {
+                            final DocumentActivity documentActivity = beanFactory.getBean(document.getType().getActivity());
+                            documentActivity.setup(document);
+                            activityNew(documentActivity);
+                        },
+                        () -> sendMessage("Document [%s] not found", idToken)
+                );
+    }
+
+    private void remove(final Tokenizer tokenizer) {
+        final String idToken = tokenizer.next();
+        Utils.asLongNoThrow(idToken)
+                .ifPresentOrElse(
+                        id -> {
+                            journalEntryRepository.deleteByDocumentId(id);
+                            documentRepository.deleteById(id);
+                            all();
+                        },
+                        () -> sendMessage("Unable to parse id [%s]", idToken)
+                );
+    }
+
+    private void all() {
         final String all = documentRepository.findAll()
                 .stream()
                 .map(this::documentToString)
@@ -85,17 +106,6 @@ public class DocumentListActivity extends BotActivity {
 
     private String documentToString(final Document document) {
         return String.format("%s | %s | %s", document.getId(), document.getDate(), document.getType());
-    }
-
-    public Optional<DocumentActivity> buildDocumentActivity(final String type, final Long documentId) {
-        return Stream.of(Document.Type.values())
-                .filter(t -> Utils.isSimilar(type, t.name().toLowerCase()))
-                .findFirst()
-                .map(t -> {
-                    final DocumentActivity documentActivity = beanFactory.getBean(t.getActivity());
-                    documentActivity.setup(t, documentId);
-                    return documentActivity;
-                });
     }
 
 }

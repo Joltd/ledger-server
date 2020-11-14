@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.builder;
 
-import com.evgenltd.ledgerserver.Utils;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.entity.Reference;
 import com.evgenltd.ledgerserver.record.ValueInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,10 +14,15 @@ import java.util.stream.Collectors;
 
 public class ValueInfoBuilder {
 
-    public static  <T> ValueInfo<T> primitiveValue(final Function<String, Optional<T>> converter, final String example) {
+    public static  <T> ValueInfo<T> primitiveValue(
+            final Function<String, Optional<T>> fromString,
+            final Function<T, String> toString,
+            final String example
+    ) {
         return new ValueInfoImpl<>(
-                converter,
-                String::valueOf,
+                fromString,
+                toString,
+                toString,
                 () -> example
         );
     }
@@ -26,6 +31,7 @@ public class ValueInfoBuilder {
         return new ValueInfoImpl<>(
                 value -> Utils.asLongNoThrow(value)
                         .flatMap(repository::findById),
+                value -> value != null ? value.getId().toString() : null,
                 value -> value != null ? value.asString() : null,
                 () -> repository.findAll()
                         .stream()
@@ -39,22 +45,30 @@ public class ValueInfoBuilder {
         private T value;
         private final Function<String,Optional<T>> fromString;
         private final Function<T,String> toString;
+        private final Function<T,String> print;
         private final Supplier<String> example;
         private final List<Runnable> callbacks = new ArrayList<>();
 
         public ValueInfoImpl(
                 final Function<String, Optional<T>> fromString,
                 final Function<T,String> toString,
+                final Function<T,String> print,
                 final Supplier<String> example
         ) {
             this.fromString = fromString;
             this.toString = toString;
+            this.print = print;
             this.example = example;
         }
 
         @Override
         public T get() {
             return value;
+        }
+
+        @Override
+        public String asString() {
+            return toString.apply(value);
         }
 
         @Override
@@ -75,7 +89,7 @@ public class ValueInfoBuilder {
 
         @Override
         public String print() {
-            return toString.apply(value);
+            return print.apply(value);
         }
 
         @Override

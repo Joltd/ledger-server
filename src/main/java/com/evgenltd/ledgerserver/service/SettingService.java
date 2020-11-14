@@ -2,7 +2,7 @@ package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.builder.SettingInfoBuilder;
 import com.evgenltd.ledgerserver.record.SettingInfo;
-import com.evgenltd.ledgerserver.Utils;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.repository.ExpenseItemRepository;
@@ -39,6 +39,12 @@ public class SettingService {
         add(SettingInfoBuilder.beanSetting(Settings.BROKER_COMMISSION_CALCULATOR, beanFactory, TinkoffTraderCommissionCalculator.class, TinkoffInvestorCommissionCalculator.class));
         add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_EXPENSE_ITEM, expenseItemRepository));
         add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_INCOME_ITEM, incomeItemRepository));
+        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_SALE_EXPENSE_ITEM, expenseItemRepository));
+        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_SALE_INCOME_ITEM, incomeItemRepository));
+        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_REASSESSMENT_EXPENSE_ITEM, expenseItemRepository));
+        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_REASSESSMENT_INCOME_ITEM, incomeItemRepository));
+        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_SALE_EXPENSE_ITEM, expenseItemRepository));
+        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_SALE_INCOME_ITEM, incomeItemRepository));
     }
 
     private void add(final SettingInfo<?> settingInfo) {

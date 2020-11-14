@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.builder;
 
-import com.evgenltd.ledgerserver.Utils;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.entity.Reference;
 import com.evgenltd.ledgerserver.entity.Setting;
 import com.evgenltd.ledgerserver.record.SettingInfo;

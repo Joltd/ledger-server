@@ -1,0 +1,1 @@
+alter table documents add content varchar(4096);

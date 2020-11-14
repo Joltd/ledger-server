@@ -10,8 +10,8 @@
     </Properties>
     <Appenders>
         <RollingFile name="rolling-file">
-            <FileName>${env:CATALINA_HOME}/logs/lead-tools.log</FileName>
-            <FilePattern>${env:CATALINA_HOME}/logs/lead-tools-%d{yyyy-MM-dd}-%i.log</FilePattern>
+            <FileName>${env:CATALINA_HOME}/logs/ledger.log</FileName>
+            <FilePattern>${env:CATALINA_HOME}/logs/ledger-%d{yyyy-MM-dd}-%i.log</FilePattern>
             <PatternLayout>
                 <Pattern>${LOG_PATTERN}</Pattern>
             </PatternLayout>

@@ -1,14 +1,20 @@
 package com.evgenltd.ledgerserver.service.bot.activity;
 
-import com.evgenltd.ledgerserver.Utils;
-import com.evgenltd.ledgerserver.entity.Reference;
+import com.evgenltd.ledgerserver.entity.*;
+import com.evgenltd.ledgerserver.util.Tokenizer;
+import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import com.evgenltd.ledgerserver.service.bot.activity.document.DocumentListActivity;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static com.evgenltd.ledgerserver.service.bot.BotState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -16,42 +22,49 @@ public class MainActivity extends BotActivity {
 
     private final BeanFactory beanFactory;
 
-    public MainActivity(
-            final BotService botService,
-            final BeanFactory beanFactory
-    ) {
-        super(botService);
+    public MainActivity(final BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
+        command(this::reference, "ref", "reference", "refs");
+        command(this::settings, "settings", "options");
+        command(this::documents, "documents", "docs");
     }
 
-    @Override
-    public void onMessageReceived(final String message) {
+    private void reference(final Tokenizer tokenizer) {
+        final List<Class<? extends Reference>> refs = Arrays.asList(
+                Account.class,
+                ExpenseItem.class,
+                IncomeItem.class,
+                Person.class,
+                TickerSymbol.class
+        );
 
-        final FirstWord wordAndMessage = splitFirstWord(message);
-        final String command = wordAndMessage.word();
-
-        if (Utils.isSimilar(command, "ref", "reference", "refs")) {
-            final ReferenceActivity<Reference> referenceActivity = beanFactory.getBean(ReferenceActivity.class);
-            referenceActivity.setupReference(wordAndMessage.message());
-            activityNew(referenceActivity);
-//        } else if (Utils.isSimilar(command, "")) {
-//            final ReferenceSelectionActivity<Reference> referenceSelectionActivity = beanFactory.getBean(ReferenceSelectionActivity.class);
-//            referenceSelectionActivity.setupReference(wordAndMessage.message(), result -> {
-//                System.out.println(result.getId() + " " + result.getName());
-//            });
-//            activityNew(referenceSelectionActivity);
-        } else if (Utils.isSimilar(command, "settings", "options")) {
-            final SettingsActivity settingsActivity = beanFactory.getBean(SettingsActivity.class);
-            activityNew(settingsActivity);
-        } else if (Utils.isSimilar(command, "documents", "docs")) {
-            final DocumentListActivity documentListActivity = beanFactory.getBean(DocumentListActivity.class);
-            activityNew(documentListActivity);
-        }
-
+        final String type = tokenizer.next();
+        refs.stream()
+                .filter(referenceType -> Utils.isSimilar(type, referenceType.getSimpleName()))
+                .findFirst()
+                .ifPresentOrElse(
+                        reference -> {
+                            final ReferenceActivity<Reference> referenceActivity = beanFactory.getBean(ReferenceActivity.class);
+                            referenceActivity.setupReference(reference.getSimpleName());
+                            activityNew(referenceActivity);
+                        },
+                        () -> {
+                            final String allowedReferenceTypes = refs.stream()
+                                    .map(c -> "- " + c.getSimpleName())
+                                    .collect(Collectors.joining("\n"));
+                            sendMessage("Allowed types: \n" + allowedReferenceTypes);
+                        }
+                );
     }
 
-    @Override
-    protected void hello() {
-        sendMessage("ref - All references\nsettings - configuring app settings\ndocs - applied documents");
+    private void settings(final Tokenizer message) {
+        final SettingsActivity settingsActivity = beanFactory.getBean(SettingsActivity.class);
+        activityNew(settingsActivity);
     }
+
+    private void documents(final Tokenizer message) {
+        final DocumentListActivity documentListActivity = beanFactory.getBean(DocumentListActivity.class);
+        activityNew(documentListActivity);
+    }
+
 }

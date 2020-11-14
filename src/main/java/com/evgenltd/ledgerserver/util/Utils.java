@@ -1,4 +1,7 @@
-package com.evgenltd.ledgerserver;
+package com.evgenltd.ledgerserver.util;
+
+import com.evgenltd.ledgerserver.ApplicationException;
+import com.evgenltd.ledgerserver.service.bot.BotState;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -31,6 +34,7 @@ public class Utils {
         try {
             return (Class<T>) Class.forName(name);
         } catch (final ClassNotFoundException e) {
+            BotState.sendMessage("Unknown class [%s]", name);
             throw new RuntimeException(e);
         }
     }
@@ -40,6 +44,7 @@ public class Utils {
             final Constructor<T> constructor = type.getConstructor();
             return constructor.newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            BotState.sendMessage("Unable to instantiate [%s]", type.getName());
             throw new RuntimeException(e);
         }
     }
@@ -117,6 +122,10 @@ public class Utils {
         }
 
         return LocalDateTime.parse(value, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    public static String dateTimeToString(final LocalDateTime dateTime) {
+        return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
     }
 
 }

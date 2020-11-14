@@ -3,6 +3,7 @@ package com.evgenltd.ledgerserver.repository;
 import com.evgenltd.ledgerserver.entity.Account;
 import com.evgenltd.ledgerserver.entity.Currency;
 import com.evgenltd.ledgerserver.entity.JournalEntry;
+import com.evgenltd.ledgerserver.entity.TickerSymbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -26,6 +27,13 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
             String code,
             Account account,
             Currency currency
+    );
+
+    List<JournalEntry> findByDateLessThanAndCodeAndAccountAndTickerSymbol(
+            LocalDateTime date,
+            String code,
+            Account account,
+            TickerSymbol tickerSymbol
     );
 
     void deleteByDocumentId(Long documentId);
