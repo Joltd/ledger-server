@@ -16,6 +16,14 @@ import java.util.stream.Stream;
 
 public class Utils {
 
+    public static boolean isEmpty(final Object object) {
+        if (object instanceof String string) {
+            return isBlank(string);
+        } else {
+            return object == null;
+        }
+    }
+
     public static boolean isBlank(final String value) {
         return value == null || value.isEmpty();
     }
@@ -27,6 +35,10 @@ public class Utils {
         final String cleanedValue = value.trim().toLowerCase();
         return Arrays.stream(examples)
                 .anyMatch(example -> Objects.equals(cleanedValue, example.trim().toLowerCase()));
+    }
+
+    public static <T> T ifNull(final T value, final T other) {
+        return isEmpty(value) ? other : value;
     }
 
     @SuppressWarnings("unchecked")

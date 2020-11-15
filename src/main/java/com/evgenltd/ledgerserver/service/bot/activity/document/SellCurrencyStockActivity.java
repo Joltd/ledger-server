@@ -2,11 +2,7 @@ package com.evgenltd.ledgerserver.service.bot.activity.document;
 
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.Currency;
-import com.evgenltd.ledgerserver.entity.TickerSymbol;
-import com.evgenltd.ledgerserver.record.StockBalance;
-import com.evgenltd.ledgerserver.service.JournalService;
 import com.evgenltd.ledgerserver.service.SettingService;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -14,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import static com.evgenltd.ledgerserver.state.DocumentState.*;
+import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -28,7 +24,6 @@ public class SellCurrencyStockActivity extends DocumentActivity {
     private static final String CURRENCY = "currency";
     private static final String CURRENCY_RATE = "currencyRate";
     private static final String CURRENCY_AMOUNT = "currencyAmount";
-    private static final String BROKER = "broker";
     private static final String COMMISSION = "commission";
     private static final String COMMISSION_AMOUNT = "commissionAmount";
     private static final String STOCK_SALE_INCOME = "stockSaleIncome";
@@ -45,7 +40,6 @@ public class SellCurrencyStockActivity extends DocumentActivity {
 
         moneyField(AMOUNT);
         accountField(ACCOUNT);
-        personField(BROKER);
         tickerField(TICKER);
         moneyField(PRICE);
         longField(COUNT);
@@ -64,7 +58,6 @@ public class SellCurrencyStockActivity extends DocumentActivity {
     @Override
     protected void onDefaults() {
         set(CURRENCY, Currency.USD);
-        set(BROKER, settingService.get(Settings.BROKER));
         set(AMOUNT, BigDecimal.ZERO);
         set(CURRENCY_RATE, BigDecimal.ZERO);
         set(CURRENCY_AMOUNT, BigDecimal.ZERO);

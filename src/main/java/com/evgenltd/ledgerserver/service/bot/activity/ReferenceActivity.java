@@ -37,7 +37,13 @@ public class ReferenceActivity<T extends Reference> extends BotActivity {
         repository = beanFactory.getBean(Utils.classForName("com.evgenltd.ledgerserver.repository." + name + "Repository"));
     }
 
-    protected void all() {
+    @Override
+    public void hello() {
+        super.hello();
+        all();
+    }
+
+    private void all() {
         final String all = repository.findAll()
                 .stream()
                 .map(reference -> String.format("%s | %s", reference.getId(), reference.getName()))

@@ -77,11 +77,13 @@ public class BotService extends TelegramLongPollingBot {
     public void activityNew(final Long chatId, final BotActivity activity) {
         final ActivityStack activityStack = getActivityStack(chatId);
         activityStack.push(activity);
+        activity.hello();
     }
 
     public void activityBack(final Long chatId) {
         final ActivityStack activityStack = getActivityStack(chatId);
         activityStack.back();
+        activityStack.current().hello();
     }
 
     private ActivityStack getActivityStack(final Long chatId) {

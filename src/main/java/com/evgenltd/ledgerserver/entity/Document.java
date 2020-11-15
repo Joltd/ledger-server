@@ -55,9 +55,13 @@ public class Document {
 
     public enum Type {
         TRANSFER(TransferActivity.class),
+        FOUNDER_CONTRIBUTION(FounderContributionActivity.class),
         BUY_CURRENCY(BuyCurrencyActivity.class),
+        SELL_CURRENCY(SellCurrencyActivity.class),
         BUY_STOCK(BuyStockActivity.class),
-        BUY_CURRENCY_STOCK(BuyCurrencyStockActivity.class);
+        SELLS_STOCK(SellStockActivity.class),
+        BUY_CURRENCY_STOCK(BuyCurrencyStockActivity.class),
+        SELL_CURRENCY_STOCK(SellCurrencyStockActivity.class);
 
         private final Class<? extends DocumentActivity> activity;
 

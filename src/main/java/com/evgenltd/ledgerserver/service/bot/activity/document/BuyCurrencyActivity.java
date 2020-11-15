@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import static com.evgenltd.ledgerserver.state.DocumentState.*;
+import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

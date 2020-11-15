@@ -22,6 +22,12 @@ public class SettingsActivity extends BotActivity {
         command(tokenizer -> all(), "all");
     }
 
+    @Override
+    public void hello() {
+        super.hello();
+        all();
+    }
+
     private void all() {
         sendMessage(String.join("\n", settingService.all()));
     }

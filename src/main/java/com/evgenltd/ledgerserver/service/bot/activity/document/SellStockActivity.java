@@ -4,7 +4,6 @@ import com.evgenltd.ledgerserver.util.Tokenizer;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.service.SettingService;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import com.evgenltd.ledgerserver.service.brocker.CommissionCalculator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import static com.evgenltd.ledgerserver.state.DocumentState.*;
+import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -67,7 +66,7 @@ public class SellStockActivity extends DocumentActivity {
         reassessment58(ACCOUNT, TICKER, PRICE);
 
         dt91(AMOUNT, STOCK_SALE_EXPENSE);
-        ct58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT, null, null, null);
+        ct58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT);
 
         dt51(AMOUNT, ACCOUNT);
         ct91(AMOUNT, STOCK_SALE_INCOME);

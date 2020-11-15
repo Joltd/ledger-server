@@ -1,0 +1,1 @@
+alter table ledger.journal_entries add operation varchar(64);

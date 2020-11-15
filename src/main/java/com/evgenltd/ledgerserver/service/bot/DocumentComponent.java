@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.service;
+package com.evgenltd.ledgerserver.service.bot;
 
 import com.evgenltd.ledgerserver.builder.ValueInfoBuilder;
 import com.evgenltd.ledgerserver.constants.Codes;
@@ -8,7 +8,7 @@ import com.evgenltd.ledgerserver.entity.Currency;
 import com.evgenltd.ledgerserver.record.StockBalance;
 import com.evgenltd.ledgerserver.record.ValueInfo;
 import com.evgenltd.ledgerserver.repository.*;
-import com.evgenltd.ledgerserver.state.DocumentState;
+import com.evgenltd.ledgerserver.service.SettingService;
 import com.evgenltd.ledgerserver.util.Utils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.BeanFactory;
@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy;
+import javax.transaction.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,6 +40,7 @@ public class DocumentComponent {
     private Document document;
     private final List<JournalEntry> entries = new ArrayList<>();
     private final Map<String, ValueInfo<?>> fields = new HashMap<>();
+    private UUID uuid;
 
     public DocumentComponent(
             final BeanFactory beanFactory,
@@ -58,6 +59,7 @@ public class DocumentComponent {
         setContent(document.getContent());
     }
 
+    @Transactional
     public void save() {
         final String content = getContent();
         document.setDate(get(DATE));
@@ -72,11 +74,14 @@ public class DocumentComponent {
     }
 
     public void setContent(final String content) {
+        if (Utils.isBlank(content)) {
+            return;
+        }
         Stream.of(content.split("\n"))
                 .forEach(entry -> {
                     final String[] parts = entry.split(" = ");
                     final String field = parts[0];
-                    final String value = parts[1];
+                    final String value = parts.length > 1 ? parts[1] : null;
                     getInfo(field).ifPresent(valueInfo -> valueInfo.set(value));
                 });
     }
@@ -85,6 +90,13 @@ public class DocumentComponent {
         return fields.entrySet()
                 .stream()
                 .map(entry -> String.format("%s = %s", entry.getKey(), entry.getValue().asString()))
+                .collect(Collectors.joining("\n"));
+    }
+
+    public String print() {
+        return fields.entrySet()
+                .stream()
+                .map(entry -> String.format("%s = %s", entry.getKey(), entry.getValue().print()))
                 .collect(Collectors.joining("\n"));
     }
 
@@ -255,11 +267,11 @@ public class DocumentComponent {
             final TickerSymbol ticker,
             final BigDecimal price,
             final Long count,
-            final com.evgenltd.ledgerserver.entity.Currency currency,
+            final Currency currency,
             final BigDecimal currencyRate,
             final BigDecimal currencyAmount
     ) {
-        final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C52, amount);
+        final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C58, amount);
         entry.setAccount(account);
         entry.setTickerSymbol(ticker);
         entry.setPrice(price);
@@ -284,7 +296,7 @@ public class DocumentComponent {
             final BigDecimal currencyRate,
             final BigDecimal currencyAmount
     ) {
-        final JournalEntry entry = create(date, JournalEntry.Type.CREDIT, Codes.C52, amount);
+        final JournalEntry entry = create(date, JournalEntry.Type.CREDIT, Codes.C58, amount);
         entry.setAccount(account);
         entry.setTickerSymbol(ticker);
         entry.setPrice(price);
@@ -292,6 +304,22 @@ public class DocumentComponent {
         entry.setCurrency(currency);
         entry.setCurrencyRate(currencyRate);
         entry.setCurrencyAmount(currencyAmount);
+    }
+
+    public void dt75(final String amount) {
+        dt75(get(DATE), get(amount));
+    }
+
+    public void dt75(final LocalDateTime date, final BigDecimal amount) {
+        create(date, JournalEntry.Type.DEBIT, Codes.C75, amount);
+    }
+
+    public void ct75(final String amount) {
+        ct75(get(DATE), get(amount));
+    }
+
+    public void ct75(final LocalDateTime date, final BigDecimal amount) {
+        create(date, JournalEntry.Type.CREDIT, Codes.C75, amount);
     }
 
     public void dt76(final String amount, final String person) {
@@ -303,7 +331,7 @@ public class DocumentComponent {
             final BigDecimal amount,
             final Person person
     ) {
-        final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C52, amount);
+        final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C76, amount);
         entry.setPerson(person);
     }
     public void ct76(final String amount, final String person) {
@@ -315,8 +343,24 @@ public class DocumentComponent {
             final BigDecimal amount,
             final Person person
     ) {
-        final JournalEntry entry = create(date, JournalEntry.Type.CREDIT, Codes.C52, amount);
+        final JournalEntry entry = create(date, JournalEntry.Type.CREDIT, Codes.C76, amount);
         entry.setPerson(person);
+    }
+
+    public void dt80(final String amount) {
+        dt80(get(DATE), get(amount));
+    }
+
+    public void dt80(final LocalDateTime date, final BigDecimal amount) {
+        create(date, JournalEntry.Type.DEBIT, Codes.C80, amount);
+    }
+
+    public void ct80(final String amount) {
+        ct80(get(DATE), get(amount));
+    }
+
+    public void ct80(final LocalDateTime date, final BigDecimal amount) {
+        create(date, JournalEntry.Type.CREDIT, Codes.C80, amount);
     }
 
     public void dt91(final String amount, final String expenseItem) {
@@ -356,6 +400,13 @@ public class DocumentComponent {
         journalEntry.setType(type);
         journalEntry.setCode(code);
         journalEntry.setAmount(amount);
+        if (uuid == null) {
+            uuid = UUID.randomUUID();
+            journalEntry.setOperation(uuid.toString());
+        } else {
+            journalEntry.setOperation(uuid.toString());
+            uuid = null;
+        }
         entries.add(journalEntry);
         return journalEntry;
     }
@@ -419,9 +470,9 @@ public class DocumentComponent {
     // #                                                #
     // ##################################################
 
-    private StockBalance balance(final LocalDate date, final Account account, final TickerSymbol tickerSymbol) {
+    private StockBalance balance(final LocalDateTime date, final Account account, final TickerSymbol tickerSymbol) {
         final List<JournalEntry> result = journalEntryRepository.findByDateLessThanAndCodeAndAccountAndTickerSymbol(
-                date.atStartOfDay(),
+                date,
                 Codes.C58,
                 account,
                 tickerSymbol
@@ -430,9 +481,9 @@ public class DocumentComponent {
         return calculateStockBalance(result);
     }
 
-    private StockBalance balance(final LocalDate date, final Account account, final Currency currency) {
+    private StockBalance balance(final LocalDateTime date, final Account account, final Currency currency) {
         final List<JournalEntry> result = journalEntryRepository.findByDateLessThanAndCodeAndAccountAndCurrency(
-                date.atStartOfDay(),
+                date,
                 Codes.C52,
                 account,
                 currency

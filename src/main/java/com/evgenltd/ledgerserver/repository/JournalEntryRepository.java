@@ -13,8 +13,6 @@ import java.util.List;
 @Repository
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
 
-    List<JournalEntry> findByDocumentId(Long id);
-
     List<JournalEntry> findByDateGreaterThanEqualAndDateLessThanAndCodeAndType(
             LocalDateTime from,
             LocalDateTime to,
@@ -37,5 +35,7 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
     );
 
     void deleteByDocumentId(Long documentId);
+
+    List<JournalEntry> findByDateLessThanEqual(LocalDateTime date);
 
 }

@@ -40,6 +40,12 @@ public class DocumentListActivity extends BotActivity {
         command(tokenizer -> all(), "all");
     }
 
+    @Override
+    public void hello() {
+        super.hello();
+        all();
+    }
+
     private void create(final Tokenizer tokenizer) {
         final String typeToken = tokenizer.next();
         Stream.of(Document.Type.values())

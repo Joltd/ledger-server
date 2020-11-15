@@ -1,8 +1,7 @@
-package com.evgenltd.ledgerserver.state;
+package com.evgenltd.ledgerserver.service.bot;
 
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.record.ValueInfo;
-import com.evgenltd.ledgerserver.service.DocumentComponent;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -163,6 +162,16 @@ public class DocumentState {
             final String account,
             final String ticker,
             final String price,
+            final String count
+    ) {
+        dt58(amount, account, ticker, price, count, "", "", "");
+    }
+
+    public static void dt58(
+            final String amount,
+            final String account,
+            final String ticker,
+            final String price,
             final String count,
             final String currency,
             final String currencyRate,
@@ -183,6 +192,16 @@ public class DocumentState {
             final BigDecimal currencyAmount
     ) {
         documentComponent().dt58(date, amount, account, ticker, price, count, currency, currencyRate, currencyAmount);
+    }
+
+    public static void ct58(
+            final String amount,
+            final String account,
+            final String ticker,
+            final String price,
+            final String count
+    ) {
+        ct58(amount, account, ticker, price, count);
     }
 
     public static void ct58(
@@ -212,6 +231,22 @@ public class DocumentState {
         documentComponent().ct58(date, amount, account, ticker, price, count, currency, currencyRate, currencyAmount);
     }
 
+    public static void dt75(final String amount) {
+        documentComponent().dt75(amount);
+    }
+
+    public static void dt75(final LocalDateTime date, final BigDecimal amount) {
+        documentComponent().dt75(date, amount);
+    }
+
+    public static void ct75(final String amount) {
+        documentComponent().ct75(amount);
+    }
+
+    public static void ct75(final LocalDateTime date, final BigDecimal amount) {
+        documentComponent().ct75(date, amount);
+    }
+
     public static void dt76(final String amount, final String person) {
         documentComponent().dt76(amount, person);
     }
@@ -234,6 +269,22 @@ public class DocumentState {
             final Person person
     ) {
         documentComponent().ct76(date, amount, person);
+    }
+
+    public static void dt80(final String amount) {
+        documentComponent().dt80(amount);
+    }
+
+    public static void dt80(final LocalDateTime date, final BigDecimal amount) {
+        documentComponent().dt80(date, amount);
+    }
+
+    public static void ct80(final String amount) {
+        documentComponent().ct80(amount);
+    }
+
+    public static void ct80(final LocalDateTime date, final BigDecimal amount) {
+        documentComponent().ct80(date, amount);
     }
 
     public static void dt91(final String amount, final String expenseItem) {

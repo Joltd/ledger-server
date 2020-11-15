@@ -31,8 +31,8 @@ public class ValueInfoBuilder {
         return new ValueInfoImpl<>(
                 value -> Utils.asLongNoThrow(value)
                         .flatMap(repository::findById),
-                value -> value != null ? value.getId().toString() : null,
-                value -> value != null ? value.asString() : null,
+                value -> value.getId().toString(),
+                Reference::asString,
                 () -> repository.findAll()
                         .stream()
                         .map(Reference::asString)
@@ -68,7 +68,7 @@ public class ValueInfoBuilder {
 
         @Override
         public String asString() {
-            return toString.apply(value);
+            return value != null ? toString.apply(value) : "";
         }
 
         @Override
@@ -89,7 +89,7 @@ public class ValueInfoBuilder {
 
         @Override
         public String print() {
-            return print.apply(value);
+            return value != null ? print.apply(value) : "";
         }
 
         @Override

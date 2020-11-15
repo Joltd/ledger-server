@@ -1,7 +1,7 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.service.DocumentComponent;
-import com.evgenltd.ledgerserver.state.DocumentState;
+import com.evgenltd.ledgerserver.service.bot.DocumentComponent;
+import com.evgenltd.ledgerserver.service.bot.DocumentState;
 import com.evgenltd.ledgerserver.util.Tokenizer;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.record.ValueInfo;
@@ -14,25 +14,22 @@ import java.util.*;
 public abstract class DocumentActivity extends BotActivity {
 
     private static final String DATE = "date";
-    
-    private final BeanFactory beanFactory;
-    private DocumentComponent documentComponent;
+
+    private final DocumentComponent documentComponent;
 
     public DocumentActivity(final BeanFactory beanFactory) {
-        this.beanFactory = beanFactory;
+        documentComponent = beanFactory.getBean(DocumentComponent.class);
+        DocumentState.set(documentComponent);
 
         documentComponent.dateField(DATE);
 
         command(this::update, "&");
-        command(tokenizer -> save(), "save", "apple");
+        command(tokenizer -> save(), "save", "apply");
         command(tokenizer -> cancel(), "discard", "cancel", "close", "back");
     }
 
     public void setup(final Document document) {
-        documentComponent = beanFactory.getBean(DocumentComponent.class);
         documentComponent.setup(document);
-        DocumentState.set(documentComponent);
-
         documentComponent.set(DATE, document.getDate());
         if (document.getId() == null) {
             onDefaults();
@@ -49,6 +46,7 @@ public abstract class DocumentActivity extends BotActivity {
 
     private void update(final Tokenizer tokenizer) {
         documentComponent.setContent(tokenizer.whole());
+        hello();
     }
 
     private void save() {
@@ -65,16 +63,23 @@ public abstract class DocumentActivity extends BotActivity {
     }
 
     @Override
+    public void hello() {
+        super.hello();
+        BotState.sendMessage(documentComponent.print());
+    }
+
+    @Override
     protected void onMessageReceived(final String message) {
         final Tokenizer tokenizer = Tokenizer.of(message);
         final String field = tokenizer.next();
         final Optional<ValueInfo<Object>> valueInfo = documentComponent.getInfo(field);
         if (valueInfo.isPresent()) {
-            final String value = tokenizer.next();
+            final String value = tokenizer.whole();
             if (value.isBlank()) {
                 BotState.sendMessage(valueInfo.get().example());
             } else {
                 valueInfo.get().set(value);
+                hello();
             }
         }
     }

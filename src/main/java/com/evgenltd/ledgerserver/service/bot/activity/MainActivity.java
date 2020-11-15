@@ -57,12 +57,12 @@ public class MainActivity extends BotActivity {
                 );
     }
 
-    private void settings(final Tokenizer message) {
+    private void settings(final Tokenizer tokenizer) {
         final SettingsActivity settingsActivity = beanFactory.getBean(SettingsActivity.class);
         activityNew(settingsActivity);
     }
 
-    private void documents(final Tokenizer message) {
+    private void documents(final Tokenizer tokenizer) {
         final DocumentListActivity documentListActivity = beanFactory.getBean(DocumentListActivity.class);
         activityNew(documentListActivity);
     }

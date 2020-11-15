@@ -3,7 +3,6 @@ package com.evgenltd.ledgerserver.service.bot.activity.document;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.Currency;
 import com.evgenltd.ledgerserver.service.SettingService;
-import com.evgenltd.ledgerserver.service.bot.BotService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import static com.evgenltd.ledgerserver.state.DocumentState.*;
+import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

@@ -21,6 +21,8 @@ public class JournalEntry {
 
     private BigDecimal amount;
 
+    private String operation;
+
     // dimensions
 
     @ManyToOne
@@ -101,6 +103,14 @@ public class JournalEntry {
 
     public void setAmount(final BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
+
+    public void setOperation(final String operation) {
+        this.operation = operation;
     }
 
     public Account getAccount() {

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 
-import static com.evgenltd.ledgerserver.state.DocumentState.*;
+import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -57,7 +57,7 @@ public class BuyStockActivity extends DocumentActivity {
 
     @Override
     protected void onSave() {
-        dt58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT, null, null, null);
+        dt58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT);
         ct51(AMOUNT, ACCOUNT);
 
         dt91(COMMISSION_AMOUNT, COMMISSION);

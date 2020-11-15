@@ -34,6 +34,10 @@ public abstract class BotActivity {
 
     protected void onMessageReceived(final String message) {}
 
+    public void hello() {
+        sendMessage(getClass().getSimpleName());
+    }
+
     public void done() {
         activityBack();
     }
