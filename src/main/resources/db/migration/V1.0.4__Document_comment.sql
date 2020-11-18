@@ -1,0 +1,1 @@
+alter table documents add comment varchar(1024);

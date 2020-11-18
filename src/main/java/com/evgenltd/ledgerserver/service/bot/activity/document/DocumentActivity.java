@@ -1,7 +1,6 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
 import com.evgenltd.ledgerserver.service.bot.DocumentComponent;
-import com.evgenltd.ledgerserver.service.bot.DocumentState;
 import com.evgenltd.ledgerserver.util.Tokenizer;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.record.ValueInfo;
@@ -13,19 +12,24 @@ import java.util.*;
 
 public abstract class DocumentActivity extends BotActivity {
 
-    private static final String DATE = "date";
+    public static final String DATE = "date";
+    public static final String COMMENT = "comment";
 
     private final DocumentComponent documentComponent;
 
     public DocumentActivity(final BeanFactory beanFactory) {
         documentComponent = beanFactory.getBean(DocumentComponent.class);
-        DocumentState.set(documentComponent);
 
         documentComponent.dateField(DATE);
+        documentComponent.stringField(COMMENT);
 
         command(this::update, "&");
         command(tokenizer -> save(), "save", "apply");
-        command(tokenizer -> cancel(), "discard", "cancel", "close", "back");
+        command(tokenizer -> BotState.activityBack(), "discard", "cancel", "close", "back");
+    }
+
+    public DocumentComponent document() {
+        return documentComponent;
     }
 
     public void setup(final Document document) {
@@ -40,7 +44,6 @@ public abstract class DocumentActivity extends BotActivity {
 
     @Override
     public void done() {
-        DocumentState.reset();
         super.done();
     }
 
@@ -49,18 +52,17 @@ public abstract class DocumentActivity extends BotActivity {
         hello();
     }
 
-    private void save() {
+    public void apply() {
         onSave();
         documentComponent.save();
-        cancel();
+    }
+
+    private void save() {
+        apply();
+        BotState.activityBack();
     }
 
     protected abstract void onSave();
-
-    private void cancel() {
-        DocumentState.reset();
-        BotState.activityBack();
-    }
 
     @Override
     public void hello() {

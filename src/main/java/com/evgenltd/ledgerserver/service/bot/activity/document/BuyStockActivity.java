@@ -1,18 +1,17 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.util.Tokenizer;
-import com.evgenltd.ledgerserver.util.Utils;
+import com.evgenltd.ledgerserver.entity.Account;
+import com.evgenltd.ledgerserver.entity.ExpenseItem;
+import com.evgenltd.ledgerserver.entity.TickerSymbol;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.service.SettingService;
-import com.evgenltd.ledgerserver.service.brocker.CommissionCalculator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-
-import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
+import java.time.LocalDateTime;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -35,55 +34,42 @@ public class BuyStockActivity extends DocumentActivity {
         super(beanFactory);
         this.settingService = settingService;
 
-        moneyField(AMOUNT);
-        accountField(ACCOUNT);
-        tickerField(TICKER);
-        moneyField(PRICE);
-        longField(COUNT);
-        expenseItemField(COMMISSION);
-        moneyField(COMMISSION_AMOUNT);
-
-        on(PRICE, this::recalculateAmount);
-        on(COUNT, this::recalculateAmount);
+        document().moneyField(AMOUNT);
+        document().accountField(ACCOUNT);
+        document().tickerField(TICKER);
+        document().moneyField(PRICE);
+        document().longField(COUNT);
+        document().expenseItemField(COMMISSION);
+        document().moneyField(COMMISSION_AMOUNT);
     }
 
     @Override
     protected void onDefaults() {
-        set(AMOUNT, BigDecimal.ZERO);
-        set(PRICE, BigDecimal.ZERO);
-        set(COMMISSION, settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM));
-        set(COUNT, 0L);
+        document().set(AMOUNT, BigDecimal.ZERO);
+        document().set(PRICE, BigDecimal.ZERO);
+        document().set(COMMISSION, settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM));
+        document().set(COUNT, 0L);
     }
 
     @Override
     protected void onSave() {
-        dt58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT);
-        ct51(AMOUNT, ACCOUNT);
+        final LocalDateTime date = document().get(DATE);
+        final BigDecimal amount = document().get(AMOUNT);
+        final Account account = document().get(ACCOUNT);
+        final TickerSymbol ticker = document().get(TICKER);
+        final BigDecimal price = document().get(PRICE);
+        final Long count = document().get(COUNT);
+        final ExpenseItem commission = document().get(COMMISSION);
+        final BigDecimal commissionAmount = document().get(COMMISSION_AMOUNT);
 
-        dt91(COMMISSION_AMOUNT, COMMISSION);
-        ct51(COMMISSION_AMOUNT, ACCOUNT);
-    }
 
-    @Override
-    protected void onMessageReceived(final String message) {
-        super.onMessageReceived(message);
-        final String command = Tokenizer.of(message).next();
-        if (Utils.isSimilar(command, "comCalc")) {
-            recalculateCommissionAmount();
-        }
-    }
+        document().dt58(date, amount, account, ticker, price, count, null, null, null);
+        document().ct51(date, amount, account);
 
-    private void recalculateAmount() {
-        final BigDecimal price = get(PRICE, BigDecimal.ZERO);
-        final Long count = get(COUNT, 0L);
-        set(AMOUNT, price.multiply(new BigDecimal(count)));
-    }
+        document().dt91(date, commissionAmount, commission);
+        document().ct51(date, commissionAmount, account);
 
-    private void recalculateCommissionAmount() {
-        final CommissionCalculator calculator = settingService.get(Settings.BROKER_COMMISSION_CALCULATOR);
-        final BigDecimal amount = get(AMOUNT, BigDecimal.ZERO);
-        final BigDecimal commission = calculator.calculate(get("date"), amount);
-        set(COMMISSION_AMOUNT, commission);
+        document().setComment("Buy %s %s", count, ticker.getName());
     }
 
 }

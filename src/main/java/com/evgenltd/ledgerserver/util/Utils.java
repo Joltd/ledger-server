@@ -6,6 +6,7 @@ import com.evgenltd.ledgerserver.service.bot.BotState;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -138,6 +139,10 @@ public class Utils {
 
     public static String dateTimeToString(final LocalDateTime dateTime) {
         return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    }
+
+    public static String formatMoney(final BigDecimal money) {
+        return new DecimalFormat("0.00").format(money);
     }
 
 }

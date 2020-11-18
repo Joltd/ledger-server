@@ -12,6 +12,8 @@ public class TickerSymbol implements Reference {
 
     private String name;
 
+    private String figi;
+
     public Long getId() {
         return id;
     }
@@ -26,6 +28,14 @@ public class TickerSymbol implements Reference {
 
     public void setName(final String name) {
         this.name = name;
+    }
+
+    public String getFigi() {
+        return figi;
+    }
+
+    public void setFigi(final String figi) {
+        this.figi = figi;
     }
 
 }

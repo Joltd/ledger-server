@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,6 +39,7 @@ public class DocumentListActivity extends BotActivity {
         command(this::edit, "edit");
         command(this::remove, "remove", "rem", "delete", "del");
         command(tokenizer -> all(), "all");
+        command(tokenizer -> butchUpdate(), "batchUpdate", "bu");
     }
 
     @Override
@@ -110,8 +112,19 @@ public class DocumentListActivity extends BotActivity {
         }
     }
 
+    private void butchUpdate() {
+        documentRepository.findAll()
+                .stream()
+                .sorted(Comparator.comparing(Document::getDate))
+                .forEach(document -> {
+                    final DocumentActivity activity = beanFactory.getBean(document.getType().getActivity());
+                    activity.setup(document);
+                    activity.apply();
+                });
+    }
+
     private String documentToString(final Document document) {
-        return String.format("%s | %s | %s", document.getId(), document.getDate(), document.getType());
+        return String.format("%s | %s | %s | %s", document.getId(), document.getDate(), document.getType(), document.getComment());
     }
 
 }

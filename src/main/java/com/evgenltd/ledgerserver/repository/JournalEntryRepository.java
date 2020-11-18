@@ -38,4 +38,6 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
 
     List<JournalEntry> findByDateLessThanEqual(LocalDateTime date);
 
+    List<JournalEntry> findByCode(String code);
+
 }

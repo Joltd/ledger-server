@@ -19,7 +19,7 @@
         </thead>
         <tbody>
             <tr th:each="entry : ${turnover}">
-                <td width="50px" ><a th:text="${entry.code()}" th:href="@{'/code_card/' + ${entry.code()}}"></a></td>
+                <td width="50px" ><a th:text="${entry.code()}" th:href="@{'/code_card/' + ${entry.code()} + '?from=' + ${from} + '&to=' + ${to}}"></a></td>
                 <td width="100px" align="right" th:text="${#numbers.formatDecimal(entry.beforeDt(), 1, 2)}"></td>
                 <td width="100px" align="right" th:text="${#numbers.formatDecimal(entry.beforeCt(), 1, 2)}"></td>
                 <td width="100px" align="right" th:text="${#numbers.formatDecimal(entry.turnoverDt(), 1, 2)}"></td>

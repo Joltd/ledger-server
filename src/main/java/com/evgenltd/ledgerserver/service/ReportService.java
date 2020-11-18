@@ -202,6 +202,7 @@ public class ReportService {
         final String entryCode = getEntryCode(entry);
         return new CodeCardEntry(
                 entry.getDate(),
+                entry.getDocument().getComment(),
                 Objects.equals(entry.getType(), JournalEntry.Type.DEBIT) ? entryCode : null,
                 Objects.equals(entry.getType(), JournalEntry.Type.CREDIT) ? entryCode : null,
                 Objects.equals(entry.getType(), JournalEntry.Type.DEBIT) && Objects.equals(entryCode, code) ? entry.getAmount() : BigDecimal.ZERO,
@@ -212,6 +213,7 @@ public class ReportService {
     private CodeCardEntry combineCodeCardEntry(final CodeCardEntry left, final CodeCardEntry right) {
         return new CodeCardEntry(
                 Utils.ifNull(left.date(), right.date()),
+                Utils.ifNull(left.comment(), right.comment()),
                 Utils.ifNull(left.dt(), right.dt()),
                 Utils.ifNull(left.ct(), right.ct()),
                 left.dtAmount().add(right.dtAmount()),
@@ -222,16 +224,16 @@ public class ReportService {
     private CodeCardEntry combineCodeCardEntryAmount(final CodeCardEntry entry) {
         final BigDecimal turnoverAmount = entry.dtAmount().subtract(entry.ctAmount());
         if (turnoverAmount.compareTo(BigDecimal.ZERO) > 0) {
-            return new CodeCardEntry(null, null, null, turnoverAmount, BigDecimal.ZERO);
+            return new CodeCardEntry(null, null, null, null, turnoverAmount, BigDecimal.ZERO);
         }
         if (turnoverAmount.compareTo(BigDecimal.ZERO) < 0) {
-            return new CodeCardEntry(null, null, null, BigDecimal.ZERO, turnoverAmount.abs());
+            return new CodeCardEntry(null, null, null, null, BigDecimal.ZERO, turnoverAmount.abs());
         }
-        return new CodeCardEntry(null, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+        return new CodeCardEntry(null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
     private CodeCardEntry emptyCodeCardEntry() {
-        return new CodeCardEntry(null, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
+        return new CodeCardEntry(null, null, null, null, BigDecimal.ZERO, BigDecimal.ZERO);
     }
 
 }

@@ -1,75 +1,73 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.constants.Settings;
+import com.evgenltd.ledgerserver.entity.Account;
 import com.evgenltd.ledgerserver.entity.Currency;
-import com.evgenltd.ledgerserver.service.SettingService;
+import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.record.StockBalance;
+import com.evgenltd.ledgerserver.service.JournalService;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-
-import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BuyCurrencyStockActivity extends DocumentActivity {
 
-    private static final String AMOUNT = "amount";
     private static final String ACCOUNT = "account";
     private static final String TICKER = "ticker";
     private static final String PRICE = "price";
     private static final String COUNT = "count";
     private static final String CURRENCY = "currency";
-    private static final String CURRENCY_RATE = "currencyRate";
     private static final String CURRENCY_AMOUNT = "currencyAmount";
 
-    private final SettingService settingService;
-
+    private final JournalService journalService;
 
     public BuyCurrencyStockActivity(
             final BeanFactory beanFactory,
-            final SettingService settingService
+            final JournalService journalService
     ) {
         super(beanFactory);
-        this.settingService = settingService;
+        this.journalService = journalService;
 
-        moneyField(AMOUNT);
-        accountField(ACCOUNT);
-        tickerField(TICKER);
-        moneyField(PRICE);
-        longField(COUNT);
-
-        currencyField(CURRENCY);
-        moneyField(CURRENCY_RATE);
-        moneyField(CURRENCY_AMOUNT);
-
-        on(CURRENCY_RATE, this::recalculateAmount);
-        on(CURRENCY_AMOUNT, this::recalculateAmount);
+        document().accountField(ACCOUNT);
+        document().tickerField(TICKER);
+        document().moneyField(PRICE);
+        document().longField(COUNT);
+        document().currencyField(CURRENCY);
+        document().moneyField(CURRENCY_AMOUNT);
     }
 
     @Override
     protected void onDefaults() {
-        set(CURRENCY, Currency.USD);
-        set(AMOUNT, BigDecimal.ZERO);
-        set(CURRENCY_RATE, BigDecimal.ZERO);
-        set(CURRENCY_AMOUNT, BigDecimal.ZERO);
+        document().set(CURRENCY, Currency.USD);
+        document().set(CURRENCY_AMOUNT, BigDecimal.ZERO);
     }
 
     @Override
     protected void onSave() {
-        reassessment52(ACCOUNT, CURRENCY, CURRENCY_RATE);
-        reassessment58(ACCOUNT, TICKER, CURRENCY, CURRENCY_RATE, PRICE);
+        final LocalDateTime date = document().get(DATE);
+        final Account account = document().get(ACCOUNT);
+        final TickerSymbol ticker = document().get(TICKER);
+        final BigDecimal price = document().get(PRICE);
+        final Long count = document().get(COUNT);
+        final Currency currency = document().get(CURRENCY);
+        final BigDecimal currencyAmount = document().get(CURRENCY_AMOUNT);
 
-        dt58(AMOUNT, ACCOUNT, TICKER, PRICE, COUNT, CURRENCY, CURRENCY_RATE, CURRENCY_AMOUNT);
-        ct52(AMOUNT, ACCOUNT, CURRENCY, CURRENCY_RATE, CURRENCY_AMOUNT);
-    }
+        final StockBalance balance = journalService.balance(date, account, currency);
+        final BigDecimal averageCurrencyRate = balance.balance().divide(balance.currencyBalance(), RoundingMode.HALF_DOWN);
+        final BigDecimal withdrawAmount = averageCurrencyRate.multiply(currencyAmount);
 
-    private void recalculateAmount() {
-        final BigDecimal currencyRate = get(CURRENCY_RATE, BigDecimal.ZERO);
-        final BigDecimal currencyAmount = get(CURRENCY_AMOUNT, BigDecimal.ZERO);
-        set(AMOUNT, currencyAmount.multiply(currencyRate));
+        document().dt58(date, withdrawAmount, account, ticker, price, count, currency, averageCurrencyRate, currencyAmount);
+        document().ct52(date, withdrawAmount, account, currency, averageCurrencyRate, currencyAmount);
+
+        // commission
+
+        document().setComment("Buy %s %s", count, ticker.getName());
     }
 
 }

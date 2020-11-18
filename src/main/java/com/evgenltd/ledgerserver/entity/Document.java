@@ -21,6 +21,8 @@ public class Document {
 
     private String content;
 
+    private String comment;
+
     public Long getId() {
         return id;
     }
@@ -51,6 +53,14 @@ public class Document {
 
     public void setContent(final String content) {
         this.content = content;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(final String comment) {
+        this.comment = comment;
     }
 
     public enum Type {

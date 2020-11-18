@@ -12,8 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-
-import static com.evgenltd.ledgerserver.service.bot.DocumentState.*;
+import java.time.LocalDateTime;
 
 @Component
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -37,34 +36,42 @@ public class BuyCurrencyActivity extends DocumentActivity {
         super(beanFactory);
         this.settingService = settingService;
 
-        moneyField(AMOUNT);
-        accountField(ACCOUNT);
-        currencyField(CURRENCY);
-        moneyField(CURRENCY_RATE);
-        moneyField(CURRENCY_AMOUNT);
-        expenseItemField(COMMISSION);
-        moneyField(COMMISSION_AMOUNT);
-
-        on(CURRENCY_RATE, this::recalculateAmount);
-        on(CURRENCY_AMOUNT, this::recalculateAmount);
+        document().moneyField(AMOUNT);
+        document().accountField(ACCOUNT);
+        document().currencyField(CURRENCY);
+        document().moneyField(CURRENCY_RATE);
+        document().moneyField(CURRENCY_AMOUNT);
+        document().expenseItemField(COMMISSION);
+        document().moneyField(COMMISSION_AMOUNT);
     }
 
     @Override
     protected void onDefaults() {
-        set(CURRENCY, Currency.USD);
-        set(COMMISSION, settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM));
-        set(AMOUNT, BigDecimal.ZERO);
-        set(CURRENCY_RATE, BigDecimal.ZERO);
-        set(CURRENCY_AMOUNT, BigDecimal.ZERO);
+        document().set(CURRENCY, Currency.USD);
+        document().set(COMMISSION, settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM));
+        document().set(AMOUNT, BigDecimal.ZERO);
+        document().set(CURRENCY_RATE, BigDecimal.ZERO);
+        document().set(CURRENCY_AMOUNT, BigDecimal.ZERO);
     }
 
     @Override
     protected void onSave() {
-        dt52(AMOUNT, ACCOUNT, CURRENCY, CURRENCY_RATE, CURRENCY_AMOUNT);
-        ct51(AMOUNT, ACCOUNT);
+        final LocalDateTime date = document().get(DATE);
+        final BigDecimal amount = document().get(AMOUNT);
+        final Account account = document().get(ACCOUNT);
+        final Currency currency = document().get(CURRENCY);
+        final BigDecimal currencyRate = document().get(CURRENCY_RATE);
+        final BigDecimal currencyAmount = document().get(CURRENCY_AMOUNT);
+        final ExpenseItem commission = document().get(COMMISSION);
+        final BigDecimal commissionAmount = document().get(COMMISSION_AMOUNT);
 
-        dt91(COMMISSION_AMOUNT, COMMISSION);
-        ct51(COMMISSION_AMOUNT, ACCOUNT);
+        document().dt52(date, amount, account, currency, currencyRate, currencyAmount);
+        document().ct51(date, amount, account);
+
+        document().dt91(date, commissionAmount, commission);
+        document().ct51(date, commissionAmount, account);
+
+        document().setComment("Buy %s %s", Utils.formatMoney(currencyAmount), currency.name());
     }
 
     @Override
@@ -77,16 +84,16 @@ public class BuyCurrencyActivity extends DocumentActivity {
     }
 
     private void recalculateAmount() {
-        final BigDecimal currencyRate = get(CURRENCY_RATE, BigDecimal.ZERO);
-        final BigDecimal currencyAmount = get(CURRENCY_AMOUNT, BigDecimal.ZERO);
-        set(AMOUNT, currencyAmount.multiply(currencyRate));
+        final BigDecimal currencyRate = document().get(CURRENCY_RATE, BigDecimal.ZERO);
+        final BigDecimal currencyAmount = document().get(CURRENCY_AMOUNT, BigDecimal.ZERO);
+        document().set(AMOUNT, currencyAmount.multiply(currencyRate));
     }
 
     private void recalculateCommissionAmount() {
         final CommissionCalculator calculator = settingService.get(Settings.BROKER_COMMISSION_CALCULATOR);
-        final BigDecimal amount = get(AMOUNT, BigDecimal.ZERO);
-        final BigDecimal commission = calculator.calculate(get(DATE), amount);
-        set(COMMISSION_AMOUNT, commission);
+        final BigDecimal amount = document().get(AMOUNT, BigDecimal.ZERO);
+        final BigDecimal commission = calculator.calculate(document().get(DATE), amount);
+        document().set(COMMISSION_AMOUNT, commission);
     }
 
 }

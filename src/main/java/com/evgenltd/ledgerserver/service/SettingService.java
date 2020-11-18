@@ -9,8 +9,8 @@ import com.evgenltd.ledgerserver.repository.ExpenseItemRepository;
 import com.evgenltd.ledgerserver.repository.IncomeItemRepository;
 import com.evgenltd.ledgerserver.repository.PersonRepository;
 import com.evgenltd.ledgerserver.repository.SettingRepository;
-import com.evgenltd.ledgerserver.service.brocker.TinkoffInvestorCommissionCalculator;
-import com.evgenltd.ledgerserver.service.brocker.TinkoffTraderCommissionCalculator;
+import com.evgenltd.ledgerserver.service.brocker.tinkoff.TinkoffInvestorCommissionCalculator;
+import com.evgenltd.ledgerserver.service.brocker.tinkoff.TinkoffTraderCommissionCalculator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 

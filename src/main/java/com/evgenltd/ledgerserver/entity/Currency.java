@@ -1,7 +1,17 @@
 package com.evgenltd.ledgerserver.entity;
 
 public enum Currency {
-    RUB,
-    USD,
-    EUR
+    RUB(""),
+    USD("BBG0013HGFT4"),
+    EUR("BBG0013HJJ31");
+
+    private final String figi;
+
+    Currency(final String figi) {
+        this.figi = figi;
+    }
+
+    public String getFigi() {
+        return figi;
+    }
 }

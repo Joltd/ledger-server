@@ -19,7 +19,6 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
@@ -31,12 +30,12 @@ import java.util.stream.Stream;
 public class DocumentComponent {
 
     private static final String DATE = "date";
+    private static final String COMMENT = "comment";
 
     private final BeanFactory beanFactory;
     private final DocumentRepository documentRepository;
     private final JournalEntryRepository journalEntryRepository;
-    private final SettingService settingService;
-    
+
     private Document document;
     private final List<JournalEntry> entries = new ArrayList<>();
     private final Map<String, ValueInfo<?>> fields = new HashMap<>();
@@ -45,13 +44,11 @@ public class DocumentComponent {
     public DocumentComponent(
             final BeanFactory beanFactory,
             final DocumentRepository documentRepository,
-            final JournalEntryRepository journalEntryRepository,
-            final SettingService settingService
+            final JournalEntryRepository journalEntryRepository
     ) {
         this.beanFactory = beanFactory;
         this.documentRepository = documentRepository;
         this.journalEntryRepository = journalEntryRepository;
-        this.settingService = settingService;
     }
 
     public void setup(final Document document) {
@@ -63,6 +60,7 @@ public class DocumentComponent {
     public void save() {
         final String content = getContent();
         document.setDate(get(DATE));
+        document.setComment(get(COMMENT));
         document.setContent(content);
 
         documentRepository.save(document);
@@ -98,6 +96,10 @@ public class DocumentComponent {
                 .stream()
                 .map(entry -> String.format("%s = %s", entry.getKey(), entry.getValue().print()))
                 .collect(Collectors.joining("\n"));
+    }
+
+    public void setComment(final String comment, final Object... args) {
+        set(COMMENT, String.format(comment, args));
     }
 
     // ##################################################
@@ -136,6 +138,10 @@ public class DocumentComponent {
     // #  Fields                                        #
     // #                                                #
     // ##################################################
+
+    public void stringField(final String field) {
+        primitiveField(field, Optional::of, v -> v, "Any string");
+    }
 
     public void moneyField(final String field) {
         primitiveField(field, Utils::asBigDecimal, BigDecimal::toString, "1234.56");
@@ -193,10 +199,6 @@ public class DocumentComponent {
     // #                                                #
     // ##################################################
 
-    public void dt51(final String amount, final String account) {
-        dt51(get(DATE), get(amount), get(account));
-    }
-
     public void dt51(
             final LocalDateTime date,
             final BigDecimal amount,
@@ -204,9 +206,6 @@ public class DocumentComponent {
     ) {
         final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C51, amount);
         entry.setAccount(account);
-    }
-    public void ct51(final String amount, final String account) {
-        ct51(get(DATE), get(amount), get(account));
     }
 
     public void ct51(
@@ -216,10 +215,6 @@ public class DocumentComponent {
     ) {
         final JournalEntry entry = create(date, JournalEntry.Type.CREDIT, Codes.C51, amount);
         entry.setAccount(account);
-    }
-
-    public void dt52(final String amount, final String account, final String currency, final String currencyRate, final String currencyAmount) {
-        dt52(get(DATE), get(amount), get(account), get(currency), get(currencyRate), get(currencyAmount));
     }
 
     public void dt52(
@@ -237,10 +232,6 @@ public class DocumentComponent {
         entry.setCurrencyAmount(currencyAmount);
     }
 
-    public void ct52(final String amount, final String account, final String currency, final String currencyRate, final String currencyAmount) {
-        ct52(get(DATE), get(amount), get(account), get(currency), get(currencyRate), get(currencyAmount));
-    }
-
     public void ct52(
             final LocalDateTime date,
             final BigDecimal amount,
@@ -254,10 +245,6 @@ public class DocumentComponent {
         entry.setCurrency(currency);
         entry.setCurrencyRate(currencyRate);
         entry.setCurrencyAmount(currencyAmount);
-    }
-
-    public void dt58(final String amount, final String account, final String ticker, final String price, final String count, final String currency, final String currencyRate, final String currencyAmount) {
-        dt58(get(DATE), get(amount), get(account), get(ticker), get(price), get(count), get(currency), get(currencyRate), get(currencyAmount));
     }
 
     public void dt58(
@@ -281,10 +268,6 @@ public class DocumentComponent {
         entry.setCurrencyAmount(currencyAmount);
     }
 
-    public void ct58(final String amount, final String account, final String ticker, final String price, final String count, final String currency, final String currencyRate, final String currencyAmount) {
-        ct58(get(DATE), get(amount), get(account), get(ticker), get(price), get(count), get(currency), get(currencyRate), get(currencyAmount));
-    }
-
     public void ct58(
             final LocalDateTime date,
             final BigDecimal amount,
@@ -306,24 +289,12 @@ public class DocumentComponent {
         entry.setCurrencyAmount(currencyAmount);
     }
 
-    public void dt75(final String amount) {
-        dt75(get(DATE), get(amount));
-    }
-
     public void dt75(final LocalDateTime date, final BigDecimal amount) {
         create(date, JournalEntry.Type.DEBIT, Codes.C75, amount);
     }
 
-    public void ct75(final String amount) {
-        ct75(get(DATE), get(amount));
-    }
-
     public void ct75(final LocalDateTime date, final BigDecimal amount) {
         create(date, JournalEntry.Type.CREDIT, Codes.C75, amount);
-    }
-
-    public void dt76(final String amount, final String person) {
-        dt76(get(DATE), get(amount), get(person));
     }
 
     public void dt76(
@@ -333,9 +304,6 @@ public class DocumentComponent {
     ) {
         final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C76, amount);
         entry.setPerson(person);
-    }
-    public void ct76(final String amount, final String person) {
-        ct76(get(DATE), get(amount), get(person));
     }
 
     public void ct76(
@@ -347,24 +315,12 @@ public class DocumentComponent {
         entry.setPerson(person);
     }
 
-    public void dt80(final String amount) {
-        dt80(get(DATE), get(amount));
-    }
-
     public void dt80(final LocalDateTime date, final BigDecimal amount) {
         create(date, JournalEntry.Type.DEBIT, Codes.C80, amount);
     }
 
-    public void ct80(final String amount) {
-        ct80(get(DATE), get(amount));
-    }
-
     public void ct80(final LocalDateTime date, final BigDecimal amount) {
         create(date, JournalEntry.Type.CREDIT, Codes.C80, amount);
-    }
-
-    public void dt91(final String amount, final String expenseItem) {
-        dt91(get(DATE), get(amount), get(expenseItem));
     }
 
     public void dt91(
@@ -374,10 +330,6 @@ public class DocumentComponent {
     ) {
         final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C91_2, amount);
         entry.setExpenseItem(expenseItem);
-    }
-
-    public void ct91(final String amount, final String incomeItem) {
-        ct91(get(DATE), get(amount), get(incomeItem));
     }
 
     public void ct91(
@@ -411,114 +363,4 @@ public class DocumentComponent {
         return journalEntry;
     }
 
-    public void reassessment52(final String account, final String currency, final String newCurrencyRate) {
-        final StockBalance balance = balance(get(DATE), get(account), (Currency) get(currency));
-
-        final BigDecimal actualBalance = balance.currencyBalance().multiply(get(newCurrencyRate));
-
-        final BigDecimal diff = actualBalance.subtract(balance.balance());
-        if (diff.compareTo(BigDecimal.ZERO) > 0) {
-            final IncomeItem reassessment = settingService.get(Settings.CURRENCY_REASSESSMENT_INCOME_ITEM);
-            dt52(get(DATE), diff, get(account), get(currency), get(newCurrencyRate), null);
-            ct91(get(DATE), diff, reassessment);
-        } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-            final ExpenseItem reassessment = settingService.get(Settings.CURRENCY_REASSESSMENT_EXPENSE_ITEM);
-            dt91(get(DATE), diff.abs(), reassessment);
-            ct52(get(DATE), diff.abs(), get(account), get(currency), get(newCurrencyRate), null);
-        }
-    }
-
-    public void reassessment58(final String account, final String ticker, final String newPrice) {
-        final StockBalance balance = balance(get(DATE), get(account), (TickerSymbol) get(ticker));
-
-        final BigDecimal newBalance = balance.currencyBalance().multiply(get(newPrice));
-
-        final BigDecimal diff = newBalance.subtract(balance.balance());
-        if (diff.compareTo(BigDecimal.ZERO) > 0) {
-            final IncomeItem reassessment = settingService.get(Settings.STOCK_REASSESSMENT_INCOME_ITEM);
-            dt58(get(DATE), diff, get(account), get(ticker), get(newPrice), null, null, null, null);
-            ct91(get(DATE), diff, reassessment);
-        } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-            final ExpenseItem reassessment = settingService.get(Settings.STOCK_REASSESSMENT_EXPENSE_ITEM);
-            dt91(get(DATE), diff.negate(), reassessment);
-            ct58(get(DATE), diff.negate(), get(account), get(ticker), get(newPrice), null, null, null, null);
-        }
-    }
-
-    public void reassessment58(final String account, final String ticker, final String currency, final String newCurrencyRate, final String newPrice) {
-        final StockBalance balance = balance(get(DATE), get(account), (TickerSymbol) get(ticker));
-
-        final BigDecimal newCurrencyAmount = new BigDecimal(balance.count()).multiply(get(newPrice));
-        final BigDecimal newBalance = balance.currencyBalance().multiply(get(newCurrencyRate));
-
-        final BigDecimal diff = newBalance.subtract(balance.balance());
-        final BigDecimal currencyDiff = newCurrencyAmount.subtract(balance.currencyBalance());
-        if (diff.compareTo(BigDecimal.ZERO) > 0) {
-            final IncomeItem reassessment = settingService.get(Settings.STOCK_REASSESSMENT_INCOME_ITEM);
-            dt58(get(DATE), diff, get(account), get(ticker), get(newPrice), null, get(currency), get(newCurrencyRate), currencyDiff);
-            ct91(get(DATE), diff, reassessment);
-        } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-            final ExpenseItem reassessment = settingService.get(Settings.STOCK_REASSESSMENT_EXPENSE_ITEM);
-            dt91(get(DATE), diff.negate(), reassessment);
-            ct58(get(DATE), diff.negate(), get(account), get(ticker), get(newPrice), null, get(currency), get(newCurrencyRate), currencyDiff.negate());
-        }
-    }
-
-    // ##################################################
-    // #                                                #
-    // #  Support methods                               #
-    // #                                                #
-    // ##################################################
-
-    private StockBalance balance(final LocalDateTime date, final Account account, final TickerSymbol tickerSymbol) {
-        final List<JournalEntry> result = journalEntryRepository.findByDateLessThanAndCodeAndAccountAndTickerSymbol(
-                date,
-                Codes.C58,
-                account,
-                tickerSymbol
-        );
-
-        return calculateStockBalance(result);
-    }
-
-    private StockBalance balance(final LocalDateTime date, final Account account, final Currency currency) {
-        final List<JournalEntry> result = journalEntryRepository.findByDateLessThanAndCodeAndAccountAndCurrency(
-                date,
-                Codes.C52,
-                account,
-                currency
-        );
-
-        return calculateStockBalance(result);
-    }
-
-    @NotNull
-    private StockBalance calculateStockBalance(final List<JournalEntry> result) {
-        BigDecimal balance = BigDecimal.ZERO;
-        BigDecimal currencyBalance = BigDecimal.ZERO;
-        long count = 0L;
-        for (JournalEntry entry : result) {
-            switch (entry.getType()) {
-                case DEBIT -> {
-                    balance = balance.add(entry.getAmount());
-                    final BigDecimal currencyAmount = entry.getCurrencyAmount() != null
-                            ? entry.getCurrencyAmount()
-                            : BigDecimal.ZERO;
-                    currencyBalance = currencyBalance.add(currencyAmount);
-                    count += entry.getCount() != null ? entry.getCount() : 0L;
-                }
-                case CREDIT -> {
-                    balance = balance.subtract(entry.getAmount());
-                    final BigDecimal currencyAmount = entry.getCurrencyAmount() != null
-                            ? entry.getCurrencyAmount()
-                            : BigDecimal.ZERO;
-                    currencyBalance = currencyBalance.subtract(currencyAmount);
-                    count -= entry.getCount() != null ? entry.getCount() : 0L;
-                }
-            }
-        }
-
-        return new StockBalance(balance, currencyBalance, count);
-    }
-    
 }

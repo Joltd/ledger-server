@@ -7,4 +7,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TickerSymbolRepository extends JpaRepository<TickerSymbol, Long> {
+
+    TickerSymbol findByName(String name);
+
 }
