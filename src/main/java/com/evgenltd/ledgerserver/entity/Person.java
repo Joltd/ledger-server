@@ -27,4 +27,10 @@ public class Person implements Reference {
     public void setName(final String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s,%s", id, name);
+    }
+
 }

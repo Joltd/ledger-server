@@ -5,7 +5,6 @@ import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.service.SettingService;
-import com.evgenltd.ledgerserver.service.brocker.CommissionCalculator;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -68,32 +67,10 @@ public class BuyCurrencyActivity extends DocumentActivity {
         document().dt52(date, amount, account, currency, currencyRate, currencyAmount);
         document().ct51(date, amount, account);
 
-        document().dt91(date, commissionAmount, commission);
+        document().dt91(date, commissionAmount, account, null, currency, commission);
         document().ct51(date, commissionAmount, account);
 
         document().setComment("Buy %s %s", Utils.formatMoney(currencyAmount), currency.name());
-    }
-
-    @Override
-    protected void onMessageReceived(final String message) {
-        super.onMessageReceived(message);
-        final String command = Tokenizer.of(message).next();
-        if (Utils.isSimilar(command, "comCalc")) {
-            recalculateCommissionAmount();
-        }
-    }
-
-    private void recalculateAmount() {
-        final BigDecimal currencyRate = document().get(CURRENCY_RATE, BigDecimal.ZERO);
-        final BigDecimal currencyAmount = document().get(CURRENCY_AMOUNT, BigDecimal.ZERO);
-        document().set(AMOUNT, currencyAmount.multiply(currencyRate));
-    }
-
-    private void recalculateCommissionAmount() {
-        final CommissionCalculator calculator = settingService.get(Settings.BROKER_COMMISSION_CALCULATOR);
-        final BigDecimal amount = document().get(AMOUNT, BigDecimal.ZERO);
-        final BigDecimal commission = calculator.calculate(document().get(DATE), amount);
-        document().set(COMMISSION_AMOUNT, commission);
     }
 
 }

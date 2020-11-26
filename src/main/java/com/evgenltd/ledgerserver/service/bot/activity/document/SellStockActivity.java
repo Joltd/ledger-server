@@ -21,14 +21,14 @@ import java.time.LocalDateTime;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SellStockActivity extends DocumentActivity {
 
-    private static final String ACCOUNT = "account";
-    private static final String TICKER = "ticker";
-    private static final String PRICE = "price";
-    private static final String COUNT = "count";
-    private static final String COMMISSION = "commission";
-    private static final String COMMISSION_AMOUNT = "commissionAmount";
-    private static final String STOCK_SALE_INCOME = "stockSaleIncome";
-    private static final String STOCK_SALE_EXPENSE = "stockSaleExpense";
+    public static final String ACCOUNT = "account";
+    public static final String TICKER = "ticker";
+    public static final String PRICE = "price";
+    public static final String COUNT = "count";
+    public static final String COMMISSION = "commission";
+    public static final String COMMISSION_AMOUNT = "commissionAmount";
+    public static final String STOCK_SALE_INCOME = "stockSaleIncome";
+    public static final String STOCK_SALE_EXPENSE = "stockSaleExpense";
 
     private final SettingService settingService;
     private final JournalService journalService;
@@ -84,13 +84,13 @@ public class SellStockActivity extends DocumentActivity {
         final BigDecimal diff = actualAmount.subtract(withdrawAmount);
         if (diff.compareTo(BigDecimal.ZERO) > 0) {
             document().dt51(date, diff, account);
-            document().ct91(date, diff, stockSaleIncome);
+            document().ct91(date, diff, account, ticker, null, stockSaleIncome);
         } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-            document().dt91(date, diff.abs(), stockSaleExpense);
+            document().dt91(date, diff.abs(), account, ticker, null, stockSaleExpense);
             document().ct51(date, diff.abs(), account);
         }
 
-        document().dt91(date, commissionAmount, commission);
+        document().dt91(date, commissionAmount, account, ticker, null, commission);
         document().ct51(date, commissionAmount, account);
 
         document().setComment("Sell %s %s", count, ticker.getName());

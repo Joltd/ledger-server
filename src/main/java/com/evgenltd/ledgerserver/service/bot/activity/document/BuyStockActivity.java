@@ -66,7 +66,7 @@ public class BuyStockActivity extends DocumentActivity {
         document().dt58(date, amount, account, ticker, price, count, null, null, null);
         document().ct51(date, amount, account);
 
-        document().dt91(date, commissionAmount, commission);
+        document().dt91(date, commissionAmount, account, ticker, null, commission);
         document().ct51(date, commissionAmount, account);
 
         document().setComment("Buy %s %s", count, ticker.getName());

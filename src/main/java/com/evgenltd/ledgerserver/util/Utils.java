@@ -42,6 +42,12 @@ public class Utils {
         return isEmpty(value) ? other : value;
     }
 
+    public static <T,R> R ifNull(final T value, final Function<T,R> mapper, final R other) {
+        return Optional.ofNullable(value)
+                .map(mapper)
+                .orElse(other);
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> Class<T> classForName(final String name) {
         try {

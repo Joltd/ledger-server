@@ -47,31 +47,16 @@ public class JournalService {
 
     @NotNull
     private StockBalance calculateStockBalance(final List<JournalEntry> result) {
-        BigDecimal balance = BigDecimal.ZERO;
-        BigDecimal currencyBalance = BigDecimal.ZERO;
-        long count = 0L;
-        for (JournalEntry entry : result) {
-            switch (entry.getType()) {
-                case DEBIT -> {
-                    balance = balance.add(entry.getAmount());
-                    final BigDecimal currencyAmount = entry.getCurrencyAmount() != null
-                            ? entry.getCurrencyAmount()
-                            : BigDecimal.ZERO;
-                    currencyBalance = currencyBalance.add(currencyAmount);
-                    count += entry.getCount() != null ? entry.getCount() : 0L;
-                }
-                case CREDIT -> {
-                    balance = balance.subtract(entry.getAmount());
-                    final BigDecimal currencyAmount = entry.getCurrencyAmount() != null
-                            ? entry.getCurrencyAmount()
-                            : BigDecimal.ZERO;
-                    currencyBalance = currencyBalance.subtract(currencyAmount);
-                    count -= entry.getCount() != null ? entry.getCount() : 0L;
-                }
-            }
-        }
-
-        return new StockBalance(balance, currencyBalance, count);
+        return result.stream()
+                .map(entry -> new StockBalance(entry.amount(), entry.currencyAmount(), entry.count()))
+                .reduce(
+                        new StockBalance(BigDecimal.ZERO, BigDecimal.ZERO, 0L),
+                        (left, right) -> new StockBalance(
+                                left.balance().add(right.balance()),
+                                left.currencyBalance().add(right.currencyBalance()),
+                                left.count() + right.count()
+                        )
+                );
     }
 
 }

@@ -2,16 +2,12 @@ package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.builder.SettingInfoBuilder;
 import com.evgenltd.ledgerserver.record.SettingInfo;
-import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.repository.ExpenseItemRepository;
 import com.evgenltd.ledgerserver.repository.IncomeItemRepository;
 import com.evgenltd.ledgerserver.repository.PersonRepository;
 import com.evgenltd.ledgerserver.repository.SettingRepository;
-import com.evgenltd.ledgerserver.service.brocker.tinkoff.TinkoffInvestorCommissionCalculator;
-import com.evgenltd.ledgerserver.service.brocker.tinkoff.TinkoffTraderCommissionCalculator;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,15 +24,12 @@ public class SettingService {
             final SettingRepository settingRepository,
             final PersonRepository personRepository,
             final ExpenseItemRepository expenseItemRepository,
-            final IncomeItemRepository incomeItemRepository,
-            final BeanFactory beanFactory
-            ) {
+            final IncomeItemRepository incomeItemRepository
+    ) {
         this.settingRepository = settingRepository;
 
         add(SettingInfoBuilder.referenceSetting(Settings.BROKER, personRepository));
         add(SettingInfoBuilder.referenceSetting(Settings.BROKER_COMMISSION_EXPENSE_ITEM, expenseItemRepository));
-        add(SettingInfoBuilder.primitiveSetting(Settings.BROKER_COMMISSION_SETTLEMENT_DAY, Utils::asIntNoThrow, "[1-31]"));
-        add(SettingInfoBuilder.beanSetting(Settings.BROKER_COMMISSION_CALCULATOR, beanFactory, TinkoffTraderCommissionCalculator.class, TinkoffInvestorCommissionCalculator.class));
         add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_EXPENSE_ITEM, expenseItemRepository));
         add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_INCOME_ITEM, incomeItemRepository));
         add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_SALE_EXPENSE_ITEM, expenseItemRepository));

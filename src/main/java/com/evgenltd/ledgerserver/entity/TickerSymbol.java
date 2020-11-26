@@ -38,4 +38,9 @@ public class TickerSymbol implements Reference {
         this.figi = figi;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s,%s", id, name);
+    }
+
 }

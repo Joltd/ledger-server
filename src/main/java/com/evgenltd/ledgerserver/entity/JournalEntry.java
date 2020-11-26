@@ -217,6 +217,33 @@ public class JournalEntry {
         this.position = position;
     }
 
+    public BigDecimal amount() {
+        return switch (type) {
+            case DEBIT -> getAmount();
+            case CREDIT -> getAmount().negate();
+        };
+    }
+
+    public BigDecimal currencyAmount() {
+        if (getCurrencyAmount() == null) {
+            return BigDecimal.ZERO;
+        }
+        return switch (type) {
+            case DEBIT -> getCurrencyAmount();
+            case CREDIT -> getCurrencyAmount().negate();
+        };
+    }
+
+    public Long count() {
+        if (getCount() == null) {
+            return 0L;
+        }
+        return switch (type) {
+            case DEBIT -> getCount();
+            case CREDIT -> -getCount();
+        };
+    }
+
     public enum Type {
         DEBIT,
         CREDIT

@@ -66,8 +66,10 @@ public class DocumentComponent {
         documentRepository.save(document);
         journalEntryRepository.deleteByDocumentId(document.getId());
         for (final JournalEntry journalEntry : entries) {
-            journalEntry.setDocument(document);
-            journalEntryRepository.save(journalEntry);
+            if (journalEntry.getAmount() != null && journalEntry.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+                journalEntry.setDocument(document);
+                journalEntryRepository.save(journalEntry);
+            }
         }
     }
 
@@ -326,18 +328,30 @@ public class DocumentComponent {
     public void dt91(
             final LocalDateTime date,
             final BigDecimal amount,
+            final Account account,
+            final TickerSymbol ticker,
+            final Currency currency,
             final ExpenseItem expenseItem
     ) {
         final JournalEntry entry = create(date, JournalEntry.Type.DEBIT, Codes.C91_2, amount);
+        entry.setAccount(account);
+        entry.setTickerSymbol(ticker);
+        entry.setCurrency(currency);
         entry.setExpenseItem(expenseItem);
     }
 
     public void ct91(
             final LocalDateTime date,
             final BigDecimal amount,
+            final Account account,
+            final TickerSymbol tickerSymbol,
+            final Currency currency,
             final IncomeItem incomeItem
     ) {
         final JournalEntry entry = create(date, JournalEntry.Type.CREDIT, Codes.C91_1, amount);
+        entry.setAccount(account);
+        entry.setTickerSymbol(tickerSymbol);
+        entry.setCurrency(currency);
         entry.setIncomeItem(incomeItem);
     }
 

@@ -22,14 +22,14 @@ import java.time.LocalDateTime;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SellCurrencyActivity extends DocumentActivity {
 
-    private static final String ACCOUNT = "account";
-    private static final String CURRENCY = "currency";
-    private static final String CURRENCY_RATE = "currencyRate";
-    private static final String CURRENCY_AMOUNT = "currencyAmount";
-    private static final String COMMISSION = "commission";
-    private static final String COMMISSION_AMOUNT = "commissionAmount";
-    private static final String CURRENCY_SALE_INCOME = "currencySaleIncome";
-    private static final String CURRENCY_SALE_EXPENSE = "currencySaleExpense";
+    public static final String ACCOUNT = "account";
+    public static final String CURRENCY = "currency";
+    public static final String CURRENCY_RATE = "currencyRate";
+    public static final String CURRENCY_AMOUNT = "currencyAmount";
+    public static final String COMMISSION = "commission";
+    public static final String COMMISSION_AMOUNT = "commissionAmount";
+    public static final String CURRENCY_SALE_INCOME = "currencySaleIncome";
+    public static final String CURRENCY_SALE_EXPENSE = "currencySaleExpense";
 
     private final SettingService settingService;
     private final JournalService journalService;
@@ -86,13 +86,13 @@ public class SellCurrencyActivity extends DocumentActivity {
         final BigDecimal diff = actualAmount.subtract(withdrawAmount);
         if (diff.compareTo(BigDecimal.ZERO) > 0) {
             document().dt51(date, diff, account);
-            document().ct91(date, diff, currencySaleIncome);
+            document().ct91(date, diff, account, null, currency, currencySaleIncome);
         } else if (diff.compareTo(BigDecimal.ZERO) < 0) {
-            document().dt91(date, diff.abs(), currencySaleExpense);
+            document().dt91(date, diff.abs(), account, null, currency, currencySaleExpense);
             document().ct51(date, diff.abs(), account);
         }
 
-        document().dt91(date, commissionAmount, commission);
+        document().dt91(date, commissionAmount, account, null, currency, commission);
         document().ct51(date, commissionAmount, account);
 
         document().setComment("Sell %s %s", Utils.formatMoney(currencyAmount), currency.name());

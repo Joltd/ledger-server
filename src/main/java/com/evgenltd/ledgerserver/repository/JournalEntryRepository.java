@@ -1,23 +1,23 @@
 package com.evgenltd.ledgerserver.repository;
 
-import com.evgenltd.ledgerserver.entity.Account;
-import com.evgenltd.ledgerserver.entity.Currency;
-import com.evgenltd.ledgerserver.entity.JournalEntry;
-import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.entity.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
 
-    List<JournalEntry> findByDateGreaterThanEqualAndDateLessThanAndCodeAndType(
+    List<JournalEntry> findByDateGreaterThanEqualAndDateLessThanAndCodeAndTypeAndAccountAndExpenseItem(
             LocalDateTime from,
             LocalDateTime to,
             String code,
-            JournalEntry.Type type
+            JournalEntry.Type type,
+            Account account,
+            ExpenseItem expenseItem
     );
 
     List<JournalEntry> findByDateLessThanAndCodeAndAccountAndCurrency(
@@ -38,6 +38,10 @@ public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long
 
     List<JournalEntry> findByDateLessThanEqual(LocalDateTime date);
 
-    List<JournalEntry> findByCode(String code);
+    List<JournalEntry> findByCodeLike(String code);
+
+    List<JournalEntry> findByExpenseItemName(String commission);
+
+    List<JournalEntry> findByDateLessThanEqualAndCodeLike(LocalDateTime date, String code);
 
 }

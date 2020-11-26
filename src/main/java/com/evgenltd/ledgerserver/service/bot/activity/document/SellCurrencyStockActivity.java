@@ -18,15 +18,15 @@ import java.time.LocalDateTime;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class SellCurrencyStockActivity extends DocumentActivity {
 
-    private static final String ACCOUNT = "account";
-    private static final String TICKER = "ticker";
-    private static final String PRICE = "price";
-    private static final String COUNT = "count";
-    private static final String CURRENCY = "currency";
-    private static final String COMMISSION = "commission";
-    private static final String COMMISSION_AMOUNT = "commissionAmount";
-    private static final String STOCK_SALE_INCOME = "stockSaleIncome";
-    private static final String STOCK_SALE_EXPENSE = "stockSaleExpense";
+    public static final String ACCOUNT = "account";
+    public static final String TICKER = "ticker";
+    public static final String PRICE = "price";
+    public static final String COUNT = "count";
+    public static final String CURRENCY = "currency";
+    public static final String COMMISSION = "commission";
+    public static final String COMMISSION_AMOUNT = "commissionAmount";
+    public static final String STOCK_SALE_INCOME = "stockSaleIncome";
+    public static final String STOCK_SALE_EXPENSE = "stockSaleExpense";
 
     private final SettingService settingService;
     private final JournalService journalService;
@@ -45,6 +45,8 @@ public class SellCurrencyStockActivity extends DocumentActivity {
         document().moneyField(PRICE);
         document().longField(COUNT);
         document().currencyField(CURRENCY);
+        document().expenseItemField(COMMISSION);
+        document().moneyField(COMMISSION_AMOUNT);
         document().incomeItemField(STOCK_SALE_INCOME);
         document().expenseItemField(STOCK_SALE_EXPENSE);
     }
@@ -83,14 +85,14 @@ public class SellCurrencyStockActivity extends DocumentActivity {
         final BigDecimal currencyDiff = actualCurrencyAmount.subtract(currencyWithdrawAmount);
         if (currencyDiff.compareTo(BigDecimal.ZERO) > 0) {
             document().dt52(date, BigDecimal.ZERO, account, currency, null, currencyDiff);
-            document().ct91(date, BigDecimal.ZERO, stockSaleIncome);
+            document().ct91(date, BigDecimal.ZERO, account, null, currency, stockSaleIncome);
         } else if (currencyDiff.compareTo(BigDecimal.ZERO) < 0) {
-            document().dt91(date, BigDecimal.ZERO, stockSaleExpense);
+            document().dt91(date, BigDecimal.ZERO, account, null, currency, stockSaleExpense);
             document().ct52(date, BigDecimal.ZERO, account, currency, null, currencyDiff.abs());
         }
 
-        document().dt91(date, commissionAmount, commission);
-        document().ct51(date, commissionAmount, account);
+//        document().dt91(date, commissionAmount, commission);
+//        document().ct51(date, commissionAmount, account);
 
         document().setComment("Sell %s %s", count, ticker.getName());
     }
