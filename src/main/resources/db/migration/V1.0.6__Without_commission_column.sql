@@ -1,0 +1,1 @@
+alter table ticker_symbols add without_commission bit(1);

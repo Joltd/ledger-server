@@ -128,7 +128,7 @@ public class TinkoffBrokerService implements BrokerService {
 
         final ExpenseItem commission = settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM);
 
-        final List<JournalEntry> commissionEntries = journalEntryRepository.findByDateGreaterThanEqualAndDateLessThanAndCodeAndTypeAndAccountAndExpenseItem(
+        final List<JournalEntry> commissionEntries = journalEntryRepository.findByDateGreaterThanEqualAndDateLessThanEqualAndCodeAndTypeAndAccountAndExpenseItem(
                         from,
                         date,
                         Codes.C91_2,
@@ -138,7 +138,7 @@ public class TinkoffBrokerService implements BrokerService {
                 );
 
         if (commissionEntries.isEmpty()) {
-            return new BigDecimal("290");
+            return amount.multiply(new BigDecimal("0.0005")).add(new BigDecimal("290"));
         }
 
         return amount.multiply(new BigDecimal("0.0005"));

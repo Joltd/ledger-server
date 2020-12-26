@@ -11,7 +11,7 @@ import java.util.List;
 @Repository
 public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
 
-    List<JournalEntry> findByDateGreaterThanEqualAndDateLessThanAndCodeAndTypeAndAccountAndExpenseItem(
+    List<JournalEntry> findByDateGreaterThanEqualAndDateLessThanEqualAndCodeAndTypeAndAccountAndExpenseItem(
             LocalDateTime from,
             LocalDateTime to,
             String code,

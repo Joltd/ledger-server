@@ -14,6 +14,8 @@ public class TickerSymbol implements Reference {
 
     private String figi;
 
+    private Boolean withoutCommission;
+
     public Long getId() {
         return id;
     }
@@ -36,6 +38,14 @@ public class TickerSymbol implements Reference {
 
     public void setFigi(final String figi) {
         this.figi = figi;
+    }
+
+    public Boolean getWithoutCommission() {
+        return withoutCommission;
+    }
+
+    public void setWithoutCommission(final Boolean withoutCommission) {
+        this.withoutCommission = withoutCommission;
     }
 
     @Override

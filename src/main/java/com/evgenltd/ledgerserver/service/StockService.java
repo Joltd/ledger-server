@@ -2,8 +2,8 @@ package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.constants.Codes;
 import com.evgenltd.ledgerserver.constants.Settings;
-import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.entity.Currency;
+import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyStockActivity;
@@ -29,17 +29,20 @@ public class StockService {
 
     private final JournalEntryRepository journalEntryRepository;
     private final BrokerService brokerService;
+    private final StockExchangeService stockExchangeService;
     private final SettingService settingService;
     private final BeanFactory beanFactory;
 
     public StockService(
             final JournalEntryRepository journalEntryRepository,
             final BrokerService brokerService,
+            final StockExchangeService stockExchangeService,
             final SettingService settingService,
             final BeanFactory beanFactory
     ) {
         this.journalEntryRepository = journalEntryRepository;
         this.brokerService = brokerService;
+        this.stockExchangeService = stockExchangeService;
         this.settingService = settingService;
         this.beanFactory = beanFactory;
     }
@@ -65,53 +68,57 @@ public class StockService {
     }
 
     private Map<String, Analysis> loadPortfolio(final LocalDateTime date) {
-        final Map<String, Analysis> portfolio = stockJournalEntries(date)
+        final Map<String, BigDecimal> rateIndex = new HashMap<>();
+
+        return stockJournalEntries(date)
                 .collect(Collectors.groupingBy(
-                        this::toKey,
+                        this::byAccountAndStock,
                         Collectors.reducing(
                                 new Analysis(),
                                 Analysis::new,
                                 Analysis::combine
                         )
+                ))
+                .values()
+                .stream()
+                .peek(analysis -> {
+
+                    final TickerSymbol ticker = analysis.getTicker();
+                    final Currency currency = analysis.getCurrency();
+
+                    if (ticker != null && currency != null) {
+
+                        analysis.setPrice(rateIndex.computeIfAbsent(ticker.getName(), stockExchangeService::rate));
+                        analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.name(), stockExchangeService::rate));
+
+                        final BigDecimal balance = analysis.getPrice()
+                                .multiply(new BigDecimal(analysis.getCount()))
+                                .multiply(analysis.getCurrencyRate());
+                        analysis.setBalance(balance);
+
+                    } else if (ticker != null) {
+
+                        analysis.setPrice(rateIndex.computeIfAbsent(ticker.getName(), stockExchangeService::rate));
+                        final BigDecimal balance = analysis.getPrice()
+                                .multiply(new BigDecimal(analysis.getCount()));
+                        analysis.setBalance(balance);
+
+                    } else if (currency != null) {
+
+                        analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.name(), stockExchangeService::rate));
+                        final BigDecimal balance = analysis.getCurrencyRate()
+                                .multiply(analysis.getCurrencyAmount());
+                        analysis.setBalance(balance);
+
+                    }
+
+                    sellPortfolioEntry(date, analysis);
+
+                })
+                .collect(Collectors.groupingBy(
+                        this::byStock,
+                        Collectors.reducing(new Analysis(), Analysis::combine)
                 ));
-
-        final Map<String, BigDecimal> rateIndex = new HashMap<>();
-
-        portfolio.forEach((key,analysis) -> {
-
-            final TickerSymbol ticker = analysis.getTicker();
-            final Currency currency = analysis.getCurrency();
-
-            if (ticker != null && currency != null) {
-
-                analysis.setPrice(rateIndex.computeIfAbsent(ticker.getFigi(), brokerService::rate));
-                analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.getFigi(), brokerService::rate));
-
-                final BigDecimal balance = analysis.getPrice()
-                        .multiply(new BigDecimal(analysis.getCount()))
-                        .multiply(analysis.getCurrencyRate());
-                analysis.setBalance(balance);
-
-            } else if (ticker != null) {
-
-                analysis.setPrice(rateIndex.computeIfAbsent(ticker.getFigi(), brokerService::rate));
-                final BigDecimal balance = analysis.getPrice()
-                        .multiply(new BigDecimal(analysis.getCount()));
-                analysis.setBalance(balance);
-
-            } else if (currency != null) {
-
-                analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.getFigi(), brokerService::rate));
-                final BigDecimal balance = analysis.getCurrencyRate()
-                        .multiply(analysis.getCurrencyAmount());
-                analysis.setBalance(balance);
-
-            }
-
-            sellPortfolioEntry(date, analysis);
-        });
-
-        return portfolio;
     }
 
     private void sellPortfolioEntry(final LocalDateTime date, final Analysis analysis) {
@@ -178,7 +185,7 @@ public class StockService {
     private void sellCurrencyStock(final LocalDateTime date, final Analysis analysis) {
         final Document document = new Document();
         document.setDate(date);
-        document.setType(Document.Type.SELL_CURRENCY);
+        document.setType(Document.Type.SELL_CURRENCY_STOCK);
         final SellCurrencyStockActivity sell = beanFactory.getBean(SellCurrencyStockActivity.class);
         sell.setup(document);
 
@@ -197,18 +204,18 @@ public class StockService {
         sell.document().set(SellCurrencyStockActivity.TICKER, ticker);
         sell.document().set(SellCurrencyStockActivity.PRICE, price);
         sell.document().set(SellCurrencyStockActivity.COUNT, count);
+        sell.document().set(SellCurrencyStockActivity.CURRENCY_RATE, currencyRate);
         sell.document().set(SellCurrencyStockActivity.CURRENCY, currency);
         sell.document().set(SellCurrencyStockActivity.COMMISSION_AMOUNT, commissionAmount);
+        sell.document().set(SellCurrencyStockActivity.DIRECT_SELLING, true);
 
         sell.apply();
-
-        sellCurrency(date, analysis);
     }
 
     private void calculateTimeWeightedReturn(final LocalDateTime date, final Map<String, Analysis> portfolio) {
         stockJournalEntries(date)
                 .collect(Collectors.groupingBy(
-                        this::toKey,
+                        this::byStock,
                         Collectors.collectingAndThen(
                                 Collectors.groupingBy(
                                         entry -> entry.getDate().toLocalDate(),
@@ -252,10 +259,9 @@ public class StockService {
         journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C91 + "%")
                 .stream()
                 .collect(Collectors.groupingBy(
-                        this::toKey,
+                        this::byStock,
                         Collectors.reducing(BigDecimal.ZERO, JournalEntry::amount, BigDecimal::add)
-                ))
-                .forEach((key, income) -> {
+                )).forEach((key, income) -> {
                     final Analysis analysis = portfolio.get(key);
                     analysis.setIncome(income.negate());
                     analysis.setProfitability(income.negate().divide(analysis.getTimeWeightedAmount(), RoundingMode.HALF_DOWN));
@@ -267,7 +273,7 @@ public class StockService {
                 .stream()
                 .filter(entry -> Objects.equals(entry.getExpenseItem().getId(), commission.getId()))
                 .collect(Collectors.groupingBy(
-                        this::toKey,
+                        this::byStock,
                         Collectors.reducing(BigDecimal.ZERO, JournalEntry::amount, BigDecimal::add)
                 ))
                 .forEach((key, commissionAmount) -> portfolio.get(key).setCommission(commissionAmount));
@@ -280,9 +286,19 @@ public class StockService {
         );
     }
 
-    private String toKey(final JournalEntry entry) {
+    private String byAccountAndStock(final JournalEntry entry) {
         return entry.getAccount().getId()
                 + Optional.ofNullable(entry.getTickerSymbol()).map(ticker -> " " + ticker.getId()).orElse("")
+                + Optional.ofNullable(entry.getCurrency()).map(currency -> " " + currency.name()).orElse("");
+    }
+
+    private String byStock(final Analysis entry) {
+        return Optional.ofNullable(entry.getTicker()).map(ticker -> ticker.getId().toString()).orElse("")
+                + Optional.ofNullable(entry.getCurrency()).map(currency -> " " + currency.name()).orElse("");
+    }
+
+    private String byStock(final JournalEntry entry) {
+        return Optional.ofNullable(entry.getTickerSymbol()).map(ticker -> ticker.getId().toString()).orElse("")
                 + Optional.ofNullable(entry.getCurrency()).map(currency -> " " + currency.name()).orElse("");
     }
 
@@ -316,9 +332,11 @@ public class StockService {
             final Analysis analysis = new Analysis();
             analysis.account = Utils.ifNull(account, right.account);
             analysis.ticker = Utils.ifNull(ticker, right.ticker);
-            analysis.count += right.count;
+            analysis.count = count + right.count;
+            analysis.price = price.add(right.price);
             analysis.currency = Utils.ifNull(currency, right.currency);
             analysis.currencyAmount = currencyAmount.add(right.currencyAmount);
+            analysis.currencyRate = currencyRate.add(right.currencyRate);
             analysis.amount = amount.add(right.amount);
             analysis.balance = balance.add(right.balance);
             analysis.timeWeightedAmount = timeWeightedAmount.add(right.timeWeightedAmount);

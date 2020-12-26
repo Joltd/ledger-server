@@ -66,7 +66,7 @@ public class DocumentComponent {
         documentRepository.save(document);
         journalEntryRepository.deleteByDocumentId(document.getId());
         for (final JournalEntry journalEntry : entries) {
-            if (journalEntry.getAmount() != null && journalEntry.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+            if (journalEntry.getAmount() != null) {
                 journalEntry.setDocument(document);
                 journalEntryRepository.save(journalEntry);
             }
@@ -140,6 +140,10 @@ public class DocumentComponent {
     // #  Fields                                        #
     // #                                                #
     // ##################################################
+
+    public void booleanField(final String field) {
+        primitiveField(field, Utils::asBoolean, Object::toString, "true,false");
+    }
 
     public void stringField(final String field) {
         primitiveField(field, Optional::of, v -> v, "Any string");

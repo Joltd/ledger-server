@@ -27,7 +27,7 @@ public class MainActivity extends BotActivity {
         command(this::reference, "ref", "reference", "refs");
         command(this::settings, "settings", "options");
         command(this::documents, "documents", "docs");
-        command(this::tinkoff, "tinkoff", "tt");
+        command(this::rateCache, "rateCache", "rc");
     }
 
     private void reference(final Tokenizer tokenizer) {
@@ -68,9 +68,9 @@ public class MainActivity extends BotActivity {
         activityNew(documentListActivity);
     }
 
-    private void tinkoff(final Tokenizer tokenizer) {
-        final TinkoffActivity tinkoffActivity = beanFactory.getBean(TinkoffActivity.class);
-        activityNew(tinkoffActivity);
+    private void rateCache(final Tokenizer tokenizer) {
+        final RateCacheActivity rateCacheActivity = beanFactory.getBean(RateCacheActivity.class);
+        activityNew(rateCacheActivity);
     }
 
 }
