@@ -2,6 +2,7 @@ package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.constants.Codes;
 import com.evgenltd.ledgerserver.constants.Settings;
+import com.evgenltd.ledgerserver.controller.StockController;
 import com.evgenltd.ledgerserver.entity.Currency;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;
@@ -10,6 +11,7 @@ import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyStock
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellStockActivity;
 import com.evgenltd.ledgerserver.service.brocker.BrokerService;
 import com.evgenltd.ledgerserver.util.Utils;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
@@ -22,7 +24,6 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class StockService {
@@ -48,22 +49,61 @@ public class StockService {
     }
 
     @Transactional
-    public List<Analysis> collectPortfolioAnalysis() {
+    public PortfolioRecord collectPortfolioAnalysis() {
 
         final LocalDateTime date = LocalDate.now().plusDays(1L).atStartOfDay().minusSeconds(1L);
         final ExpenseItem commission = settingService.get(Settings.BROKER_COMMISSION_EXPENSE_ITEM);
 
         final Map<String, Analysis> portfolio = loadPortfolio(date);
+        final Analysis total = new Analysis();
+        total.setAmount(
+                portfolio.values()
+                        .stream()
+                        .map(Analysis::getAmount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
+        total.setBalance(
+                portfolio.values()
+                        .stream()
+                        .map(Analysis::getBalance)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
 
-        calculateTimeWeightedReturn(date, portfolio);
+        calculateTimeWeightedReturn(date, portfolio, total);
 
-        calculateIncome(date, portfolio);
+        calculateIncome(commission, date, portfolio, total);
 
-        calculateCommission(commission, date, portfolio);
+        calculateCommission(commission, date, portfolio, total);
 
         TransactionAspectSupport.currentTransactionStatus().setRollbackOnly();
 
-        return new ArrayList<>(portfolio.values());
+        return new PortfolioRecord(
+                portfolio.values()
+                        .stream()
+                        .map(entry -> new PortfolioEntryRecord(
+                                Optional.ofNullable(entry.getTicker())
+                                        .map(TickerSymbol::getName)
+                                        .orElse(
+                                                Optional.ofNullable(entry.getCurrency())
+                                                        .map(Enum::name)
+                                                        .orElse("RUB")
+                                        ),
+                                entry.getAmount(),
+                                entry.getBalance(),
+                                entry.getIncome(),
+                                entry.getProfitability(),
+                                entry.getCommission()
+                        ))
+                        .collect(Collectors.toList()),
+                new PortfolioEntryRecord(
+                        null,
+                        total.getAmount(),
+                        total.getBalance(),
+                        total.getIncome(),
+                        total.getProfitability(),
+                        total.getCommission()
+                )
+        );
 
     }
 
@@ -71,6 +111,7 @@ public class StockService {
         final Map<String, BigDecimal> rateIndex = new HashMap<>();
 
         return stockJournalEntries(date)
+                .stream()
                 .collect(Collectors.groupingBy(
                         this::byAccountAndStock,
                         Collectors.reducing(
@@ -109,6 +150,10 @@ public class StockService {
                         final BigDecimal balance = analysis.getCurrencyRate()
                                 .multiply(analysis.getCurrencyAmount());
                         analysis.setBalance(balance);
+
+                    } else {
+
+                        analysis.setBalance(analysis.getAmount());
 
                     }
 
@@ -212,8 +257,9 @@ public class StockService {
         sell.apply();
     }
 
-    private void calculateTimeWeightedReturn(final LocalDateTime date, final Map<String, Analysis> portfolio) {
-        stockJournalEntries(date)
+    private void calculateTimeWeightedReturn(final LocalDateTime date, final Map<String, Analysis> portfolio, final Analysis total) {
+        final List<JournalEntry> entries = stockJournalEntries(date);
+        entries.stream()
                 .collect(Collectors.groupingBy(
                         this::byStock,
                         Collectors.collectingAndThen(
@@ -226,8 +272,18 @@ public class StockService {
                 ))
                 .forEach((key, twr) -> {
                     final Analysis analysis = portfolio.get(key);
-                    analysis.timeWeightedAmount = twr;
+                    analysis.setTimeWeightedAmount(twr);
                 });
+        total.setTimeWeightedAmount(
+                entries.stream()
+                        .collect(Collectors.collectingAndThen(
+                                Collectors.groupingBy(
+                                        entry -> entry.getDate().toLocalDate(),
+                                        Collectors.reducing(BigDecimal.ZERO, JournalEntry::amount, BigDecimal::add)
+                                ),
+                                this::calculateTimeWeightedReturnForEntry
+                        ))
+        );
     }
 
     private BigDecimal calculateTimeWeightedReturnForEntry(final Map<LocalDate, BigDecimal> amountByDate) {
@@ -255,9 +311,12 @@ public class StockService {
         return cumulativeBalanceMultipleDays.divide(new BigDecimal(totalDays), RoundingMode.HALF_DOWN);
     }
 
-    private void calculateIncome(final LocalDateTime date, final Map<String, Analysis> portfolio) {
-        journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C91 + "%")
+    private void calculateIncome(final ExpenseItem commission, final LocalDateTime date, final Map<String, Analysis> portfolio, final Analysis total) {
+        final List<JournalEntry> entries = journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C91 + "%")
                 .stream()
+                .filter(journalEntry -> Objects.equals(commission, journalEntry.getExpenseItem()) || journalEntry.getDate().equals(date))
+                .collect(Collectors.toList());
+        entries.stream()
                 .collect(Collectors.groupingBy(
                         this::byStock,
                         Collectors.reducing(BigDecimal.ZERO, JournalEntry::amount, BigDecimal::add)
@@ -266,24 +325,38 @@ public class StockService {
                     analysis.setIncome(income.negate());
                     analysis.setProfitability(income.negate().divide(analysis.getTimeWeightedAmount(), RoundingMode.HALF_DOWN));
                 });
+        total.setIncome(
+                entries.stream()
+                        .map(JournalEntry::amount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+                        .negate()
+        );
+        total.setProfitability(total.getIncome().divide(total.getTimeWeightedAmount(), RoundingMode.HALF_DOWN));
     }
 
-    private void calculateCommission(final ExpenseItem commission, final LocalDateTime date, final Map<String, Analysis> portfolio) {
-        journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C91_2)
-                .stream()
+    private void calculateCommission(final ExpenseItem commission, final LocalDateTime date, final Map<String, Analysis> portfolio, final Analysis total) {
+        final List<JournalEntry> entries = journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C91_2);
+        entries.stream()
                 .filter(entry -> Objects.equals(entry.getExpenseItem().getId(), commission.getId()))
                 .collect(Collectors.groupingBy(
                         this::byStock,
                         Collectors.reducing(BigDecimal.ZERO, JournalEntry::amount, BigDecimal::add)
                 ))
                 .forEach((key, commissionAmount) -> portfolio.get(key).setCommission(commissionAmount));
+        total.setCommission(
+                entries.stream()
+                        .filter(entry -> Objects.equals(entry.getExpenseItem().getId(), commission.getId()))
+                        .map(JournalEntry::amount)
+                        .reduce(BigDecimal.ZERO, BigDecimal::add)
+        );
     }
 
-    private Stream<JournalEntry> stockJournalEntries(final LocalDateTime date) {
-        return Stream.concat(
-                journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C58).stream(),
-                journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C52).stream()
-        );
+    private List<JournalEntry> stockJournalEntries(final LocalDateTime date) {
+        final List<JournalEntry> entries = new ArrayList<>();
+        entries.addAll(journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C51));
+        entries.addAll(journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C52));
+        entries.addAll(journalEntryRepository.findByDateLessThanEqualAndCodeLike(date, Codes.C58));
+        return entries;
     }
 
     private String byAccountAndStock(final JournalEntry entry) {
@@ -301,6 +374,23 @@ public class StockService {
         return Optional.ofNullable(entry.getTickerSymbol()).map(ticker -> ticker.getId().toString()).orElse("")
                 + Optional.ofNullable(entry.getCurrency()).map(currency -> " " + currency.name()).orElse("");
     }
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    public record PortfolioRecord(
+            List<PortfolioEntryRecord> entries,
+            PortfolioEntryRecord total
+
+    ) {}
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    public record PortfolioEntryRecord(
+            String ticker,
+            BigDecimal amount,
+            BigDecimal balance,
+            BigDecimal income,
+            BigDecimal profitability,
+            BigDecimal commission
+    ) {}
 
     public static class Analysis {
         private Account account;
@@ -333,10 +423,10 @@ public class StockService {
             analysis.account = Utils.ifNull(account, right.account);
             analysis.ticker = Utils.ifNull(ticker, right.ticker);
             analysis.count = count + right.count;
-            analysis.price = price.add(right.price);
+            analysis.price = price.compareTo(BigDecimal.ZERO) != 0 ? price : right.price;
             analysis.currency = Utils.ifNull(currency, right.currency);
             analysis.currencyAmount = currencyAmount.add(right.currencyAmount);
-            analysis.currencyRate = currencyRate.add(right.currencyRate);
+            analysis.currencyRate = currencyRate.compareTo(BigDecimal.ZERO) != 0 ? currencyRate : right.currencyRate;
             analysis.amount = amount.add(right.amount);
             analysis.balance = balance.add(right.balance);
             analysis.timeWeightedAmount = timeWeightedAmount.add(right.timeWeightedAmount);

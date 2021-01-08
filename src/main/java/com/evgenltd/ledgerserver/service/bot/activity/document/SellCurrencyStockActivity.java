@@ -92,12 +92,13 @@ public class SellCurrencyStockActivity extends DocumentActivity {
 
             final BigDecimal actualCurrencyAmount = price.multiply(new BigDecimal(count));
             final BigDecimal currencyDiff = actualCurrencyAmount.subtract(currencyWithdrawAmount);
-            if (currencyDiff.compareTo(BigDecimal.ZERO) > 0) {
-                document().dt52(date, BigDecimal.ZERO, account, currency, null, currencyDiff);
-                document().ct91(date, BigDecimal.ZERO, account, ticker, currency, stockSaleIncome);
+            final BigDecimal diff = currencyDiff.multiply(averageCurrencyRate);
+            if (diff.compareTo(BigDecimal.ZERO) > 0) {
+                document().dt52(date, diff, account, currency, averageCurrencyRate, currencyDiff);
+                document().ct91(date, diff, account, ticker, currency, stockSaleIncome);
             } else if (currencyDiff.compareTo(BigDecimal.ZERO) < 0) {
-                document().dt91(date, BigDecimal.ZERO, account, ticker, currency, stockSaleExpense);
-                document().ct52(date, BigDecimal.ZERO, account, currency, null, currencyDiff.abs());
+                document().dt91(date, diff.abs(), account, ticker, currency, stockSaleExpense);
+                document().ct52(date, diff.abs(), account, currency, averageCurrencyRate, currencyDiff.abs());
             }
 
             if (ticker.getWithoutCommission() != null && !ticker.getWithoutCommission()) {
@@ -108,8 +109,8 @@ public class SellCurrencyStockActivity extends DocumentActivity {
             document().ct58(date, withdrawAmount, account, ticker, price, count, currency, averageCurrencyRate, currencyWithdrawAmount);
 
             final BigDecimal actualCurrencyAmount = price.multiply(new BigDecimal(count));
-            final BigDecimal currencyDiff = actualCurrencyAmount.subtract(currencyWithdrawAmount);
-            final BigDecimal diff = currencyRate.multiply(currencyDiff);
+            final BigDecimal actualAmount = actualCurrencyAmount.multiply(currencyRate);
+            final BigDecimal diff = actualAmount.subtract(withdrawAmount);
             if (diff.compareTo(BigDecimal.ZERO) > 0) {
                 document().dt51(date, diff, account);
                 document().ct91(date, diff, account, ticker, currency, stockSaleIncome);

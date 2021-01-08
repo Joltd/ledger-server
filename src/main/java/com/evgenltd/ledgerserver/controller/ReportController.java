@@ -30,7 +30,7 @@ public class ReportController {
                 : LocalDate.of(2020, 1, 1);
         final LocalDate toDate = to != null
                 ? LocalDate.parse(to)
-                : LocalDate.of(2021, 1, 1);
+                : LocalDate.of(2030, 1, 1);
 
         final List<Turnover> turnover = reportService.turnover(fromDate.atStartOfDay(), toDate.atStartOfDay());
 
@@ -54,7 +54,7 @@ public class ReportController {
                 : LocalDate.of(2020, 1, 1);
         final LocalDate toDate = to != null && !to.equals("null")
                 ? LocalDate.parse(to)
-                : LocalDate.of(2021, 1, 1);
+                : LocalDate.of(2030, 1, 1);
 
         final CodeCard codeCard = reportService.codeCard(
                 code,

@@ -16,7 +16,7 @@ public abstract class BotActivity {
 
     public BotActivity() {
         command(message -> done(), "done", "back");
-        command(message -> help(), "help", "man");
+        command(message -> help(), "help", "man", "?");
     }
 
     void messageReceived(final String message) {
