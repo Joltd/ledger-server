@@ -323,7 +323,7 @@ public class StockService {
                 )).forEach((key, income) -> {
                     final Analysis analysis = portfolio.get(key);
                     analysis.setIncome(income.negate());
-                    analysis.setProfitability(income.negate().divide(analysis.getTimeWeightedAmount(), RoundingMode.HALF_DOWN));
+                    analysis.setProfitability(income.negate().divide(analysis.getTimeWeightedAmount(), RoundingMode.HALF_DOWN).multiply(new BigDecimal(100)));
                 });
         total.setIncome(
                 entries.stream()
@@ -331,7 +331,7 @@ public class StockService {
                         .reduce(BigDecimal.ZERO, BigDecimal::add)
                         .negate()
         );
-        total.setProfitability(total.getIncome().divide(total.getTimeWeightedAmount(), RoundingMode.HALF_DOWN));
+        total.setProfitability(total.getIncome().divide(total.getTimeWeightedAmount(), RoundingMode.HALF_DOWN).multiply(new BigDecimal(100)));
     }
 
     private void calculateCommission(final ExpenseItem commission, final LocalDateTime date, final Map<String, Analysis> portfolio, final Analysis total) {

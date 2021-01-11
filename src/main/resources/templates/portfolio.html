@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.0.0/dist/echarts.min.js" integrity="sha256-l2MbFZa/DPaDeHSfMIRbcg5x1GwNX1LaeTEl93+r6VU=" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous">
+    <link rel="stylesheet" href="../static/portfolio.css" th:href="@{/portfolio.css}">
+</head>
+<body class="bg-light d-flex flex-column align-items-center">
+
+    <h1 class="m-5 title" onclick="toggleCharts()">Portfolio</h1>
+
+    <div id="percentage" class="percentage">
+        <div id="total-profitability" class="shadow kpi m-3 rounded-2" th:text="${#numbers.formatDecimal(total.profitability(), 0, 2)} + '%'">2.47%</div>
+        <div id="portfolio" class="shadow chart m-3 rounded-2"></div>
+        <div id="profitability" class="shadow chart m-3 rounded-2"></div>
+    </div>
+
+    <div id="values" class="values d-none">
+        <div id="total-income" class="shadow kpi m-3 rounded-2" th:text="${#numbers.formatDecimal(total.income(), 0, 0)}">12743</div>
+        <div id="income" class="shadow chart m-3 rounded-2"></div>
+    </div>
+
+    <script th:inline="javascript">
+        let entries = /*[[${entries}]]*/ [{"ticker":"RUB","amount":4496.9300,"balance":4496.9300,"income":0,"profitability":0,"commission":0},{"ticker":"FXUS","amount":121410.0000,"balance":136500,"income":14558.3196,"profitability":0.1743,"commission":531.6800},{"ticker":"TUSD","amount":78802.5840,"balance":74756.79594900,"income":-4373.451208974500,"profitability":-0.055498829949,"commission":327.378397974500},{"ticker":"FXIT","amount":110814.0000,"balance":125905,"income":14806.9781,"profitability":0.1699,"commission":284.0225},{"ticker":"FXTB","amount":394373.9000,"balance":383738.7,"income":-11894.27505,"profitability":-0.03550,"commission":1259.05935},{"ticker":"FXCN","amount":37570.0000,"balance":37332,"income":-565.4556,"profitability":-0.0156,"commission":327.4560},{"ticker":"USD","amount":99986.0260,"balance":101536.50930000,"income":211.132545350000,"profitability":0.001014882217,"commission":1339.348254650000}];
+    </script>
+    <script src="../static/main.js" th:src="@{/main.js}"></script>
+</body>
+</html>

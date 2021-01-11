@@ -3,6 +3,7 @@ package com.evgenltd.ledgerserver.controller;
 import com.evgenltd.ledgerserver.record.CodeCard;
 import com.evgenltd.ledgerserver.record.Turnover;
 import com.evgenltd.ledgerserver.service.ReportService;
+import com.evgenltd.ledgerserver.service.StockService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +15,22 @@ import java.util.List;
 public class ReportController {
 
     private final ReportService reportService;
+    private final StockService stockService;
 
-    public ReportController(final ReportService reportService) {
+    public ReportController(
+            final ReportService reportService,
+            final StockService stockService
+    ) {
         this.reportService = reportService;
+        this.stockService = stockService;
+    }
+
+    @GetMapping("/portfolio")
+    public String portfolio(final Model model) {
+        final StockService.PortfolioRecord result = stockService.collectPortfolioAnalysis();
+        model.addAttribute("entries", result.entries());
+        model.addAttribute("total", result.total());
+        return "portfolio";
     }
 
     @GetMapping("/turnover")
