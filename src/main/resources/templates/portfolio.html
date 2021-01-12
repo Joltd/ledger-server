@@ -12,13 +12,13 @@
     <h1 class="m-5 title" onclick="toggleCharts()">Portfolio</h1>
 
     <div id="percentage" class="percentage">
-        <div id="total-profitability" class="shadow kpi m-3 rounded-2" th:text="${#numbers.formatDecimal(total.profitability(), 0, 2)} + '%'">2.47%</div>
+        <div id="total-profitability" class="shadow kpi m-3 rounded-2" th:text="${#numbers.formatDecimal(total.profitability(), 1, 2)} + '%'">2.47%</div>
         <div id="portfolio" class="shadow chart m-3 rounded-2"></div>
         <div id="profitability" class="shadow chart m-3 rounded-2"></div>
     </div>
 
     <div id="values" class="values d-none">
-        <div id="total-income" class="shadow kpi m-3 rounded-2" th:text="${#numbers.formatDecimal(total.income(), 0, 0)}">12743</div>
+        <div id="total-income" class="shadow kpi m-3 rounded-2" th:text="${#numbers.formatDecimal(total.income(), 1, 0)}">12743</div>
         <div id="income" class="shadow chart m-3 rounded-2"></div>
     </div>
 
