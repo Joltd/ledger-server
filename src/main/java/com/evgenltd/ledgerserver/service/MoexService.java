@@ -115,7 +115,7 @@ public class MoexService implements StockExchangeService {
             }
 
             final JsonNode data = marketdata.get(0);
-            return new BigDecimal(data.get("LAST").asText());
+            return Utils.asBigDecimalNoThrow(data.get("LAST").asText()).orElse(BigDecimal.ZERO);
         } catch (JsonProcessingException e) {
             throw new ApplicationException(e, "Unable to retrieve rate for [%s]", ticker);
         }

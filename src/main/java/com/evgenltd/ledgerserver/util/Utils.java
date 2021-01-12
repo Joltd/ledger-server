@@ -92,6 +92,10 @@ public class Utils {
         return as(value, BigDecimal::new);
     }
 
+    public static Optional<BigDecimal> asBigDecimalNoThrow(final String value) {
+        return asNoThrow(value, BigDecimal::new);
+    }
+
     public static Optional<LocalDateTime> asDateTime(final String value) {
         return as(value, Utils::toDateTime);
     }
