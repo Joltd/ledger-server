@@ -75,7 +75,6 @@ public class MoexService implements StockExchangeService {
                 continue;
             }
 
-            this.rateCache.put(new Key(ticker, LocalDate.now()), rateHistory);
             return rateHistory;
         }
 
@@ -188,7 +187,7 @@ public class MoexService implements StockExchangeService {
                 return BigDecimal.ZERO;
             }
 
-            return new BigDecimal(marketdata.get(0).get("LAST").asText());
+            return Utils.asBigDecimalNoThrow(marketdata.get(0).get("LAST").asText()).orElse(BigDecimal.ZERO);
         } catch (JsonProcessingException e) {
             throw new ApplicationException(e, "Unable to retrieve rate for [%s]", ticker);
         }

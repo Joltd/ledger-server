@@ -48,7 +48,7 @@ echarts.init(document.getElementById('profitability'))
                 label: {
                     show: true,
                     position: 'top',
-                    formatter: p => Math.trunc(p.value) + '%'
+                    formatter: p => p.value.toFixed(2) + '%'
                 }
             }
         ]
