@@ -1,12 +1,15 @@
 package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.ApplicationException;
+import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.repository.TickerSymbolRepository;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -15,6 +18,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,7 +31,6 @@ public class MoexService implements StockExchangeService {
     private WebClient client;
     private final Map<String,String> tickerToBoard = new HashMap<>();
     private final Map<String,String> currencyToCid = new HashMap<>();
-    private final Map<Key,BigDecimal> rateCache = new ConcurrentHashMap<>();
 
     public MoexService(final ObjectMapper mapper) {
         this.mapper = mapper;
@@ -44,45 +47,23 @@ public class MoexService implements StockExchangeService {
     }
 
     @Override
-    public Map<Key, BigDecimal> getRateCache() {
-        return Collections.unmodifiableMap(rateCache);
-    }
-
-    @Override
-    public void clearCache() {
-        rateCache.clear();
-    }
-
-    @Override
     public BigDecimal rate(final String ticker) {
-
-        final boolean isCurrency = currencyToCid.containsKey(ticker);
-        final BigDecimal rate = isCurrency
-                ? rateCurrency(ticker)
-                : rateStock(ticker);
-        if (rate.compareTo(BigDecimal.ZERO) != 0) {
-            return rate;
-        }
-
-        LocalDate day = LocalDate.now().minusDays(1L);
-
-        while (true) {
-            final BigDecimal rateHistory = isCurrency
-                    ? rateCurrencyHistory(day, ticker)
-                    : rateStockHistory(day, ticker);
-            if (rateHistory.compareTo(BigDecimal.ZERO) == 0) {
-                day = day.minusDays(1L);
-                continue;
-            }
-
-            return rateHistory;
-        }
-
+        return rate(null, ticker);
     }
 
     @Override
     public BigDecimal rate(final LocalDate date, final String ticker) {
-        return null;
+        final boolean isCurrency = currencyToCid.containsKey(ticker);
+        if (date == null) {
+            return isCurrency
+                    ? rateCurrency(ticker)
+                    : rateStock(ticker);
+        } else {
+            return isCurrency
+                    ? rateCurrencyHistory(date, ticker)
+                    : rateStockHistory(date, ticker);
+        }
+
     }
 
     private BigDecimal rateStock(final String ticker) {
@@ -121,14 +102,10 @@ public class MoexService implements StockExchangeService {
     }
 
     private BigDecimal rateStockHistory(final LocalDate date, final String ticker) {
-        final Key key = new Key(ticker, date);
-        final BigDecimal cached = rateCache.get(key);
-        if (cached != null) {
-            return cached;
-        }
+        final String board = boardByTicker(ticker);
 
         final String result = client.get()
-                .uri(uriBuilder -> uriBuilder.pathSegment("history", "engines", "stock", "markets", "shares", "boards", "TQTF", "securities", ticker, "securities.json")
+                .uri(uriBuilder -> uriBuilder.pathSegment("history", "engines", "stock", "markets", "shares", "boards", board, "securities", ticker, "securities.json")
                         .queryParam("iss.meta", "off")
                         .queryParam("iss.json", "extended")
                         .queryParam("from", date.toString())
@@ -151,9 +128,7 @@ public class MoexService implements StockExchangeService {
                 return BigDecimal.ZERO;
             }
 
-            final BigDecimal rate = new BigDecimal(history.get(0).get("LEGALCLOSEPRICE").asText());
-            rateCache.put(key, rate);
-            return rate;
+            return new BigDecimal(history.get(0).get("LEGALCLOSEPRICE").asText());
         } catch (JsonProcessingException e) {
             throw new ApplicationException(e, "Unable to retrieve rate for [%s][%s]", date, ticker);
         }
@@ -200,12 +175,6 @@ public class MoexService implements StockExchangeService {
             throw new ApplicationException("Unknown currency [%s]", ticker);
         }
 
-        final Key key = new Key(ticker, LocalDate.now());
-        final BigDecimal cached = this.rateCache.get(key);
-        if (cached != null) {
-            return cached;
-        }
-
         final String result = client.get()
                 .uri(uriBuilder -> uriBuilder.pathSegment("history", "engines", "currency", "markets", "selt", "boards", "CETS", "securities", cid, "securities.json")
                         .queryParam("iss.meta", "off")
@@ -230,9 +199,7 @@ public class MoexService implements StockExchangeService {
                 return BigDecimal.ZERO;
             }
 
-            final BigDecimal rate = new BigDecimal(history.get(0).get("CLOSE").asText());
-            rateCache.put(key, rate);
-            return rate;
+            return new BigDecimal(history.get(0).get("CLOSE").asText());
         } catch (JsonProcessingException e) {
             throw new ApplicationException(e, "Unable to retrieve rate for [%s][%s]", date, ticker);
         }

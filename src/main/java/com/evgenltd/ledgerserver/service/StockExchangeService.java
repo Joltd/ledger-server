@@ -6,10 +6,6 @@ import java.util.Map;
 
 public interface StockExchangeService {
 
-    Map<StockExchangeService.Key, BigDecimal> getRateCache();
-
-    void clearCache();
-
     BigDecimal rate(String ticker);
 
     BigDecimal rate(LocalDate date, String ticker);

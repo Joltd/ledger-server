@@ -2,10 +2,10 @@ package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.constants.Codes;
 import com.evgenltd.ledgerserver.constants.Settings;
-import com.evgenltd.ledgerserver.controller.StockController;
 import com.evgenltd.ledgerserver.entity.Currency;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.repository.StockPriceRepository;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyStockActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellStockActivity;
@@ -13,6 +13,7 @@ import com.evgenltd.ledgerserver.service.brocker.BrokerService;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class StockService {
@@ -33,19 +35,45 @@ public class StockService {
     private final StockExchangeService stockExchangeService;
     private final SettingService settingService;
     private final BeanFactory beanFactory;
+    private final StockPriceRepository stockPriceRepository;
 
     public StockService(
             final JournalEntryRepository journalEntryRepository,
             final BrokerService brokerService,
             final StockExchangeService stockExchangeService,
             final SettingService settingService,
-            final BeanFactory beanFactory
+            final BeanFactory beanFactory,
+            final StockPriceRepository stockPriceRepository
     ) {
         this.journalEntryRepository = journalEntryRepository;
         this.brokerService = brokerService;
         this.stockExchangeService = stockExchangeService;
         this.settingService = settingService;
         this.beanFactory = beanFactory;
+        this.stockPriceRepository = stockPriceRepository;
+    }
+
+    public StockPriceRecord collectStockPriceRecord() {
+        final List<StockPrice> all = stockPriceRepository.findAll(Sort.by("date"));
+        final List<LocalDate> dates = all.stream()
+                .map(StockPrice::getDate)
+                .distinct()
+                .collect(Collectors.toList());
+        final List<StockPriceEntryRecord> entries = all.stream()
+                .collect(Collectors.groupingBy(
+                        StockPrice::getTicker,
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list.stream()
+                                        .map(StockPrice::getPrice)
+                                        .collect(Collectors.toList())
+                        )
+                ))
+                .entrySet()
+                .stream()
+                .map(entry -> new StockPriceEntryRecord(entry.getKey(), entry.getValue()))
+                .collect(Collectors.toList());
+        return new StockPriceRecord(dates, entries);
     }
 
     @Transactional
@@ -102,7 +130,8 @@ public class StockService {
                         total.getIncome(),
                         total.getProfitability(),
                         total.getCommission()
-                )
+                ),
+                stockExchangeService.rate("USD")
         );
 
     }
@@ -376,14 +405,14 @@ public class StockService {
     }
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-    public record PortfolioRecord(
+    public static record PortfolioRecord(
             List<PortfolioEntryRecord> entries,
-            PortfolioEntryRecord total
-
+            PortfolioEntryRecord total,
+            BigDecimal usd
     ) {}
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
-    public record PortfolioEntryRecord(
+    public static record PortfolioEntryRecord(
             String ticker,
             BigDecimal amount,
             BigDecimal balance,
@@ -391,6 +420,12 @@ public class StockService {
             BigDecimal profitability,
             BigDecimal commission
     ) {}
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    public static record StockPriceRecord(List<LocalDate> dates, List<StockPriceEntryRecord> entries) {}
+
+    @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
+    public static record StockPriceEntryRecord(String ticker, List<BigDecimal> prices) {}
 
     public static class Analysis {
         private Account account;

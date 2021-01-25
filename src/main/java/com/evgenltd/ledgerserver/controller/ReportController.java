@@ -30,7 +30,15 @@ public class ReportController {
         final StockService.PortfolioRecord result = stockService.collectPortfolioAnalysis();
         model.addAttribute("entries", result.entries());
         model.addAttribute("total", result.total());
+        model.addAttribute("usd", result.usd());
         return "portfolio";
+    }
+
+    @GetMapping("/prices")
+    public String prices(final Model model) {
+        final StockService.StockPriceRecord result = stockService.collectStockPriceRecord();
+        model.addAttribute("prices", result);
+        return "prices";
     }
 
     @GetMapping("/turnover")

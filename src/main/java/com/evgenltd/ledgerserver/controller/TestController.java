@@ -17,8 +17,8 @@ public class TestController {
 
     @GetMapping("/test")
     public BigDecimal stockExchangeRate() {
-        stockExchangeService.rate("USD");
-        return stockExchangeService.rate("USD");
+        stockExchangeService.rate("FXUS");
+        return stockExchangeService.rate("FXUS");
     }
 
 }
