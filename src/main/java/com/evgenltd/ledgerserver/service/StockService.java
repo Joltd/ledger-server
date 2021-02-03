@@ -5,7 +5,6 @@ import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.Currency;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;
-import com.evgenltd.ledgerserver.repository.StockPriceRepository;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyStockActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellStockActivity;
@@ -13,7 +12,6 @@ import com.evgenltd.ledgerserver.service.brocker.BrokerService;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
 
@@ -25,47 +23,43 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 public class StockService {
 
     private final JournalEntryRepository journalEntryRepository;
     private final BrokerService brokerService;
-    private final StockExchangeService stockExchangeService;
+    private final StockRateHistoryService stockRateHistoryService;
     private final SettingService settingService;
     private final BeanFactory beanFactory;
-    private final StockPriceRepository stockPriceRepository;
 
     public StockService(
             final JournalEntryRepository journalEntryRepository,
             final BrokerService brokerService,
-            final StockExchangeService stockExchangeService,
+            final StockRateHistoryService stockRateHistoryService,
             final SettingService settingService,
-            final BeanFactory beanFactory,
-            final StockPriceRepository stockPriceRepository
+            final BeanFactory beanFactory
     ) {
         this.journalEntryRepository = journalEntryRepository;
         this.brokerService = brokerService;
-        this.stockExchangeService = stockExchangeService;
+        this.stockRateHistoryService = stockRateHistoryService;
         this.settingService = settingService;
         this.beanFactory = beanFactory;
-        this.stockPriceRepository = stockPriceRepository;
     }
 
     public StockPriceRecord collectStockPriceRecord() {
-        final List<StockPrice> all = stockPriceRepository.findAll(Sort.by("date"));
+        final List<StockRate> all = stockRateHistoryService.loadAll();
         final List<LocalDate> dates = all.stream()
-                .map(StockPrice::getDate)
+                .map(StockRate::getDate)
                 .distinct()
                 .collect(Collectors.toList());
         final List<StockPriceEntryRecord> entries = all.stream()
                 .collect(Collectors.groupingBy(
-                        StockPrice::getTicker,
+                        StockRate::getTicker,
                         Collectors.collectingAndThen(
                                 Collectors.toList(),
                                 list -> list.stream()
-                                        .map(StockPrice::getPrice)
+                                        .map(StockRate::getRate)
                                         .collect(Collectors.toList())
                         )
                 ))
@@ -131,7 +125,7 @@ public class StockService {
                         total.getProfitability(),
                         total.getCommission()
                 ),
-                stockExchangeService.rate("USD")
+                rate("USD")
         );
 
     }
@@ -158,8 +152,8 @@ public class StockService {
 
                     if (ticker != null && currency != null) {
 
-                        analysis.setPrice(rateIndex.computeIfAbsent(ticker.getName(), stockExchangeService::rate));
-                        analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.name(), stockExchangeService::rate));
+                        analysis.setPrice(rateIndex.computeIfAbsent(ticker.getName(), this::rate));
+                        analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.name(), this::rate));
 
                         final BigDecimal balance = analysis.getPrice()
                                 .multiply(new BigDecimal(analysis.getCount()))
@@ -168,14 +162,14 @@ public class StockService {
 
                     } else if (ticker != null) {
 
-                        analysis.setPrice(rateIndex.computeIfAbsent(ticker.getName(), stockExchangeService::rate));
+                        analysis.setPrice(rateIndex.computeIfAbsent(ticker.getName(), this::rate));
                         final BigDecimal balance = analysis.getPrice()
                                 .multiply(new BigDecimal(analysis.getCount()));
                         analysis.setBalance(balance);
 
                     } else if (currency != null) {
 
-                        analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.name(), stockExchangeService::rate));
+                        analysis.setCurrencyRate(rateIndex.computeIfAbsent(currency.name(), this::rate));
                         final BigDecimal balance = analysis.getCurrencyRate()
                                 .multiply(analysis.getCurrencyAmount());
                         analysis.setBalance(balance);
@@ -402,6 +396,10 @@ public class StockService {
     private String byStock(final JournalEntry entry) {
         return Optional.ofNullable(entry.getTickerSymbol()).map(ticker -> ticker.getId().toString()).orElse("")
                 + Optional.ofNullable(entry.getCurrency()).map(currency -> " " + currency.name()).orElse("");
+    }
+
+    private BigDecimal rate(final String ticker) {
+        return stockRateHistoryService.rate(ticker);
     }
 
     @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)

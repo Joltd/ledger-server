@@ -10,6 +10,4 @@ public interface StockExchangeService {
 
     BigDecimal rate(LocalDate date, String ticker);
 
-    record Key(String ticker, LocalDate date) {}
-
 }

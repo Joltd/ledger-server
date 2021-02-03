@@ -26,6 +26,11 @@
     width: 90vw;
 }
 
+.tight-chart {
+    height: 40vh;
+    width: 90vw;
+}
+
 @media only screen and (min-width: 1080px) {
     .kpi {
         font-size: 3em;
@@ -35,6 +40,11 @@
 
     .chart {
         height: 600px;
+        width: 700px;
+    }
+
+    .tight-chart {
+        height: 400px;
         width: 700px;
     }
 }

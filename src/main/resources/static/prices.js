@@ -1,10 +1,22 @@
-echarts.init(document.getElementById('prices'))
-    .setOption({
+for (let entry of prices.entries) {
+    let element = document.getElementById(entry.ticker);
+    if (!element) {
+        console.log('Unable to found chart ' + entry.ticker);
+        continue;
+    }
+    echarts.init(element).setOption(makeOptions(entry));
+}
+
+function makeOptions(entry) {
+    return {
         textStyle: {
             fontSize: 18
         },
+        title: {
+            text: entry.ticker
+        },
         dataZoom: {
-
+            start: 60
         },
         tooltip: {
             trigger: 'axis',
@@ -12,33 +24,31 @@ echarts.init(document.getElementById('prices'))
                 fontSize: 18
             }
         },
-        legend: {
-            data: prices.entries.map(entry => entry.ticker)
-        },
         xAxis: {
             data: prices.dates,
             axisLabel: {
                 fontSize: 18
             }
         },
-        yAxis: prices.entries.map((entry, index) => {
-            return {
-                show: false,
-                max: function (value) {
-                    return value.max * 1.1
-                },
-                min: function (value) {
-                    return value.min * 0.7
-                },
-            };
-        }),
-        series: prices.entries.map((entry, index) => {
-            return {
+        yAxis: {
+            max: function (value) {
+                return value.max + offset(value);
+            },
+            min: function (value) {
+                return value.min - offset(value);
+            }
+        },
+        series: [
+            {
                 type: 'line',
                 name: entry.ticker,
-                yAxisIndex: index,
                 symbol: 'none',
                 data: entry.prices
-            };
-        })
-    });
+            }
+        ]
+    };
+}
+
+function offset(value) {
+    return (value.max - value.min) * 0.1
+}

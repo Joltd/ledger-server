@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "stock_prices")
-public class StockPrice {
+@Table(name = "stock_rates")
+public class StockRate {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,7 +16,7 @@ public class StockPrice {
 
     private String ticker;
 
-    private BigDecimal price;
+    private BigDecimal rate;
 
     public Long getId() {
         return id;
@@ -39,11 +39,11 @@ public class StockPrice {
         this.ticker = ticker;
     }
 
-    public BigDecimal getPrice() {
-        return price;
+    public BigDecimal getRate() {
+        return rate;
     }
-    public void setPrice(final BigDecimal price) {
-        this.price = price;
+    public void setRate(final BigDecimal price) {
+        this.rate = price;
     }
 
 }

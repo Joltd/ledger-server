@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.repository;
 
-import com.evgenltd.ledgerserver.entity.StockPrice;
+import com.evgenltd.ledgerserver.entity.StockRate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -8,8 +8,8 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Repository
-public interface StockPriceRepository extends JpaRepository<StockPrice, Long> {
+public interface StockRateRepository extends JpaRepository<StockRate, Long> {
 
-    Optional<StockPrice> findByDateAndTicker(LocalDate date, String ticker);
+    Optional<StockRate> findByDateAndTicker(LocalDate date, String ticker);
 
 }

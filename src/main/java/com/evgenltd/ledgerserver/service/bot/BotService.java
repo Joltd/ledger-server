@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-//@Service
+@Service
 public class BotService extends TelegramLongPollingBot {
 
     @Value("${bot.token}")
