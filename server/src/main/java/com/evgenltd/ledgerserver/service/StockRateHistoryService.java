@@ -65,7 +65,7 @@ public class StockRateHistoryService {
                 );
     }
 
-    @Scheduled(cron = "0 0 4 * * *", zone = "Europe/Samara")
+//    @Scheduled(cron = "0 0 4 * * *", zone = "Europe/Samara")
     public void gatherRates() {
         tickers().forEach(ticker -> {
             final LocalDate date = LocalDate.now().minusDays(1L);
