@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {environment} from "../environments/environment";
+import {Reference} from "../platform/model/reference";
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,10 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'ledger';
+  reference: Reference = new Reference()
+
+  constructor() {
+    this.reference.api = environment.api + '/order'
+    this.reference.id = 'order.browser'
+  }
 }

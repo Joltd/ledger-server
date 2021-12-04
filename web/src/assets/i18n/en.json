@@ -1,0 +1,11 @@
+{
+  "order.browser.id": "Id",
+  "order.browser.name": "Name",
+  "order.browser.enabled": "Enabled",
+  "order.browser.length": "Length",
+  "order.browser.amount":  "Amount",
+  "order.browser.time": "Time",
+  "order.browser.date":  "Date",
+  "order.browser.personId": "Person (ID)",
+  "order.browser.personName":  "Person"
+}

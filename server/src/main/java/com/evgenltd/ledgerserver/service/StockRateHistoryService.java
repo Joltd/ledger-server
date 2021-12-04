@@ -36,7 +36,7 @@ public class StockRateHistoryService {
         this.stockRateRepository = stockRateRepository;
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void postConstruct() {
         stockRateRepository.findAll()
                 .stream()

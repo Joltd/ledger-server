@@ -4,6 +4,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import {restInterceptorProvider} from "./service/rest-interceptor.service";
+import {PlatformModule} from "../platform/platform.module";
+import { HttpClientModule } from '@angular/common/http';
+import { TranslocoRootModule } from './transloco-root.module';
 
 @NgModule({
   declarations: [
@@ -12,9 +16,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    PlatformModule,
+    HttpClientModule,
+    TranslocoRootModule
   ],
-  providers: [],
+  providers: [
+    restInterceptorProvider
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
