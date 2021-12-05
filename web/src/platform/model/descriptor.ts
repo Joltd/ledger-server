@@ -15,6 +15,7 @@ export class DtoModel {
 export class DtoField {
   reference: string = ''
   sort: boolean = false
+  type!: FieldType
   format: string = ''
 }
 
@@ -25,15 +26,9 @@ export class MetaModel {
 
 export class MetaField {
   reference: string = ''
-  type!: MetaType
+  type!: FieldType
   @Type(() => MetaField)
   fields: MetaField[] = []
 }
 
-export enum MetaType {
-  STRING,
-  NUMBER,
-  DATE,
-  BOOlEAN,
-  OBJECT
-}
+export type FieldType = 'STRING' | 'NUMBER' | 'DATE' | 'BOOlEAN' | 'OBJECT'

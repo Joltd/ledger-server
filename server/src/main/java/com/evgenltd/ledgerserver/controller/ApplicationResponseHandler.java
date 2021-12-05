@@ -1,6 +1,7 @@
 package com.evgenltd.ledgerserver.controller;
 
-import lombok.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
@@ -13,6 +14,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @RestControllerAdvice
 public class ApplicationResponseHandler implements ResponseBodyAdvice<Object> {
+
+    private static final Logger log = LogManager.getLogger(ApplicationResponseHandler.class);
 
     @Override
     public boolean supports(
@@ -40,6 +43,7 @@ public class ApplicationResponseHandler implements ResponseBodyAdvice<Object> {
 
     @ExceptionHandler(Throwable.class)
     public Response<?> handle(final Throwable throwable) {
+        log.error("", throwable);
         return new Response<>(false, null, throwable.getMessage());
     }
 

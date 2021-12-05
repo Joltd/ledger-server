@@ -1,3 +1,3 @@
 package com.evgenltd.ledgerserver.browser.record.loadconfig;
 
-public record FilterConfig(Filter.Expression expression) {}
+public record PageConfig(Integer index, Integer size) {}

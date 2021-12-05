@@ -6,6 +6,8 @@ import {MatPaginatorModule} from "@angular/material/paginator";
 import {HttpClientModule} from "@angular/common/http";
 import {TranslocoRootModule} from "../app/transloco-root.module";
 import {MatSortModule} from "@angular/material/sort";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
 
 @NgModule({
     declarations: [
@@ -20,7 +22,9 @@ import {MatSortModule} from "@angular/material/sort";
     MatPaginatorModule,
     HttpClientModule,
     TranslocoRootModule,
-    MatSortModule
+    MatSortModule,
+    MatButtonModule,
+    MatIconModule
   ]
 })
 export class PlatformModule { }
