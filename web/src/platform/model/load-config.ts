@@ -5,14 +5,14 @@ export class LoadConfig {
 }
 
 export class FilterConfig {
-  expression!: FilterExpression
+  expression?: FilterExpression
 }
 
 export class FilterExpression {
   reference!: string
-  operator!: string
+  operator!: OperatorType
   value!: string
-  type!: string
+  type!: FilterExpressionType
   expressions: FilterExpression[] = []
 }
 
@@ -25,4 +25,24 @@ export class PageConfig {
 export class SortConfig {
   reference?: string
   order: 'ASC' | 'DESC' = 'ASC'
+}
+
+export enum FilterExpressionType {
+  OR = 'OR',
+  AND = 'AND',
+  NOT = 'NOT',
+  STATEMENT = 'STATEMENT'
+}
+
+export enum OperatorType {
+  EQUAL = 'EQUAL',
+  NOT_EQUAL = 'NOT_EQUAL',
+  LESS = 'LESS',
+  LESS_EQUAL = 'LESS_EQUAL',
+  GREATER = 'GREATER',
+  GREATER_EQUAL = 'GREATER_EQUAL',
+  LIKE = 'LIKE',
+  NOT_LIKE = 'NOT_LIKE',
+  IS_NULL = 'IS_NULL',
+  IS_NOT_NULL = 'IS_NOT_NULL'
 }

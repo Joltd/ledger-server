@@ -9,10 +9,18 @@ import {PlatformModule} from "../platform/platform.module";
 import { HttpClientModule } from '@angular/common/http';
 import { TranslocoRootModule } from './transloco-root.module';
 import {MatCardModule} from "@angular/material/card";
+import {MatToolbarModule} from "@angular/material/toolbar";
+import {MatButtonModule} from "@angular/material/button";
+import {MatIconModule} from "@angular/material/icon";
+import {MatSidenavModule} from "@angular/material/sidenav";
+import { OrderBrowserComponent } from './reference/order/browser/order-browser/order-browser.component';
+import {MatListModule} from "@angular/material/list";
+import {MatMenuModule} from "@angular/material/menu";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    OrderBrowserComponent
   ],
     imports: [
         BrowserModule,
@@ -21,7 +29,13 @@ import {MatCardModule} from "@angular/material/card";
         PlatformModule,
         HttpClientModule,
         TranslocoRootModule,
-        MatCardModule
+        MatCardModule,
+        MatToolbarModule,
+        MatButtonModule,
+        MatIconModule,
+        MatSidenavModule,
+        MatListModule,
+        MatMenuModule
     ],
   providers: [
     restInterceptorProvider

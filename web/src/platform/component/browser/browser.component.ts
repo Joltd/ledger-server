@@ -6,9 +6,12 @@ import {Reference} from "../../model/reference";
 import {CollectionViewer, DataSource} from "@angular/cdk/collections";
 import {BehaviorSubject, Observable} from "rxjs";
 import {PageEvent} from "@angular/material/paginator";
-import {FilterConfig, FilterExpression, LoadConfig} from "../../model/load-config";
-import {CurrencyPipe, DatePipe, DecimalPipe} from "@angular/common";
+import {FilterConfig, FilterExpression, FilterExpressionType, LoadConfig, OperatorType} from "../../model/load-config";
+import {DatePipe, DecimalPipe} from "@angular/common";
 import {TranslocoService} from "@ngneat/transloco";
+import {OverlayService} from "../../service/overlay.service";
+import {BrowserSettingsComponent} from "../browser-settings/browser-settings.component";
+import {OverlayCommand} from "../../model/overlay-command";
 
 @Component({
   selector: 'browser',
@@ -26,39 +29,54 @@ export class BrowserComponent implements OnInit {
   descriptor!: Descriptor
   dataSource: RemoteDateSource = new RemoteDateSource()
   config: LoadConfig = new LoadConfig()
+  private columns: string[] = []
 
   constructor(
     private http: HttpClient,
-    private translocoService: TranslocoService
+    private translocoService: TranslocoService,
+    private overlayService: OverlayService
   ) {
     let lang = this.translocoService.getActiveLang()
     this.decimalPipe = new DecimalPipe(lang)
     this.datePipe = new DatePipe(lang)
 
+    this.setupCommonCommands()
+
     this.config.filter = {
       expression: {
-        type: 'OR',
+        type: FilterExpressionType.OR,
         expressions: [
           {
+            type: FilterExpressionType.AND,
+            expressions: [
+              {
+                reference: 'length',
+                operator: OperatorType.GREATER,
+                value: '20',
+                type: FilterExpressionType.STATEMENT
+              }
+            ]
+          } as FilterExpression,
+          {
             reference: 'time',
-            operator: 'LESS',
+            operator: OperatorType.LESS,
             value: '2021-08-01T12:00:00',
-            type: 'STATEMENT'
+            type: FilterExpressionType.STATEMENT
           },
           {
             reference: 'person.name',
-            operator: 'LIKE',
+            operator: OperatorType.LIKE,
             value: 'Тинь%',
-            type: 'STATEMENT'
+            type: FilterExpressionType.STATEMENT
           },
           {
             reference: 'length',
-            operator: 'EQUAL',
+            operator: OperatorType.EQUAL,
             value: '15',
-            type: 'STATEMENT'
+            type: FilterExpressionType.STATEMENT
           }
         ]
-      }
+      } as FilterExpression
     } as FilterConfig
   }
 
@@ -72,6 +90,7 @@ export class BrowserComponent implements OnInit {
     this.http.get<Descriptor>(this.reference.api + '/descriptor', TypeUtils.of(Descriptor))
       .subscribe(result => {
         this.descriptor = result
+        this.columns = this.descriptor.dto.fields.map(entry => entry.reference);
       })
   }
 
@@ -84,8 +103,8 @@ export class BrowserComponent implements OnInit {
       })
   }
 
-  columns(): string[] {
-    let columns = this.descriptor.dto.fields.map(entry => entry.reference);
+  allowedColumns(): string[] {
+    let columns = this.columns.slice();
     columns.push('action')
     return columns
   }
@@ -113,6 +132,41 @@ export class BrowserComponent implements OnInit {
       this.config.sort.reference = undefined
     }
     this.loadData()
+  }
+
+  // toolbar
+
+  private setupCommonCommands() {
+    this.overlayService.setupCommands([
+      new OverlayCommand('', 'settings', () => this.openSettings())
+    ])
+  }
+
+  private setupSettingsCommand(component: BrowserSettingsComponent) {
+    this.overlayService.setupCommands([
+      new OverlayCommand('', 'check', () => this.saveSettings(component)),
+      new OverlayCommand('', 'close', () => this.closeSettings())
+    ])
+  }
+
+  private openSettings() {
+    this.overlayService.openSide(BrowserSettingsComponent)
+      .subscribe(component => {
+        this.setupSettingsCommand(component)
+        component.setup(this.reference, this.descriptor, this.columns, this.config.filter.expression)
+      })
+  }
+
+  private saveSettings(component: BrowserSettingsComponent) {
+    this.columns = component.columns
+    this.config.filter.expression = component.filterExpression()
+    this.closeSettings()
+    // this.loadData()
+  }
+
+  private closeSettings() {
+    this.setupCommonCommands()
+    this.overlayService.closeSide()
   }
 
 }

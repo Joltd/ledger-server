@@ -1,4 +1,8 @@
 {
+  "filter.expression.type.OR": "Or",
+  "filter.expression.type.AND": "And",
+  "filter.expression.type.NOT": "Not",
+
   "order.browser.id": "Id",
   "order.browser.name": "Name",
   "order.browser.enabled": "Enabled",
@@ -7,5 +11,5 @@
   "order.browser.time": "Time",
   "order.browser.date":  "Date",
   "order.browser.personId": "Person (ID)",
-  "order.browser.personName":  "Person"
+  "order.browser.personName": "Person"
 }

@@ -1,3 +1,9 @@
+:host {
+  overflow: hidden;
+  display: grid;
+  height: 100%;
+}
+
 table {
   width: 100%;
 }
@@ -9,4 +15,8 @@ table {
 
 .action-align {
   text-align: right;
+}
+
+.table-container {
+  overflow-y: scroll;
 }

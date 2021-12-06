@@ -1,0 +1,41 @@
+mat-tab-group {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  height: 100%;
+}
+
+.filter {
+
+  height: 100%;
+
+  button {
+    padding: 0;
+    min-width: 36px;
+  }
+
+  .invisible {
+    display: none;
+  }
+
+  .nested {
+    padding-left: 30px;
+  }
+
+  mat-form-field {
+    padding: 0 0.25rem;
+
+    .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  }
+
+  .node-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .reference-field {width: 7rem;}
+  .operator-field {width: 7rem;}
+  .value-field {width: 10rem;}
+
+}

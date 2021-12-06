@@ -1,18 +1,21 @@
-<table mat-table *ngIf="descriptor" [dataSource]="dataSource" matSort (matSortChange)="onSortChanged($event)">
+<div class="table-container">
+  <table mat-table *ngIf="descriptor" [dataSource]="dataSource" matSort (matSortChange)="onSortChanged($event)">
 
-  <ng-container *ngFor="let field of this.descriptor.dto.fields" [matColumnDef]="field.reference">
-    <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!field.sort">{{ (this.reference.id + '.' + field.reference) | transloco }}</th>
-    <td mat-cell *matCellDef="let element">{{ format(element[field.reference], field.type, field.format) }}</td>
-  </ng-container>
+    <ng-container *ngFor="let field of this.descriptor.dto.fields" [matColumnDef]="field.reference">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!field.sort">{{ (this.reference.id + '.' + field.reference) | transloco }}</th>
+      <td mat-cell *matCellDef="let element">{{ format(element[field.reference], field.type, field.format) }}</td>
+    </ng-container>
 
-  <ng-container matColumnDef="action">
-    <th mat-header-cell *matHeaderCellDef class="action-align"><button mat-button class="action"><mat-icon>settings</mat-icon></button></th>
-    <td mat-cell *matCellDef="let element" class="action-align"><button mat-button class="action"><mat-icon>edit</mat-icon></button></td>
-  </ng-container>
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef class="action-align"></th>
+      <td mat-cell *matCellDef="let element" class="action-align">
+        <button mat-button class="action"><mat-icon>edit</mat-icon></button>
+      </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="columns(); sticky: true"></tr>
-  <tr mat-row *matRowDef="let row; columns: columns();"></tr>
+    <tr mat-header-row *matHeaderRowDef="allowedColumns(); sticky: true"></tr>
+    <tr mat-row *matRowDef="let row; columns: allowedColumns();"></tr>
 
-</table>
-
+  </table>
+</div>
 <mat-paginator [length]="config.page.length" (page)="onPageChanged($event)"></mat-paginator>
