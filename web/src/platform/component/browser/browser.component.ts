@@ -39,45 +39,7 @@ export class BrowserComponent implements OnInit {
     let lang = this.translocoService.getActiveLang()
     this.decimalPipe = new DecimalPipe(lang)
     this.datePipe = new DatePipe(lang)
-
     this.setupCommonCommands()
-
-    this.config.filter = {
-      expression: {
-        type: FilterExpressionType.OR,
-        expressions: [
-          {
-            type: FilterExpressionType.AND,
-            expressions: [
-              {
-                reference: 'length',
-                operator: OperatorType.GREATER,
-                value: '20',
-                type: FilterExpressionType.STATEMENT
-              }
-            ]
-          } as FilterExpression,
-          {
-            reference: 'time',
-            operator: OperatorType.LESS,
-            value: '2021-08-01T12:00:00',
-            type: FilterExpressionType.STATEMENT
-          },
-          {
-            reference: 'person.name',
-            operator: OperatorType.LIKE,
-            value: 'Тинь%',
-            type: FilterExpressionType.STATEMENT
-          },
-          {
-            reference: 'length',
-            operator: OperatorType.EQUAL,
-            value: '15',
-            type: FilterExpressionType.STATEMENT
-          }
-        ]
-      } as FilterExpression
-    } as FilterConfig
   }
 
   ngOnInit(): void {
@@ -161,7 +123,7 @@ export class BrowserComponent implements OnInit {
     this.columns = component.columns
     this.config.filter.expression = component.filterExpression()
     this.closeSettings()
-    // this.loadData()
+    this.loadData()
   }
 
   private closeSettings() {

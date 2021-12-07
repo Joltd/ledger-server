@@ -19,6 +19,9 @@ public class Filter {
     }
 
     private <T> Specification<T> toSpecificationImpl(final Filter.Expression expression) {
+        if (expression == null) {
+            return null;
+        }
         return (root, query, cb) -> Filter.this.toPredicate(expression, root, cb);
     }
 

@@ -23,6 +23,8 @@ export class BrowserSettingsComponent implements OnInit {
   dataSource: MatTreeNestedDataSource<FilterExpression> = new MatTreeNestedDataSource<FilterExpression>()
   fields: string[] = []
   operators: OperatorType[] = Object.values(OperatorType)
+  types: FilterExpressionType[] = Object.values(FilterExpressionType)
+  structureTypes: FilterExpressionType[] = this.types.filter(type => type != FilterExpressionType.STATEMENT)
 
   constructor() {}
 
@@ -78,20 +80,22 @@ export class BrowserSettingsComponent implements OnInit {
     return null
   }
 
-  addExpression(expression: FilterExpression) {
-    if (expression.type == FilterExpressionType.STATEMENT) {
-      return
-    }
+  addExpression(expression: FilterExpression | null, type: FilterExpressionType) {
     let newExpression = new FilterExpression();
-    newExpression.type = FilterExpressionType.STATEMENT
-    expression.expressions.push(newExpression)
+    newExpression.type = type
+    newExpression.expressions = []
+    if (expression != null) {
+      expression.expressions.push(newExpression)
+    } else {
+      this.filter = [newExpression]
+    }
     this.updateFilterDataSource()
   }
 
   removeExpression(expression: FilterExpression) {
     let root = this.filter[0]
     if (!root) {
-      return;
+      return
     }
 
     if (expression == root) {
@@ -102,15 +106,39 @@ export class BrowserSettingsComponent implements OnInit {
 
     let parent = this.seekParent(root, expression)
     if (!parent) {
-      return;
+      return
     }
 
     parent.expressions = parent.expressions.filter(entry => entry != expression)
     this.updateFilterDataSource()
   }
 
-  wrapExpression(expression: FilterExpression) {
+  wrapExpression(expression: FilterExpression, type: FilterExpressionType) {
+    let newExpression = new FilterExpression();
+    newExpression.type = type
+    newExpression.expressions = [expression]
 
+    let root = this.filter[0]
+    if (!root) {
+      return
+    }
+
+    if (expression == root) {
+      this.filter = [newExpression]
+      this.updateFilterDataSource()
+      this.treeControl.expand(newExpression)
+      return
+    }
+
+    let parent = this.seekParent(root, expression)
+    if (!parent) {
+      return
+    }
+
+    let index = parent.expressions.indexOf(expression)
+    parent.expressions[index] = newExpression
+    this.updateFilterDataSource()
+    this.treeControl.expand(newExpression)
   }
 
 }
