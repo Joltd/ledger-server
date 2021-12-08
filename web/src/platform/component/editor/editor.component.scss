@@ -1,0 +1,23 @@
+:host {
+  display: grid;
+}
+
+.editor {
+  display: grid;
+  grid-auto-flow: row;
+  width: 50%;
+  justify-self: center;
+}
+
+.editor-handset {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+mat-slide-toggle {
+  padding-bottom: 1rem;
+}

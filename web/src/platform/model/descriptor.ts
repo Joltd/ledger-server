@@ -31,4 +31,4 @@ export class MetaField {
   fields: MetaField[] = []
 }
 
-export type FieldType = 'STRING' | 'NUMBER' | 'DATE' | 'BOOlEAN' | 'OBJECT'
+export type FieldType = 'STRING' | 'NUMBER' | 'DATE' | 'BOOLEAN' | 'OBJECT'

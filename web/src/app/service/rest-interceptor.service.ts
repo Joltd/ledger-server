@@ -39,14 +39,14 @@ export class RestInterceptorService implements HttpInterceptor {
             return event
           }
 
-          let body = event.body as ResponseBody
-          if (!body.body && !body.error) {
+          let responseBody = event.body as ResponseBody
+          if (!responseBody.body && !responseBody.error) {
             return event
           }
 
-          if (!body.success) {
-            this.errorService.logicError(body.error)
-            throw new Error(body.error);
+          if (!responseBody.success) {
+            this.errorService.logicError(responseBody.error)
+            throw new Error(responseBody.error);
           }
 
           let type = TypeUtils.get(req)
@@ -55,7 +55,7 @@ export class RestInterceptorService implements HttpInterceptor {
           }
 
           return event.clone({
-            body: plainToClass(type, body.body)
+            body: plainToClass(type, responseBody.body)
           })
 
         }),

@@ -12,6 +12,7 @@ import {TranslocoService} from "@ngneat/transloco";
 import {OverlayService} from "../../service/overlay.service";
 import {BrowserSettingsComponent} from "../browser-settings/browser-settings.component";
 import {OverlayCommand} from "../../model/overlay-command";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'browser',
@@ -33,6 +34,7 @@ export class BrowserComponent implements OnInit {
 
   constructor(
     private http: HttpClient,
+    private router: Router,
     private translocoService: TranslocoService,
     private overlayService: OverlayService
   ) {
@@ -63,6 +65,10 @@ export class BrowserComponent implements OnInit {
         this.http.post<any[]>(this.reference.api + '/', this.config)
           .subscribe(result => this.dataSource.setData(result))
       })
+  }
+
+  openEditor(id: number) {
+    this.router.navigate([this.reference.editor, id]).then()
   }
 
   allowedColumns(): string[] {

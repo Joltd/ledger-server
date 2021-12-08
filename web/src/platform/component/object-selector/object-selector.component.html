@@ -1,0 +1,11 @@
+<input matInput
+       #input
+       [matAutocomplete]="autocomplete"
+       [formControl]="control"
+       (focusin)="onFocusIn()"
+       (focusout)="onFocusOut()">
+<mat-autocomplete #autocomplete>
+  <mat-option *ngFor="let option of options | async"
+              [value]="option.id"
+              (onSelectionChange)="updateValue(option)">{{option.name}}</mat-option>
+</mat-autocomplete>

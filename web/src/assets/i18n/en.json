@@ -21,6 +21,7 @@
   "order.browser.amount":  "Amount",
   "order.browser.time": "Time",
   "order.browser.date":  "Date",
+  "order.browser.person": "Person",
   "order.browser.personId": "Person (ID)",
   "order.browser.personName": "Person"
 }

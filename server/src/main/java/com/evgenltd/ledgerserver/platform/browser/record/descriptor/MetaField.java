@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.browser.record.descriptor;
+package com.evgenltd.ledgerserver.platform.browser.record.descriptor;
 
 import java.util.List;
 

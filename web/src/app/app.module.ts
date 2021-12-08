@@ -13,14 +13,16 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSidenavModule} from "@angular/material/sidenav";
-import { OrderBrowserComponent } from './reference/order/browser/order-browser/order-browser.component';
+import { OrderBrowserComponent } from './reference/order/component/order-browser/order-browser.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
+import { OrderEditorComponent } from './reference/order/component/order-editor/order-editor.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    OrderBrowserComponent
+    OrderBrowserComponent,
+    OrderEditorComponent
   ],
     imports: [
         BrowserModule,

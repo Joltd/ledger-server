@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.browser.record.loadconfig;
+package com.evgenltd.ledgerserver.platform.browser.record.loadconfig;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;

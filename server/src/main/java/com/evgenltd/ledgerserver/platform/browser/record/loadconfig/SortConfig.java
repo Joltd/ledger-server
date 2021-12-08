@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.browser.record.loadconfig;
+package com.evgenltd.ledgerserver.platform.browser.record.loadconfig;
 
 import org.springframework.data.domain.Sort;
 
