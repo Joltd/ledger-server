@@ -1,15 +1,13 @@
 package com.evgenltd.ledgerserver.service;
 
-import com.evgenltd.ledgerserver.entity.Currency;
+import com.evgenltd.ledgerserver.reference.entity.Currency;
 import com.evgenltd.ledgerserver.entity.StockRate;
-import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
 import com.evgenltd.ledgerserver.repository.StockRateRepository;
-import com.evgenltd.ledgerserver.repository.TickerSymbolRepository;
+import com.evgenltd.ledgerserver.reference.repository.TickerSymbolRepository;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

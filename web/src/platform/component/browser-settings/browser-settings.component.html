@@ -2,7 +2,7 @@
 
   <mat-tab label="Columns">
     <mat-selection-list [(ngModel)]="columns">
-      <mat-list-option *ngFor="let field of descriptor?.dto?.fields || []" [value]="field.reference">{{ (this.reference.id + '.' + field.reference) | transloco }}</mat-list-option>
+      <mat-list-option *ngFor="let field of dtoModel?.fields || []" [value]="field.reference">{{ this.descriptor.fieldId(field.reference) | transloco }}</mat-list-option>
     </mat-selection-list>
   </mat-tab>
 

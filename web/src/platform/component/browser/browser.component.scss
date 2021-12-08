@@ -1,7 +1,13 @@
 :host {
   overflow: hidden;
-  display: grid;
+}
+
+mat-card {
+  overflow: hidden;
+  display: grid!important;
+  grid-template-rows: 1fr max-content;
   height: 100%;
+  box-sizing: border-box;
 }
 
 table {
@@ -19,4 +25,8 @@ table {
 
 .table-container {
   overflow-y: scroll;
+}
+
+.mat-paginator-container {
+  justify-content: flex-start!important;
 }

@@ -1,21 +1,28 @@
-<div class="table-container">
-  <table mat-table *ngIf="descriptor" [dataSource]="dataSource" matSort (matSortChange)="onSortChanged($event)">
+<mat-card>
+  <div class="table-container">
+    <table mat-table *ngIf="dtoModel" [dataSource]="dataSource" matSort (matSortChange)="onSortChanged($event)">
 
-    <ng-container *ngFor="let field of this.descriptor.dto.fields" [matColumnDef]="field.reference">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!field.sort">{{ this.reference.fieldId(field.reference) | transloco }}</th>
-      <td mat-cell *matCellDef="let element">{{ format(element[field.reference], field.type, field.format) }}</td>
-    </ng-container>
+      <ng-container *ngFor="let field of this.dtoModel.fields" [matColumnDef]="field.reference">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!field.sort">{{ this.descriptor.fieldId(field.reference) | transloco }}</th>
+        <td mat-cell *matCellDef="let element">{{ format(element[field.reference], field.type, field.format) }}</td>
+      </ng-container>
 
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef class="action-align"></th>
-      <td mat-cell *matCellDef="let element" class="action-align">
-        <button mat-button class="action" (click)="openEditor(element.id)"><mat-icon>edit</mat-icon></button>
-      </td>
-    </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef class="action-align"></th>
+        <td mat-cell *matCellDef="let element" class="action-align">
+          <button mat-button class="action" [matMenuTriggerFor]="more"><mat-icon>more_vert</mat-icon></button>
+          <mat-menu #more>
+            <button mat-menu-item (click)="edit(element.id)">Edit</button>
+            <button mat-menu-item (click)="remove(element.id)">Remove</button>
+          </mat-menu>
+        </td>
+      </ng-container>
 
-    <tr mat-header-row *matHeaderRowDef="allowedColumns(); sticky: true"></tr>
-    <tr mat-row *matRowDef="let row; columns: allowedColumns();"></tr>
+      <tr mat-header-row *matHeaderRowDef="allowedColumns(); sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: allowedColumns();"></tr>
 
-  </table>
-</div>
-<mat-paginator [length]="config.page.length" (page)="onPageChanged($event)"></mat-paginator>
+    </table>
+  </div>
+  <mat-paginator [length]="config.page.length" (page)="onPageChanged($event)"></mat-paginator>
+  <button mat-fab class="fab" (click)="add()"><mat-icon>add</mat-icon></button>
+</mat-card>

@@ -1,10 +1,10 @@
 package com.evgenltd.ledgerserver.service.brocker;
 
-import com.evgenltd.ledgerserver.ApplicationException;
+import com.evgenltd.ledgerserver.platform.ApplicationException;
 import com.evgenltd.ledgerserver.constants.Codes;
 import com.evgenltd.ledgerserver.constants.Settings;
-import com.evgenltd.ledgerserver.entity.Account;
-import com.evgenltd.ledgerserver.entity.ExpenseItem;
+import com.evgenltd.ledgerserver.reference.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.ExpenseItem;
 import com.evgenltd.ledgerserver.entity.JournalEntry;
 import com.evgenltd.ledgerserver.entity.TinkoffTariff;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;

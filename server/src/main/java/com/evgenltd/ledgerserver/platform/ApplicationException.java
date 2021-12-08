@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver;
+package com.evgenltd.ledgerserver.platform;
 
 public class ApplicationException extends RuntimeException {
 

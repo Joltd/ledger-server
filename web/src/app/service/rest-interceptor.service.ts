@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {
   HTTP_INTERCEPTORS,
   HttpEvent,
@@ -11,7 +11,6 @@ import {Observable, throwError} from "rxjs";
 import {catchError, map} from "rxjs/operators";
 import {ErrorService} from "./error.service";
 import {plainToClass} from "class-transformer";
-import {Descriptor} from "../../platform/model/descriptor";
 import {TypeUtils} from "../../core/type-utils";
 
 @Injectable({

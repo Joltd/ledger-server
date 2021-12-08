@@ -14,6 +14,17 @@
   "filter.expression.operator.IS_NULL": "Is Null",
   "filter.expression.operator.IS_NOT_NULL": "Is Not Null",
 
+  "account.entity.id": "Id",
+  "account.entity.name": "Name",
+  "expense.item.entity.id": "Id",
+  "expense.item.entity.name": "Name",
+  "income.item.entity.id": "Id",
+  "income.item.entity.name": "Name",
+  "person.entity.id": "Id",
+  "person.entity.name": "Name",
+  "ticker.symbol.entity.id": "Id",
+  "ticker.symbol.entity.name": "Name",
+
   "order.browser.id": "Id",
   "order.browser.name": "Name",
   "order.browser.enabled": "Enabled",

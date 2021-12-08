@@ -1,9 +1,10 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {Descriptor, MetaField} from "../../model/descriptor";
-import {Reference} from "../../model/reference";
+import {Descriptor, DtoModel, MetaField, MetaModel} from "../../model/descriptor";
 import {FilterExpression, FilterExpressionType, OperatorType} from "../../model/load-config";
 import {NestedTreeControl} from "@angular/cdk/tree";
 import {MatTreeNestedDataSource} from "@angular/material/tree";
+import {TypeUtils} from "../../../core/type-utils";
+import {HttpClient} from "@angular/common/http";
 
 @Component({
   selector: 'browser-settings',
@@ -13,9 +14,9 @@ import {MatTreeNestedDataSource} from "@angular/material/tree";
 })
 export class BrowserSettingsComponent implements OnInit {
 
-  reference!: Reference
-
   descriptor!: Descriptor
+  dtoModel!: DtoModel
+  metaModel!: MetaModel
   columns: string[] = []
 
   private filter: FilterExpression[] = []
@@ -26,17 +27,21 @@ export class BrowserSettingsComponent implements OnInit {
   types: FilterExpressionType[] = Object.values(FilterExpressionType)
   structureTypes: FilterExpressionType[] = this.types.filter(type => type != FilterExpressionType.STATEMENT)
 
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit(): void {}
 
-  setup(reference: Reference, descriptor: Descriptor, columns: string[], filterExpression?: FilterExpression) {
-    this.reference = reference
+  setup(descriptor: Descriptor, dtoModel: DtoModel, columns: string[], filterExpression?: FilterExpression) {
     this.descriptor = descriptor
+    this.dtoModel = dtoModel
     this.columns = columns
     this.filter = filterExpression ? [filterExpression] : []
-    this.updateFilterDataSource()
-    this.fields = this.extractFields(descriptor.meta.fields, '')
+    this.http.get<MetaModel>(this.descriptor.backend + '/descriptor/meta', TypeUtils.of(MetaModel))
+      .subscribe(result => {
+        this.metaModel = result
+        this.fields = this.extractFields(this.metaModel.fields, '')
+        this.updateFilterDataSource()
+      })
   }
 
   hasChild(index: number, node: FilterExpression) {

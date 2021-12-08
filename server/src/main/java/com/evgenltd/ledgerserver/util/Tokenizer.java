@@ -1,8 +1,5 @@
 package com.evgenltd.ledgerserver.util;
 
-import com.evgenltd.ledgerserver.ApplicationException;
-import com.evgenltd.ledgerserver.service.bot.BotState;
-
 import java.util.StringTokenizer;
 
 public class Tokenizer {

@@ -1,4 +1,4 @@
-import {ComponentRef, Injectable, Type} from '@angular/core';
+import {Injectable, Type} from '@angular/core';
 import {Observable, of} from "rxjs";
 import {OverlayCommand} from "../model/overlay-command";
 

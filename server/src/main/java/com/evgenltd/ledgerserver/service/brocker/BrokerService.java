@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.service.brocker;
 
-import com.evgenltd.ledgerserver.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.Account;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

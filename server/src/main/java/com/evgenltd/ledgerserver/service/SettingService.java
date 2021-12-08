@@ -4,9 +4,9 @@ import com.evgenltd.ledgerserver.builder.SettingInfoBuilder;
 import com.evgenltd.ledgerserver.record.SettingInfo;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
-import com.evgenltd.ledgerserver.repository.ExpenseItemRepository;
-import com.evgenltd.ledgerserver.repository.IncomeItemRepository;
-import com.evgenltd.ledgerserver.repository.PersonRepository;
+import com.evgenltd.ledgerserver.reference.repository.ExpenseItemRepository;
+import com.evgenltd.ledgerserver.reference.repository.IncomeItemRepository;
+import com.evgenltd.ledgerserver.reference.repository.PersonRepository;
 import com.evgenltd.ledgerserver.repository.SettingRepository;
 import org.springframework.stereotype.Service;
 
@@ -28,16 +28,16 @@ public class SettingService {
     ) {
         this.settingRepository = settingRepository;
 
-        add(SettingInfoBuilder.referenceSetting(Settings.BROKER, personRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.BROKER_COMMISSION_EXPENSE_ITEM, expenseItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_EXPENSE_ITEM, expenseItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_INCOME_ITEM, incomeItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_SALE_EXPENSE_ITEM, expenseItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_SALE_INCOME_ITEM, incomeItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_REASSESSMENT_EXPENSE_ITEM, expenseItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_REASSESSMENT_INCOME_ITEM, incomeItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_SALE_EXPENSE_ITEM, expenseItemRepository));
-        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_SALE_INCOME_ITEM, incomeItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.BROKER, personRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.BROKER_COMMISSION_EXPENSE_ITEM, expenseItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_EXPENSE_ITEM, expenseItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_REASSESSMENT_INCOME_ITEM, incomeItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_SALE_EXPENSE_ITEM, expenseItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.CURRENCY_SALE_INCOME_ITEM, incomeItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_REASSESSMENT_EXPENSE_ITEM, expenseItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_REASSESSMENT_INCOME_ITEM, incomeItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_SALE_EXPENSE_ITEM, expenseItemRepository));
+//        add(SettingInfoBuilder.referenceSetting(Settings.STOCK_SALE_INCOME_ITEM, incomeItemRepository));
     }
 
     private void add(final SettingInfo<?> settingInfo) {

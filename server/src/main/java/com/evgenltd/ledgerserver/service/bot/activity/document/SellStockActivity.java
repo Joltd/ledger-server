@@ -1,9 +1,9 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.entity.Account;
-import com.evgenltd.ledgerserver.entity.ExpenseItem;
-import com.evgenltd.ledgerserver.entity.IncomeItem;
-import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.reference.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.ExpenseItem;
+import com.evgenltd.ledgerserver.reference.entity.IncomeItem;
+import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
 import com.evgenltd.ledgerserver.record.StockBalance;
 import com.evgenltd.ledgerserver.service.JournalService;
 import com.evgenltd.ledgerserver.constants.Settings;

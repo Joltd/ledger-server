@@ -1,26 +1,20 @@
 package com.evgenltd.ledgerserver.service;
 
-import com.evgenltd.ledgerserver.ApplicationException;
-import com.evgenltd.ledgerserver.entity.TickerSymbol;
-import com.evgenltd.ledgerserver.repository.TickerSymbolRepository;
+import com.evgenltd.ledgerserver.platform.ApplicationException;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import javax.annotation.PostConstruct;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class MoexService implements StockExchangeService {

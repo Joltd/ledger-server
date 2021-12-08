@@ -1,10 +1,13 @@
 package com.evgenltd.ledgerserver.repository;
 
 import com.evgenltd.ledgerserver.entity.*;
+import com.evgenltd.ledgerserver.reference.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.Currency;
+import com.evgenltd.ledgerserver.reference.entity.ExpenseItem;
+import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 

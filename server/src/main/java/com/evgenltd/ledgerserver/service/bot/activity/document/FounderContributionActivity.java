@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.Account;
 import com.evgenltd.ledgerserver.util.Utils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

@@ -1,5 +1,7 @@
 package com.evgenltd.ledgerserver.entity;
 
+import com.evgenltd.ledgerserver.reference.entity.*;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

@@ -1,12 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Descriptor, FieldType} from "../../model/descriptor";
+import {Descriptor, DtoModel, FieldType} from "../../model/descriptor";
 import {TypeUtils} from "../../../core/type-utils";
-import {Reference} from "../../model/reference";
 import {CollectionViewer, DataSource} from "@angular/cdk/collections";
 import {BehaviorSubject, Observable} from "rxjs";
 import {PageEvent} from "@angular/material/paginator";
-import {FilterConfig, FilterExpression, FilterExpressionType, LoadConfig, OperatorType} from "../../model/load-config";
+import {LoadConfig} from "../../model/load-config";
 import {DatePipe, DecimalPipe} from "@angular/common";
 import {TranslocoService} from "@ngneat/transloco";
 import {OverlayService} from "../../service/overlay.service";
@@ -17,17 +16,18 @@ import {Router} from "@angular/router";
 @Component({
   selector: 'browser',
   templateUrl: './browser.component.html',
-  styleUrls: ['./browser.component.scss']
+  styleUrls: ['./browser.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class BrowserComponent implements OnInit {
 
   @Input()
-  reference!: Reference
+  descriptor!: Descriptor
 
   private decimalPipe: DecimalPipe
   private datePipe: DatePipe
 
-  descriptor!: Descriptor
+  dtoModel!: DtoModel
   dataSource: RemoteDateSource = new RemoteDateSource()
   config: LoadConfig = new LoadConfig()
   private columns: string[] = []
@@ -51,24 +51,33 @@ export class BrowserComponent implements OnInit {
   }
 
   private loadDescriptor() {
-    this.http.get<Descriptor>(this.reference.api + '/descriptor', TypeUtils.of(Descriptor))
+    this.http.get<DtoModel>(this.descriptor.backend + '/descriptor/dto', TypeUtils.of(DtoModel))
       .subscribe(result => {
-        this.descriptor = result
-        this.columns = this.descriptor.dto.fields.map(entry => entry.reference);
+        this.dtoModel = result
+        this.columns = this.dtoModel.fields.map(entry => entry.reference);
       })
   }
 
   private loadData() {
-    this.http.post<number>(this.reference.api + '/count', this.config)
+    this.http.post<number>(this.descriptor.backend + '/count', this.config)
       .subscribe(result => {
         this.config.page.length = result
-        this.http.post<any[]>(this.reference.api + '/', this.config)
+        this.http.post<any[]>(this.descriptor.backend + '/', this.config)
           .subscribe(result => this.dataSource.setData(result))
       })
   }
 
-  openEditor(id: number) {
-    this.router.navigate([this.reference.editor, id]).then()
+  add() {
+    this.router.navigate([this.descriptor.frontend + '/new']).then()
+  }
+
+  edit(id: number) {
+    this.router.navigate([this.descriptor.frontend + '/', id]).then()
+  }
+
+  remove(id: number) {
+    this.http.delete(this.descriptor.backend + '/' + id)
+      .subscribe(() => this.loadData())
   }
 
   allowedColumns(): string[] {
@@ -121,7 +130,7 @@ export class BrowserComponent implements OnInit {
     this.overlayService.openSide(BrowserSettingsComponent)
       .subscribe(component => {
         this.setupSettingsCommand(component)
-        component.setup(this.reference, this.descriptor, this.columns, this.config.filter.expression)
+        component.setup(this.descriptor, this.dtoModel, this.columns, this.config.filter.expression)
       })
   }
 

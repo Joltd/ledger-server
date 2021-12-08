@@ -1,8 +1,8 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.entity.Account;
-import com.evgenltd.ledgerserver.entity.Currency;
-import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.reference.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.Currency;
+import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
 import com.evgenltd.ledgerserver.record.StockBalance;
 import com.evgenltd.ledgerserver.service.JournalService;
 import org.springframework.beans.factory.BeanFactory;

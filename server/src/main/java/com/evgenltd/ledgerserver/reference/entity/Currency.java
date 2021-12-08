@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.entity;
+package com.evgenltd.ledgerserver.reference.entity;
 
 public enum Currency {
     RUB(""),

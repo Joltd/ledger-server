@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.controller;
+package com.evgenltd.ledgerserver.platform;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

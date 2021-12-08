@@ -2,15 +2,13 @@ package com.evgenltd.ledgerserver.service.bot;
 
 import com.evgenltd.ledgerserver.builder.ValueInfoBuilder;
 import com.evgenltd.ledgerserver.constants.Codes;
-import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
-import com.evgenltd.ledgerserver.entity.Currency;
-import com.evgenltd.ledgerserver.record.StockBalance;
+import com.evgenltd.ledgerserver.reference.entity.Currency;
 import com.evgenltd.ledgerserver.record.ValueInfo;
+import com.evgenltd.ledgerserver.reference.entity.*;
+import com.evgenltd.ledgerserver.reference.repository.*;
 import com.evgenltd.ledgerserver.repository.*;
-import com.evgenltd.ledgerserver.service.SettingService;
 import com.evgenltd.ledgerserver.util.Utils;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -166,27 +164,27 @@ public class DocumentComponent {
     }
 
     public void currencyField(final String field) {
-        primitiveField(field, value -> Utils.asEnumNoThrow(value, com.evgenltd.ledgerserver.entity.Currency.class), Enum::name, "USD,RUB");
+        primitiveField(field, value -> Utils.asEnumNoThrow(value, Currency.class), Enum::name, "USD,RUB");
     }
 
     public void accountField(final String field) {
-        referenceField(field, beanFactory.getBean(AccountRepository.class));
+//        referenceField(field, beanFactory.getBean(AccountRepository.class));
     }
 
     public void personField(final String field) {
-        referenceField(field, beanFactory.getBean(PersonRepository.class));
+//        referenceField(field, beanFactory.getBean(PersonRepository.class));
     }
 
     public void expenseItemField(final String field) {
-        referenceField(field, beanFactory.getBean(ExpenseItemRepository.class));
+//        referenceField(field, beanFactory.getBean(ExpenseItemRepository.class));
     }
 
     public void incomeItemField(final String field) {
-        referenceField(field, beanFactory.getBean(IncomeItemRepository.class));
+//        referenceField(field, beanFactory.getBean(IncomeItemRepository.class));
     }
 
     public void tickerField(final String field) {
-        referenceField(field, beanFactory.getBean(TickerSymbolRepository.class));
+//        referenceField(field, beanFactory.getBean(TickerSymbolRepository.class));
     }
 
     private  <T> void primitiveField(final String field, final Function<String, Optional<T>> fromString, final Function<T, String> toString, final String example) {
@@ -227,7 +225,7 @@ public class DocumentComponent {
             final LocalDateTime date,
             final BigDecimal amount,
             final Account account,
-            final com.evgenltd.ledgerserver.entity.Currency currency,
+            final Currency currency,
             final BigDecimal currencyRate,
             final BigDecimal currencyAmount
     ) {
@@ -242,7 +240,7 @@ public class DocumentComponent {
             final LocalDateTime date,
             final BigDecimal amount,
             final Account account,
-            final com.evgenltd.ledgerserver.entity.Currency currency,
+            final Currency currency,
             final BigDecimal currencyRate,
             final BigDecimal currencyAmount
     ) {
@@ -281,7 +279,7 @@ public class DocumentComponent {
             final TickerSymbol ticker,
             final BigDecimal price,
             final Long count,
-            final com.evgenltd.ledgerserver.entity.Currency currency,
+            final Currency currency,
             final BigDecimal currencyRate,
             final BigDecimal currencyAmount
     ) {

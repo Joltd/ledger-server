@@ -1,10 +1,19 @@
 import {Type} from "class-transformer";
 
 export class Descriptor {
-  @Type(() => DtoModel)
-  dto!: DtoModel
-  @Type(() => MetaModel)
-  meta!: MetaModel
+  readonly id: string
+  readonly backend: string
+  readonly frontend: string
+
+  constructor(id: string, backend: string, frontend: string) {
+    this.id = id;
+    this.backend = backend;
+    this.frontend = frontend;
+  }
+
+  fieldId(field: string) {
+    return this.id + '.' + field
+  }
 }
 
 export class DtoModel {

@@ -4,25 +4,25 @@
 
       <ng-container *ngFor="let field of model?.fields || []">
 
-        <mat-form-field *ngIf="field.type == 'STRING' || field.type == 'NUMBER'">
-          <mat-label>{{ this.reference.fieldId(field.reference) | transloco }}</mat-label>
+        <mat-form-field *ngIf="(field.type == 'STRING' || field.type == 'NUMBER') && field.reference != 'id'">
+          <mat-label>{{ this.descriptor.fieldId(field.reference) | transloco }}</mat-label>
           <input matInput [formControlName]="field.reference">
         </mat-form-field>
 
         <mat-form-field *ngIf="field.type == 'OBJECT'">
-          <mat-label>{{ this.reference.fieldId(field.reference) | transloco }}</mat-label>
+          <mat-label>{{ this.descriptor.fieldId(field.reference) | transloco }}</mat-label>
           <object-selector [api]="personApi()" [formControlName]="field.reference"></object-selector>
         </mat-form-field>
 
         <mat-form-field *ngIf="field.type == 'DATE'">
-          <mat-label>{{ this.reference.fieldId(field.reference) | transloco }}</mat-label>
+          <mat-label>{{ this.descriptor.fieldId(field.reference) | transloco }}</mat-label>
           <input matInput [matDatepicker]="date" [formControlName]="field.reference">
           <mat-datepicker-toggle matSuffix [for]="date"></mat-datepicker-toggle>
           <mat-datepicker #date></mat-datepicker>
         </mat-form-field>
 
         <mat-slide-toggle *ngIf="field.type == 'BOOLEAN'" [formControlName]="field.reference">
-          {{ this.reference.fieldId(field.reference) | transloco }}
+          {{ this.descriptor.fieldId(field.reference) | transloco }}
         </mat-slide-toggle>
 
       </ng-container>

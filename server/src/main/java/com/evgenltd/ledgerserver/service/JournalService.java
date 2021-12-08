@@ -1,10 +1,10 @@
 package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.constants.Codes;
-import com.evgenltd.ledgerserver.entity.Account;
-import com.evgenltd.ledgerserver.entity.Currency;
+import com.evgenltd.ledgerserver.reference.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.Currency;
 import com.evgenltd.ledgerserver.entity.JournalEntry;
-import com.evgenltd.ledgerserver.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
 import com.evgenltd.ledgerserver.record.StockBalance;
 import com.evgenltd.ledgerserver.repository.JournalEntryRepository;
 import org.jetbrains.annotations.NotNull;

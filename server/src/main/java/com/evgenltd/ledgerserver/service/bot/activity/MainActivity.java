@@ -1,6 +1,7 @@
 package com.evgenltd.ledgerserver.service.bot.activity;
 
 import com.evgenltd.ledgerserver.entity.*;
+import com.evgenltd.ledgerserver.reference.entity.*;
 import com.evgenltd.ledgerserver.util.Tokenizer;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;
@@ -30,31 +31,31 @@ public class MainActivity extends BotActivity {
     }
 
     private void reference(final Tokenizer tokenizer) {
-        final List<Class<? extends Reference>> refs = Arrays.asList(
-                Account.class,
-                ExpenseItem.class,
-                IncomeItem.class,
-                Person.class,
-                TickerSymbol.class
-        );
-
-        final String type = tokenizer.next();
-        refs.stream()
-                .filter(referenceType -> Utils.isSimilar(type, referenceType.getSimpleName()))
-                .findFirst()
-                .ifPresentOrElse(
-                        reference -> {
-                            final ReferenceActivity<Reference> referenceActivity = beanFactory.getBean(ReferenceActivity.class);
-                            referenceActivity.setupReference(reference.getSimpleName());
-                            activityNew(referenceActivity);
-                        },
-                        () -> {
-                            final String allowedReferenceTypes = refs.stream()
-                                    .map(c -> "- " + c.getSimpleName())
-                                    .collect(Collectors.joining("\n"));
-                            sendMessage("Allowed types: \n" + allowedReferenceTypes);
-                        }
-                );
+//        final List<Class<? extends Reference>> refs = Arrays.asList(
+//                Account.class,
+//                ExpenseItem.class,
+//                IncomeItem.class,
+//                Person.class,
+//                TickerSymbol.class
+//        );
+//
+//        final String type = tokenizer.next();
+//        refs.stream()
+//                .filter(referenceType -> Utils.isSimilar(type, referenceType.getSimpleName()))
+//                .findFirst()
+//                .ifPresentOrElse(
+//                        reference -> {
+//                            final ReferenceActivity<Reference> referenceActivity = beanFactory.getBean(ReferenceActivity.class);
+//                            referenceActivity.setupReference(reference.getSimpleName());
+//                            activityNew(referenceActivity);
+//                        },
+//                        () -> {
+//                            final String allowedReferenceTypes = refs.stream()
+//                                    .map(c -> "- " + c.getSimpleName())
+//                                    .collect(Collectors.joining("\n"));
+//                            sendMessage("Allowed types: \n" + allowedReferenceTypes);
+//                        }
+//                );
     }
 
     private void settings(final Tokenizer tokenizer) {

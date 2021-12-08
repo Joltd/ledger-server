@@ -1,12 +1,12 @@
 package com.evgenltd.ledgerserver.controller;
 
-import com.evgenltd.ledgerserver.ApplicationException;
-import com.evgenltd.ledgerserver.entity.Person;
+import com.evgenltd.ledgerserver.platform.ApplicationException;
+import com.evgenltd.ledgerserver.reference.entity.Person;
 import com.evgenltd.ledgerserver.platform.browser.record.descriptor.*;
 import com.evgenltd.ledgerserver.platform.browser.record.loadconfig.LoadConfig;
 import com.evgenltd.ledgerserver.entity.Order;
 import com.evgenltd.ledgerserver.repository.OrderRepository;
-import com.evgenltd.ledgerserver.repository.PersonRepository;
+import com.evgenltd.ledgerserver.reference.repository.PersonRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 

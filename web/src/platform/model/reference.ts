@@ -1,5 +1,3 @@
-import {MetaField} from "./descriptor";
-
 export class Reference {
   id: string
   api: string

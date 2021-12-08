@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.aspect;
+package com.evgenltd.ledgerserver.platform.aspect;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

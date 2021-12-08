@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.repository;
 
-import com.evgenltd.ledgerserver.entity.Account;
+import com.evgenltd.ledgerserver.reference.entity.Account;
 import com.evgenltd.ledgerserver.entity.TinkoffTariff;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

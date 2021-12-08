@@ -1,8 +1,8 @@
-import {Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild} from '@angular/core';
-import {ControlValueAccessor, FormControl, NG_VALUE_ACCESSOR, NgControl} from "@angular/forms";
+import {Component, ElementRef, HostBinding, Input, OnDestroy, Optional, Self, ViewChild} from '@angular/core';
+import {ControlValueAccessor, FormControl, NgControl} from "@angular/forms";
 import {Observable, Subject} from "rxjs";
 import {Reference} from "../../model/entity";
-import {debounce, debounceTime, distinctUntilChanged, retry, startWith, switchMap} from "rxjs/operators";
+import {debounceTime, distinctUntilChanged, startWith, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import {TypeUtils} from "../../../core/type-utils";
 import {MatFormFieldControl} from "@angular/material/form-field";

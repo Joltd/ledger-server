@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Reference} from "../../../../../platform/model/reference";
 import {environment} from "../../../../../environments/environment";
+import {Descriptor} from "../../../../../platform/model/descriptor";
 
 @Component({
   selector: 'order-editor',
@@ -9,7 +10,7 @@ import {environment} from "../../../../../environments/environment";
 })
 export class OrderEditorComponent implements OnInit {
 
-  reference: Reference = new Reference('order.browser', environment.api + '/order', '/order/')
+  descriptor: Descriptor = new Descriptor('order.browser', environment.api + '/order', '/order')
 
   constructor() {}
 
