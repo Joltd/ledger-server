@@ -1,4 +1,4 @@
-package com.evgenltd.ledgerserver.entity;
+package com.evgenltd.ledgerserver.document.entity;
 
 import com.evgenltd.ledgerserver.reference.entity.*;
 

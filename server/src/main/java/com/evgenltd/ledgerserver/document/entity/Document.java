@@ -1,67 +1,30 @@
-package com.evgenltd.ledgerserver.entity;
-
+package com.evgenltd.ledgerserver.document.entity;
 
 import com.evgenltd.ledgerserver.service.bot.activity.document.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "documents")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
 public class Document {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private LocalDateTime date;
-
     @Enumerated(EnumType.STRING)
     private Type type;
-
     private String content;
-
     private String comment;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(final LocalDateTime date) {
-        this.date = date;
-    }
-
-    public Type getType() {
-        return type;
-    }
-
-    public void setType(final Type type) {
-        this.type = type;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(final String content) {
-        this.content = content;
-    }
-
-    public String getComment() {
-        return comment;
-    }
-
-    public void setComment(final String comment) {
-        this.comment = comment;
-    }
 
     public enum Type {
         TRANSFER(TransferActivity.class),

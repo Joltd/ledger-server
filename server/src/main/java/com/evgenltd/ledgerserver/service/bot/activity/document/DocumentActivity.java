@@ -1,8 +1,8 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
+import com.evgenltd.ledgerserver.document.entity.Document;
 import com.evgenltd.ledgerserver.service.bot.DocumentComponent;
 import com.evgenltd.ledgerserver.util.Tokenizer;
-import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.record.ValueInfo;
 import com.evgenltd.ledgerserver.service.bot.BotState;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;

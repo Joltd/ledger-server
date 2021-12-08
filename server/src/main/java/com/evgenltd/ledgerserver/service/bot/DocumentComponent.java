@@ -2,12 +2,14 @@ package com.evgenltd.ledgerserver.service.bot;
 
 import com.evgenltd.ledgerserver.builder.ValueInfoBuilder;
 import com.evgenltd.ledgerserver.constants.Codes;
+import com.evgenltd.ledgerserver.document.entity.Document;
+import com.evgenltd.ledgerserver.document.entity.JournalEntry;
+import com.evgenltd.ledgerserver.document.repository.DocumentRepository;
+import com.evgenltd.ledgerserver.document.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.reference.entity.Currency;
 import com.evgenltd.ledgerserver.record.ValueInfo;
 import com.evgenltd.ledgerserver.reference.entity.*;
-import com.evgenltd.ledgerserver.reference.repository.*;
-import com.evgenltd.ledgerserver.repository.*;
 import com.evgenltd.ledgerserver.util.Utils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
