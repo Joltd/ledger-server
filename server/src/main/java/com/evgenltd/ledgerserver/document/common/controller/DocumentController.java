@@ -1,26 +1,33 @@
-package com.evgenltd.ledgerserver.document.controller;
+package com.evgenltd.ledgerserver.document.common.controller;
 
-import com.evgenltd.ledgerserver.document.entity.Document;
-import com.evgenltd.ledgerserver.document.repository.DocumentRepository;
-import com.evgenltd.ledgerserver.document.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.document.common.record.DocumentRecord;
+import com.evgenltd.ledgerserver.document.common.repository.DocumentRepository;
+import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.document.common.service.DocumentService;
 import com.evgenltd.ledgerserver.platform.browser.record.descriptor.*;
 import com.evgenltd.ledgerserver.platform.browser.record.loadconfig.LoadConfig;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/document")
 public class DocumentController {
 
+    private final DocumentService documentService;
     private final DocumentRepository documentRepository;
     private final JournalEntryRepository journalEntryRepository;
 
     public DocumentController(
+            final DocumentService documentService,
             final DocumentRepository documentRepository,
             final JournalEntryRepository journalEntryRepository
     ) {
+        this.documentService = documentService;
         this.documentRepository = documentRepository;
         this.journalEntryRepository = journalEntryRepository;
     }
@@ -51,11 +58,23 @@ public class DocumentController {
     }
 
     @PostMapping("/")
-    public List<Document> load(@RequestBody final LoadConfig loadConfig) {
+    public List<DocumentRecord> load(@RequestBody final LoadConfig loadConfig) {
         return documentRepository.findAll(
                 loadConfig.toSpecification(),
                 loadConfig.toPageRequest()
-        ).toList();
+        ).stream()
+                .map(document -> new DocumentRecord(document.getId(), document.getDate(), document.getType(), document.getComment()))
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{id}")
+    public JsonNode byId(@PathVariable("id") final Long id) {
+        return documentService.byId(id);
+    }
+
+    @PostMapping
+    public void update(@RequestBody final ObjectNode document) {
+        documentService.update(document);
     }
 
     @DeleteMapping("/{id}")

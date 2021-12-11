@@ -1,10 +1,7 @@
-package com.evgenltd.ledgerserver.document.entity;
+package com.evgenltd.ledgerserver.document.common.entity;
 
 import com.evgenltd.ledgerserver.service.bot.activity.document.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -15,6 +12,7 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Document {
 
     @Id

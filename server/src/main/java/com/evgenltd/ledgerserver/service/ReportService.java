@@ -1,10 +1,10 @@
 package com.evgenltd.ledgerserver.service;
 
-import com.evgenltd.ledgerserver.document.entity.JournalEntry;
+import com.evgenltd.ledgerserver.document.common.entity.JournalEntry;
 import com.evgenltd.ledgerserver.record.CodeCard;
 import com.evgenltd.ledgerserver.record.CodeCardEntry;
 import com.evgenltd.ledgerserver.record.Turnover;
-import com.evgenltd.ledgerserver.document.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.util.Utils;
 import org.springframework.stereotype.Service;
 

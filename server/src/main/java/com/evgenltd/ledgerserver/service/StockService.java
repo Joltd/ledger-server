@@ -2,14 +2,14 @@ package com.evgenltd.ledgerserver.service;
 
 import com.evgenltd.ledgerserver.constants.Codes;
 import com.evgenltd.ledgerserver.constants.Settings;
-import com.evgenltd.ledgerserver.document.entity.Document;
-import com.evgenltd.ledgerserver.document.entity.JournalEntry;
+import com.evgenltd.ledgerserver.document.common.entity.Document;
+import com.evgenltd.ledgerserver.document.common.entity.JournalEntry;
 import com.evgenltd.ledgerserver.reference.entity.Currency;
 import com.evgenltd.ledgerserver.entity.*;
 import com.evgenltd.ledgerserver.reference.entity.Account;
 import com.evgenltd.ledgerserver.reference.entity.ExpenseItem;
 import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
-import com.evgenltd.ledgerserver.document.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellCurrencyStockActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.SellStockActivity;

@@ -3,10 +3,10 @@ package com.evgenltd.ledgerserver.service;
 import com.evgenltd.ledgerserver.constants.Codes;
 import com.evgenltd.ledgerserver.reference.entity.Account;
 import com.evgenltd.ledgerserver.reference.entity.Currency;
-import com.evgenltd.ledgerserver.document.entity.JournalEntry;
+import com.evgenltd.ledgerserver.document.common.entity.JournalEntry;
 import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
 import com.evgenltd.ledgerserver.record.StockBalance;
-import com.evgenltd.ledgerserver.document.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 

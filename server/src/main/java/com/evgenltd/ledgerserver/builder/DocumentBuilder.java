@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.builder;
 
-import com.evgenltd.ledgerserver.document.entity.Document;
+import com.evgenltd.ledgerserver.document.common.entity.Document;
 
 import java.time.LocalDateTime;
 
