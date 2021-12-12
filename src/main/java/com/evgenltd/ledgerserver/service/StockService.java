@@ -145,6 +145,7 @@ public class StockService {
                 ))
                 .values()
                 .stream()
+                .filter(analysis -> analysis.getTicker() == null || analysis.getCount() > 0)
                 .peek(analysis -> {
 
                     final TickerSymbol ticker = analysis.getTicker();
@@ -295,7 +296,9 @@ public class StockService {
                 ))
                 .forEach((key, twr) -> {
                     final Analysis analysis = portfolio.get(key);
-                    analysis.setTimeWeightedAmount(twr);
+                    if (analysis != null) {
+                        analysis.setTimeWeightedAmount(twr);
+                    }
                 });
         total.setTimeWeightedAmount(
                 entries.stream()
@@ -345,8 +348,12 @@ public class StockService {
                         Collectors.reducing(BigDecimal.ZERO, JournalEntry::amount, BigDecimal::add)
                 )).forEach((key, income) -> {
                     final Analysis analysis = portfolio.get(key);
-                    analysis.setIncome(income.negate());
-                    analysis.setProfitability(income.negate().divide(analysis.getTimeWeightedAmount(), RoundingMode.HALF_DOWN).multiply(new BigDecimal(100)));
+                    if (analysis != null) {
+                        analysis.setIncome(income.negate());
+                        analysis.setProfitability(income.negate()
+                                .divide(analysis.getTimeWeightedAmount(), RoundingMode.HALF_DOWN)
+                                .multiply(new BigDecimal(100)));
+                    }
                 });
         total.setIncome(
                 entries.stream()
@@ -365,7 +372,12 @@ public class StockService {
                         this::byStock,
                         Collectors.reducing(BigDecimal.ZERO, JournalEntry::amount, BigDecimal::add)
                 ))
-                .forEach((key, commissionAmount) -> portfolio.get(key).setCommission(commissionAmount));
+                .forEach((key, commissionAmount) -> {
+                    final Analysis analysis = portfolio.get(key);
+                    if (analysis != null) {
+                        analysis.setCommission(commissionAmount);
+                    }
+                });
         total.setCommission(
                 entries.stream()
                         .filter(entry -> Objects.equals(entry.getExpenseItem().getId(), commission.getId()))

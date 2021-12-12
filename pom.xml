@@ -11,7 +11,9 @@
     <packaging>war</packaging>
 
     <properties>
-        <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <spring-boot.version>2.6.0</spring-boot.version>
         <mysql.version>8.0.21</mysql.version>
         <flyway.version>6.5.3</flyway.version>
         <telegram-bot-api.version>5.0.1</telegram-bot-api.version>
@@ -53,8 +55,7 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <release>14</release>
-                    <compilerArgs>--enable-preview</compilerArgs>
+                    <release>17</release>
                 </configuration>
             </plugin>
             <plugin>
