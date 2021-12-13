@@ -3,8 +3,8 @@
     <table mat-table *ngIf="dtoModel" [dataSource]="dataSource" matSort (matSortChange)="onSortChanged($event)">
 
       <ng-container *ngFor="let field of this.dtoModel.fields" [matColumnDef]="field.reference">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!field.sort">{{ this.descriptor.fieldId(field.reference) | transloco }}</th>
-        <td mat-cell *matCellDef="let element">{{ format(element[field.reference], field.type, field.format) }}</td>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header [disabled]="!field.sort">{{ this.descriptor.localizationKey(field.reference) | transloco }}</th>
+        <td mat-cell *matCellDef="let element">{{ format(element[field.reference], field) }}</td>
       </ng-container>
 
       <ng-container matColumnDef="action">
@@ -12,7 +12,7 @@
         <td mat-cell *matCellDef="let element" class="action-align">
           <button mat-button class="action" [matMenuTriggerFor]="more"><mat-icon>more_vert</mat-icon></button>
           <mat-menu #more>
-            <button mat-menu-item (click)="edit(element.id)">Edit</button>
+            <button mat-menu-item (click)="edit(element)">Edit</button>
             <button mat-menu-item (click)="remove(element.id)">Remove</button>
           </mat-menu>
         </td>

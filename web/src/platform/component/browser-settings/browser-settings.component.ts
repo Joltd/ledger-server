@@ -1,5 +1,5 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {Descriptor, DtoModel, MetaField, MetaModel} from "../../model/descriptor";
+import {BrowserDescriptor, DtoModel, MetaField, MetaModel} from "../../model/descriptor";
 import {FilterExpression, FilterExpressionType, OperatorType} from "../../model/load-config";
 import {NestedTreeControl} from "@angular/cdk/tree";
 import {MatTreeNestedDataSource} from "@angular/material/tree";
@@ -14,7 +14,7 @@ import {HttpClient} from "@angular/common/http";
 })
 export class BrowserSettingsComponent implements OnInit {
 
-  descriptor!: Descriptor
+  descriptor!: BrowserDescriptor
   dtoModel!: DtoModel
   metaModel!: MetaModel
   columns: string[] = []
@@ -31,12 +31,12 @@ export class BrowserSettingsComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  setup(descriptor: Descriptor, dtoModel: DtoModel, columns: string[], filterExpression?: FilterExpression) {
+  setup(descriptor: BrowserDescriptor, dtoModel: DtoModel, columns: string[], filterExpression?: FilterExpression) {
     this.descriptor = descriptor
     this.dtoModel = dtoModel
     this.columns = columns
     this.filter = filterExpression ? [filterExpression] : []
-    this.http.get<MetaModel>(this.descriptor.backend + '/descriptor/meta', TypeUtils.of(MetaModel))
+    this.http.get<MetaModel>(this.descriptor.metModel(), TypeUtils.of(MetaModel))
       .subscribe(result => {
         this.metaModel = result
         this.fields = this.extractFields(this.metaModel.fields, '')

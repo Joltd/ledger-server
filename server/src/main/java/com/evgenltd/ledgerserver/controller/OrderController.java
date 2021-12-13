@@ -37,15 +37,15 @@ public class OrderController {
     public Descriptor descriptor() {
         return new Descriptor(
                 new DtoModel(Arrays.asList(
-                        new DtoField("id", false, FieldType.NUMBER, null),
-                        new DtoField("name", true, FieldType.STRING, null),
-                        new DtoField("enabled", true, FieldType.BOOLEAN, null),
-                        new DtoField("length", true, FieldType.NUMBER, "5.1-2"),
-                        new DtoField("amount", true, FieldType.NUMBER, "8.4-4"),
-                        new DtoField("time", true, FieldType.DATE, "yy MMMM dd h:mm"),
-                        new DtoField("date", true, FieldType.DATE, "MMMM dd"),
-                        new DtoField("personId", true, FieldType.NUMBER, null),
-                        new DtoField("personName", true, FieldType.STRING, null)
+                        DtoField.builder().reference("id").type(FieldType.NUMBER).build(),
+                        DtoField.builder().reference("name").sort(true).type(FieldType.STRING).build(),
+                        DtoField.builder().reference("enabled").sort(true).type(FieldType.BOOLEAN).build(),
+                        DtoField.builder().reference("length").sort(true).type(FieldType.NUMBER).format("5.1-2").build(),
+                        DtoField.builder().reference("amount").sort(true).type(FieldType.NUMBER).format("8.4-4").build(),
+                        DtoField.builder().reference("time").sort(true).type(FieldType.DATE).format("yy MMMM dd h:mm").build(),
+                        DtoField.builder().reference("date").sort(true).type(FieldType.DATE).format("MMMM dd").build(),
+                        DtoField.builder().reference("personId").sort(true).type(FieldType.NUMBER).build(),
+                        DtoField.builder().reference("personName").sort(true).type(FieldType.STRING).build()
                 )),
                 meta()
         );
@@ -54,17 +54,17 @@ public class OrderController {
     @GetMapping("/descriptor/meta")
     public MetaModel meta() {
         return new MetaModel(Arrays.asList(
-                new MetaField("id", FieldType.NUMBER, null),
-                new MetaField("name", FieldType.STRING, null),
-                new MetaField("enabled", FieldType.BOOLEAN, null),
-                new MetaField("length", FieldType.NUMBER, null),
-                new MetaField("amount", FieldType.NUMBER, null),
-                new MetaField("time", FieldType.DATE, null),
-                new MetaField("date", FieldType.DATE, null),
-                new MetaField("person", FieldType.OBJECT, Arrays.asList(
-                        new MetaField("id", FieldType.NUMBER, null),
-                        new MetaField("name", FieldType.STRING, null)
-                ))
+//                new MetaField("id", FieldType.NUMBER, null),
+//                new MetaField("name", FieldType.STRING, null),
+//                new MetaField("enabled", FieldType.BOOLEAN, null),
+//                new MetaField("length", FieldType.NUMBER, null),
+//                new MetaField("amount", FieldType.NUMBER, null),
+//                new MetaField("time", FieldType.DATE, null),
+//                new MetaField("date", FieldType.DATE, null),
+//                new MetaField("person", FieldType.OBJECT, Arrays.asList(
+//                        new MetaField("id", FieldType.NUMBER, null),
+//                        new MetaField("name", FieldType.STRING, null)
+//                ))
         ));
     }
 

@@ -25,14 +25,21 @@
   "ticker.symbol.entity.id": "Id",
   "ticker.symbol.entity.name": "Name",
 
-  "order.browser.id": "Id",
-  "order.browser.name": "Name",
-  "order.browser.enabled": "Enabled",
-  "order.browser.length": "Length",
-  "order.browser.amount":  "Amount",
-  "order.browser.time": "Time",
-  "order.browser.date":  "Date",
-  "order.browser.person": "Person",
-  "order.browser.personId": "Person (ID)",
-  "order.browser.personName": "Person"
+  "document.entity.id": "Id",
+  "document.entity.date": "Date",
+  "document.entity.type": "Type",
+  "document.entity.comment": "Comment",
+  "document.entity.amount": "Amount",
+  "document.entity.account": "Account",
+  "document.entity.from": "From",
+  "document.entity.to": "To",
+
+  "document.type.TRANSFER": "Transfer",
+  "document.type.FOUNDER_CONTRIBUTION": "Founder Contribution",
+  "document.type.BUY_CURRENCY": "Buy Currency",
+  "document.type.SELL_CURRENCY": "Sell Currency",
+  "document.type.BUY_STOCK": "Buy Stock",
+  "document.type.SELLS_STOCK": "Sells Stock",
+  "document.type.BUY_CURRENCY_STOCK": "Buy Currency Stock",
+  "document.type.SELL_CURRENCY_STOCK": "Sell Currency Stock"
 }

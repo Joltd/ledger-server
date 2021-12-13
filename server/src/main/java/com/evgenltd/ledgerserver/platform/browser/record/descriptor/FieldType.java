@@ -5,5 +5,6 @@ public enum FieldType {
     NUMBER,
     DATE,
     BOOLEAN,
-    OBJECT
+    OBJECT,
+    ENUM
 }

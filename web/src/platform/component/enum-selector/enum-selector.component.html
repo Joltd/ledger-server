@@ -6,6 +6,6 @@
        (focusout)="onFocusOut()">
 <mat-autocomplete #autocomplete>
   <mat-option *ngFor="let option of options"
-              [value]="option.id"
-              (onSelectionChange)="updateValue(option)">{{option.name}}</mat-option>
+              [value]="option"
+              (onSelectionChange)="updateValue(option)">{{ this.localizationKey + option | transloco}}</mat-option>
 </mat-autocomplete>

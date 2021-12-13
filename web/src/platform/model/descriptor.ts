@@ -1,19 +1,38 @@
 import {Type} from "class-transformer";
 
 export class Descriptor {
-  readonly id: string
+  readonly localizationKey: string
   readonly backend: string
   readonly frontend: string
 
-  constructor(id: string, backend: string, frontend: string) {
-    this.id = id;
+  constructor(localizationKey: string, backend: string, frontend: string) {
+    this.localizationKey = localizationKey;
     this.backend = backend;
     this.frontend = frontend;
   }
 
   fieldId(field: string) {
-    return this.id + '.' + field
+    return this.localizationKey + '.' + field
   }
+}
+
+export interface BrowserDescriptor {
+  dtoModel(): string
+  metModel(): string
+  count(): string
+  create(): string
+  read(): string
+  update(entity: any): string
+  delete(id: number): string
+  localizationKey(field: string): string
+}
+
+export interface EditorDescriptor {
+  metaModel(): string
+  read(id: number): string
+  update(): string
+  backTo(): string
+  localizationKey(field: string): string
 }
 
 export class DtoModel {
@@ -26,6 +45,7 @@ export class DtoField {
   sort: boolean = false
   type!: FieldType
   format: string = ''
+  localizationKey: string = ''
 }
 
 export class MetaModel {
@@ -38,6 +58,8 @@ export class MetaField {
   type!: FieldType
   @Type(() => MetaField)
   fields: MetaField[] = []
+  api!: string
+  localizationKey: string = ''
 }
 
-export type FieldType = 'STRING' | 'NUMBER' | 'DATE' | 'BOOLEAN' | 'OBJECT'
+export type FieldType = 'STRING' | 'NUMBER' | 'DATE' | 'BOOLEAN' | 'OBJECT' | 'ENUM'

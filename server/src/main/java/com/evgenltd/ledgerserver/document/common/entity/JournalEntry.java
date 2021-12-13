@@ -54,43 +54,36 @@ public class JournalEntry {
     private ProductType productType;
     private Integer position;
 
-    public static class JournalEntryBuilder {
-        public JournalEntryBuilder accountId(Long id) {
-            final Account account = new Account();
-            account.setId(id);
-            this.account = account;
-            return this;
-        }
-
-        public JournalEntryBuilder personId(Long id) {
-            final Person person = new Person();
-            person.setId(id);
-            this.person = person;
-            return this;
-        }
-
-        public JournalEntryBuilder expenseItemId(Long id) {
-            final ExpenseItem expenseItem = new ExpenseItem();
-            expenseItem.setId(id);
-            this.expenseItem = expenseItem;
-            return this;
-        }
-
-        public JournalEntryBuilder incomeItemId(Long id) {
-            final IncomeItem incomeItem = new IncomeItem();
-            incomeItem.setId(id);
-            this.incomeItem = incomeItem;
-            return this;
-        }
-
-        public JournalEntryBuilder tickerSymbolId(Long id) {
-            final TickerSymbol tickerSymbol = new TickerSymbol();
-            tickerSymbol.setId(id);
-            this.tickerSymbol = tickerSymbol;
-            return this;
-        }
-
+    public void setAccountId(Long id) {
+        final Account account = new Account();
+        account.setId(id);
+        setAccount(account);
     }
+
+    public void setPersonId(Long id) {
+        final Person person = new Person();
+        person.setId(id);
+        setPerson(person);
+    }
+
+    public void setExpenseItemId(Long id) {
+        final ExpenseItem expenseItem = new ExpenseItem();
+        expenseItem.setId(id);
+        setExpenseItem(expenseItem);
+    }
+
+    public void setIncomeItemId(Long id) {
+        final IncomeItem incomeItem = new IncomeItem();
+        incomeItem.setId(id);
+        setIncomeItem(incomeItem);
+    }
+
+    public void setTickerSymbolId(Long id) {
+        final TickerSymbol tickerSymbol = new TickerSymbol();
+        tickerSymbol.setId(id);
+        setTickerSymbol(tickerSymbol);
+    }
+
 
     public BigDecimal amount() {
         return switch (type) {

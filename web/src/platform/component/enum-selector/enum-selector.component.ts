@@ -1,41 +1,38 @@
-import {Component, ElementRef, HostBinding, Input, OnDestroy, Optional, Self, ViewChild} from '@angular/core';
-import {ControlValueAccessor, FormControl, NgControl} from "@angular/forms";
-import {Observable, Subject} from "rxjs";
-import {Reference} from "../../model/entity";
-import {debounceTime, distinctUntilChanged, map, startWith, switchMap, tap} from "rxjs/operators";
-import {HttpClient} from "@angular/common/http";
-import {TypeUtils} from "../../../core/type-utils";
+import {Component, ElementRef, HostBinding, Input, OnDestroy, OnInit, Optional, Self, ViewChild} from '@angular/core';
 import {MatFormFieldControl} from "@angular/material/form-field";
+import {ControlValueAccessor, FormControl, NgControl} from "@angular/forms";
+import {Reference} from "../../model/entity";
+import {Observable, Subject} from "rxjs";
+import {HttpClient} from "@angular/common/http";
+import {debounceTime, startWith, switchMap} from "rxjs/operators";
 import {coerceBooleanProperty} from "@angular/cdk/coercion";
 import {environment} from "../../../environments/environment";
+import {TypeUtils} from "../../../core/type-utils";
 
 @Component({
-  selector: 'object-selector',
-  templateUrl: './object-selector.component.html',
-  styleUrls: ['./object-selector.component.scss'],
-  providers: [{provide: MatFormFieldControl, useExisting: ObjectSelectorComponent}],
-  host: {
-    '[class.example-floating]': 'shouldLabelFloat',
-    '[id]': 'id',
-  }
+  selector: 'enum-selector',
+  templateUrl: './enum-selector.component.html',
+  styleUrls: ['./enum-selector.component.scss']
 })
-export class ObjectSelectorComponent implements MatFormFieldControl<number>,ControlValueAccessor,OnDestroy {
+export class EnumSelectorComponent implements MatFormFieldControl<string>,ControlValueAccessor,OnDestroy {
 
   private static nextId: number = 0
 
   @Input()
   api!: string
+  @Input()
+  localizationKey: string = ''
   @ViewChild('input')
   input!: ElementRef
   @Input('aria-describedby')
   userAriaDescribedBy!: string
 
   control: FormControl = new FormControl()
-  options: Reference[] = []
+  options: string[] = []
   optionsTrigger: Subject<string> = new Subject<string>()
-  private _value: number | null = null
+  private _value: string | null = null
   stateChanges: Subject<void> = new Subject<void>()
-  id: string = `object-selector-${ObjectSelectorComponent.nextId++}`
+  id: string = `object-selector-${EnumSelectorComponent.nextId++}`
   private _placeholder: string = ''
   focused: boolean = false
   touched: boolean = false
@@ -65,10 +62,10 @@ export class ObjectSelectorComponent implements MatFormFieldControl<number>,Cont
       .subscribe(result => this.options = result)
   }
 
-  get value(): number | null {
+  get value(): string | null {
     return this._value
   }
-  set value(value: number | null) {
+  set value(value: string | null) {
     if (!value) {
       this._value = null
     } else {
@@ -143,11 +140,11 @@ export class ObjectSelectorComponent implements MatFormFieldControl<number>,Cont
     this.disabled = disabled
   }
 
-  writeValue(obj: number | null): void {
+  writeValue(obj: string | null): void {
     this.value = obj
     if (obj) {
-      let reference = this.options.find(option => option.id == obj);
-      this.control.setValue(reference?.name)
+      let reference = this.options.find(option => option == obj);
+      this.control.setValue(reference || '')
     } else {
       this.control.setValue('')
     }
@@ -169,14 +166,14 @@ export class ObjectSelectorComponent implements MatFormFieldControl<number>,Cont
     }
   }
 
-  private loadByFilter(filter: string): Observable<Reference[]> {
-    return this.http.get<Reference[]>(environment.api + this.api + '?filter=' + filter, TypeUtils.of(Reference))
+  private loadByFilter(filter: string): Observable<string[]> {
+    return this.http.get<string[]>(environment.api + this.api + '?filter=' + filter)
   }
 
-  updateValue(value: Reference) {
-    this.value = value.id
-    this.control.setValue(value.name)
-    this.onChange(value.id)
+  updateValue(value: string) {
+    this.value = value
+    this.control.setValue(value)
+    this.onChange(value)
   }
 
 }

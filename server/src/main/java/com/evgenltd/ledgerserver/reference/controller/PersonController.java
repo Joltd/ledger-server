@@ -7,10 +7,13 @@ import com.evgenltd.ledgerserver.reference.entity.Account;
 import com.evgenltd.ledgerserver.reference.entity.Person;
 import com.evgenltd.ledgerserver.reference.repository.AccountRepository;
 import com.evgenltd.ledgerserver.reference.repository.PersonRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.ws.rs.QueryParam;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/reference/person")
@@ -25,16 +28,16 @@ public class PersonController {
     @GetMapping("/descriptor/dto")
     public DtoModel dto() {
         return new DtoModel(Arrays.asList(
-                new DtoField("id", false, FieldType.NUMBER, null),
-                new DtoField("name", false, FieldType.STRING, null)
+                DtoField.builder().reference("id").type(FieldType.NUMBER).build(),
+                DtoField.builder().reference("name").type(FieldType.STRING).build()
         ));
     }
 
     @GetMapping("/descriptor/meta")
     public MetaModel meta() {
         return new MetaModel(Arrays.asList(
-                new MetaField("id", FieldType.NUMBER, null),
-                new MetaField("name", FieldType.NUMBER, null)
+                MetaField.builder().reference("id").type(FieldType.NUMBER).build(),
+                MetaField.builder().reference("name").type(FieldType.NUMBER).build()
         ));
     }
 
@@ -49,6 +52,14 @@ public class PersonController {
                 loadConfig.toSpecification(),
                 loadConfig.toPageRequest()
         ).toList();
+    }
+
+    @GetMapping("/")
+    public List<Person> filter(@QueryParam("filter") final String filter) {
+        return personRepository.findAll()
+                .stream()
+                .filter(person -> StringUtils.isBlank(filter) || person.getName().contains(filter))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")

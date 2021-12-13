@@ -3,7 +3,7 @@ import {HttpClient} from "@angular/common/http";
 import {OverlayService} from "../../service/overlay.service";
 import {OverlayCommand} from "../../model/overlay-command";
 import {ActivatedRoute, Router} from "@angular/router";
-import {Descriptor, MetaModel} from "../../model/descriptor";
+import {EditorDescriptor, MetaModel} from "../../model/descriptor";
 import {TypeUtils} from "../../../core/type-utils";
 import {BreakpointObserver, Breakpoints} from "@angular/cdk/layout";
 import {FormBuilder, FormGroup} from "@angular/forms";
@@ -18,7 +18,7 @@ import {Observable} from "rxjs";
 export class EditorComponent implements OnInit {
 
   @Input()
-  descriptor!: Descriptor
+  descriptor!: EditorDescriptor
   private id!: number
   model!: MetaModel
   form: FormGroup = new FormGroup({})
@@ -30,14 +30,13 @@ export class EditorComponent implements OnInit {
     private formBuilder: FormBuilder,
     private overlayService: OverlayService,
     private breakpointObserver: BreakpointObserver
-  ) {
-    this.setupCommands()
-  }
+  ) {}
 
   ngOnInit(): void {
     this.loadDescriptor()
       .subscribe(result => {
         this.model = result
+        this.setupCommands()
         this.initForm()
         this.route.params.subscribe(params => {
           this.id = +params['id']
@@ -62,13 +61,12 @@ export class EditorComponent implements OnInit {
   }
 
   private loadDescriptor(): Observable<MetaModel> {
-    return this.http.get<MetaModel>(this.descriptor.backend + '/descriptor/meta', TypeUtils.of(MetaModel))
+    return this.http.get<MetaModel>(this.descriptor.metaModel(), TypeUtils.of(MetaModel))
   }
-
 
   private load() {
     if (this.id) {
-      this.http.get<any>(this.descriptor.backend + '/' + this.id)
+      this.http.get<any>(this.descriptor.read(this.id))
         .subscribe(result => {
           this.fillForm(result)
         })
@@ -77,14 +75,14 @@ export class EditorComponent implements OnInit {
 
   private apply() {
     let entity = this.fillEntity()
-    this.http.post(this.descriptor.backend, entity)
+    this.http.post(this.descriptor.update(), entity)
       .subscribe(() => {
         this.close()
       })
   }
 
   private close() {
-    this.router.navigate([this.descriptor.frontend]).then()
+    this.router.navigate([this.descriptor.backTo()]).then()
   }
 
   private initForm() {

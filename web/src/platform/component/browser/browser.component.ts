@@ -1,6 +1,6 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
 import {HttpClient} from "@angular/common/http";
-import {Descriptor, DtoModel, FieldType} from "../../model/descriptor";
+import {BrowserDescriptor, DtoField, DtoModel, FieldType, MetaField} from "../../model/descriptor";
 import {TypeUtils} from "../../../core/type-utils";
 import {CollectionViewer, DataSource} from "@angular/cdk/collections";
 import {BehaviorSubject, Observable} from "rxjs";
@@ -22,7 +22,7 @@ import {Router} from "@angular/router";
 export class BrowserComponent implements OnInit {
 
   @Input()
-  descriptor!: Descriptor
+  descriptor!: BrowserDescriptor
 
   private decimalPipe: DecimalPipe
   private datePipe: DatePipe
@@ -41,7 +41,6 @@ export class BrowserComponent implements OnInit {
     let lang = this.translocoService.getActiveLang()
     this.decimalPipe = new DecimalPipe(lang)
     this.datePipe = new DatePipe(lang)
-    this.setupCommonCommands()
   }
 
   ngOnInit(): void {
@@ -51,32 +50,33 @@ export class BrowserComponent implements OnInit {
   }
 
   private loadDescriptor() {
-    this.http.get<DtoModel>(this.descriptor.backend + '/descriptor/dto', TypeUtils.of(DtoModel))
+    this.http.get<DtoModel>(this.descriptor.dtoModel(), TypeUtils.of(DtoModel))
       .subscribe(result => {
         this.dtoModel = result
         this.columns = this.dtoModel.fields.map(entry => entry.reference);
+        this.setupCommonCommands()
       })
   }
 
   private loadData() {
-    this.http.post<number>(this.descriptor.backend + '/count', this.config)
+    this.http.post<number>(this.descriptor.count(), this.config)
       .subscribe(result => {
         this.config.page.length = result
-        this.http.post<any[]>(this.descriptor.backend + '/', this.config)
+        this.http.post<any[]>(this.descriptor.read(), this.config)
           .subscribe(result => this.dataSource.setData(result))
       })
   }
 
   add() {
-    this.router.navigate([this.descriptor.frontend + '/new']).then()
+    this.router.navigate([this.descriptor.create()]).then()
   }
 
-  edit(id: number) {
-    this.router.navigate([this.descriptor.frontend + '/', id]).then()
+  edit(entry: any) {
+    this.router.navigate([this.descriptor.update(entry)]).then()
   }
 
   remove(id: number) {
-    this.http.delete(this.descriptor.backend + '/' + id)
+    this.http.delete(this.descriptor.delete(id))
       .subscribe(() => this.loadData())
   }
 
@@ -86,11 +86,13 @@ export class BrowserComponent implements OnInit {
     return columns
   }
 
-  format(value: string, type: FieldType, format: string): string {
-    if (type == 'NUMBER') {
-      return this.decimalPipe.transform(value, format)!
-    } else if (type == 'DATE') {
-      return this.datePipe.transform(value, format)!
+  format(value: string, field: DtoField): string {
+    if (field.type == 'NUMBER') {
+      return this.decimalPipe.transform(value, field.format)!
+    } else if (field.type == 'DATE') {
+      return this.datePipe.transform(value, field.format)!
+    } else if (field.type == 'ENUM') {
+      return this.translocoService.translate(field.localizationKey + value)
     } else {
       return value
     }

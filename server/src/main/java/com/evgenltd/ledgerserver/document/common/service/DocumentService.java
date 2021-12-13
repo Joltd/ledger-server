@@ -1,15 +1,14 @@
 package com.evgenltd.ledgerserver.document.common.service;
 
 import com.evgenltd.ledgerserver.document.common.entity.Document;
-import com.evgenltd.ledgerserver.document.common.entity.JournalEntry;
 import com.evgenltd.ledgerserver.document.common.repository.DocumentRepository;
 import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.platform.ApplicationException;
-import com.evgenltd.ledgerserver.reference.entity.Account;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,15 +19,22 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
     private final JournalEntryRepository journalEntryRepository;
     private final ObjectMapper objectMapper;
+    private final BeanFactory beanFactory;
 
     public DocumentService(
             final DocumentRepository documentRepository,
             final JournalEntryRepository journalEntryRepository,
-            final ObjectMapper objectMapper
+            final ObjectMapper objectMapper,
+            final BeanFactory beanFactory
     ) {
         this.documentRepository = documentRepository;
         this.journalEntryRepository = journalEntryRepository;
         this.objectMapper = objectMapper;
+        this.beanFactory = beanFactory;
+    }
+
+    public DocumentDefinition resolveDefinition(final Document.Type type) {
+        return (DocumentDefinition) beanFactory.getBean(type.id());
     }
 
     public JsonNode byId(final Long id) {
@@ -60,10 +66,13 @@ public class DocumentService {
 
         documentRepository.save(document);
 
-        JournalEntry.builder()
-                .accountId()
-                .person()
-                .build();
+        final DocumentDefinition persist = resolveDefinition(document.getType());
+        persist.persist();
+
+        if (document.getId() != null) {
+            journalEntryRepository.deleteByDocumentId(document.getId());
+        }
+        journalEntryRepository.saveAll(persist.entities());
     }
 
     private ObjectNode readNode(final String content) {

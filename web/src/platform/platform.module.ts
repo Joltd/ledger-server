@@ -25,13 +25,15 @@ import {ObjectSelectorComponent} from './component/object-selector/object-select
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatNativeDateModule} from "@angular/material/core";
+import { EnumSelectorComponent } from './component/enum-selector/enum-selector.component';
 
 @NgModule({
   declarations: [
     BrowserComponent,
     BrowserSettingsComponent,
     EditorComponent,
-    ObjectSelectorComponent
+    ObjectSelectorComponent,
+    EnumSelectorComponent
   ],
   exports: [
     BrowserComponent,

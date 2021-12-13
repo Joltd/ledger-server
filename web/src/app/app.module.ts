@@ -13,36 +13,20 @@ import {MatToolbarModule} from "@angular/material/toolbar";
 import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatSidenavModule} from "@angular/material/sidenav";
-import {OrderBrowserComponent} from './reference/order/component/order-browser/order-browser.component';
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
-import {OrderEditorComponent} from './reference/order/component/order-editor/order-editor.component';
-import {AccountBrowserComponent} from './reference/account-browser/account-browser.component';
-import {AccountEditorComponent} from './reference/account-editor/account-editor.component';
-import {ExpenseItemBrowserComponent} from "./reference/expense-item-browser/expense-item-browser.component";
-import {ExpenseItemEditorComponent} from "./reference/expense-item-editor/expense-item-editor.component";
-import { IncomeItemEditorComponent } from './reference/income-item-editor/income-item-editor.component';
-import { IncomeItemBrowserComponent } from './reference/income-item-browser/income-item-browser.component';
-import { PersonBrowserComponent } from './reference/person-browser/person-browser.component';
-import { PersonEditorComponent } from './reference/person-editor/person-editor.component';
-import { TickerSymbolEditorComponent } from './reference/ticker-symbol-editor/ticker-symbol-editor.component';
-import { TickerSymbolBrowserComponent } from './reference/ticker-symbol-browser/ticker-symbol-browser.component';
+import {CommonBrowserComponent} from "./common/common-browser/common-browser.component";
+import { CommonEditorComponent } from './common/common-editor/common-editor.component';
+import { DocumentEditorComponent } from './common/document-editor/document-editor.component';
+import { DocumentBrowserComponent } from './common/document-browser/document-browser.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    OrderBrowserComponent,
-    OrderEditorComponent,
-    AccountBrowserComponent,
-    AccountEditorComponent,
-    ExpenseItemBrowserComponent,
-    ExpenseItemEditorComponent,
-    IncomeItemEditorComponent,
-    IncomeItemBrowserComponent,
-    PersonBrowserComponent,
-    PersonEditorComponent,
-    TickerSymbolEditorComponent,
-    TickerSymbolBrowserComponent
+    CommonBrowserComponent,
+    CommonEditorComponent,
+    DocumentEditorComponent,
+    DocumentBrowserComponent
   ],
   imports: [
     BrowserModule,
