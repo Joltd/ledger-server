@@ -1,10 +1,10 @@
 package com.evgenltd.ledgerserver.document.common.repository;
 
 import com.evgenltd.ledgerserver.document.common.entity.JournalEntry;
-import com.evgenltd.ledgerserver.reference.entity.Account;
-import com.evgenltd.ledgerserver.reference.entity.Currency;
-import com.evgenltd.ledgerserver.reference.entity.ExpenseItem;
-import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.platform.entities.reference.account.Account;
+import com.evgenltd.ledgerserver.platform.entities.reference.currency.Currency;
+import com.evgenltd.ledgerserver.platform.entities.reference.expenseitem.ExpenseItem;
+import com.evgenltd.ledgerserver.platform.entities.reference.tickersymbol.TickerSymbol;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

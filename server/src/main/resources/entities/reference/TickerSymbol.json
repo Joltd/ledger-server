@@ -1,0 +1,14 @@
+{
+  "name": "TickerSymbol",
+  "table": "ticker_symbols",
+  "fields": [
+    {
+      "name": "figi",
+      "type": "String"
+    },
+    {
+      "name": "withoutCommission",
+      "type": "Boolean"
+    }
+  ]
+}

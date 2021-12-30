@@ -3,7 +3,7 @@ package com.evgenltd.ledgerserver.document.common.service;
 import com.evgenltd.ledgerserver.document.common.entity.Document;
 import com.evgenltd.ledgerserver.document.common.repository.DocumentRepository;
 import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
-import com.evgenltd.ledgerserver.platform.ApplicationException;
+import com.evgenltd.ledgerserver.platform.common.ApplicationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

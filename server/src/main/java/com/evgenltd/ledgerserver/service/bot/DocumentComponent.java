@@ -7,9 +7,13 @@ import com.evgenltd.ledgerserver.document.common.entity.JournalEntry;
 import com.evgenltd.ledgerserver.document.common.repository.DocumentRepository;
 import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.entity.*;
-import com.evgenltd.ledgerserver.reference.entity.Currency;
+import com.evgenltd.ledgerserver.platform.entities.reference.account.Account;
+import com.evgenltd.ledgerserver.platform.entities.reference.expenseitem.ExpenseItem;
+import com.evgenltd.ledgerserver.platform.entities.reference.incomeitem.IncomeItem;
+import com.evgenltd.ledgerserver.platform.entities.reference.person.Person;
+import com.evgenltd.ledgerserver.platform.entities.reference.tickersymbol.TickerSymbol;
+import com.evgenltd.ledgerserver.platform.entities.reference.currency.Currency;
 import com.evgenltd.ledgerserver.record.ValueInfo;
-import com.evgenltd.ledgerserver.reference.entity.*;
 import com.evgenltd.ledgerserver.util.Utils;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -166,7 +170,7 @@ public class DocumentComponent {
     }
 
     public void currencyField(final String field) {
-        primitiveField(field, value -> Utils.asEnumNoThrow(value, Currency.class), Enum::name, "USD,RUB");
+//        primitiveField(field, value -> Utils.asEnumNoThrow(value, Currency.class), Enum::name, "USD,RUB");
     }
 
     public void accountField(final String field) {

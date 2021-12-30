@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.entity;
 
-import com.evgenltd.ledgerserver.reference.entity.Person;
+import com.evgenltd.ledgerserver.platform.entities.reference.person.Person;
 import lombok.Getter;
 import lombok.Setter;
 

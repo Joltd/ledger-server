@@ -5,7 +5,7 @@ import com.evgenltd.ledgerserver.document.common.repository.DocumentRepository;
 import com.evgenltd.ledgerserver.document.common.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.document.common.service.DocumentService;
 import com.evgenltd.ledgerserver.platform.browser.record.descriptor.*;
-import com.evgenltd.ledgerserver.platform.browser.record.loadconfig.LoadConfig;
+import com.evgenltd.ledgerserver.platform.common.filter.LoadConfig;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.web.bind.annotation.*;

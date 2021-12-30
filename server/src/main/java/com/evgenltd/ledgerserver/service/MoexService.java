@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.service;
 
-import com.evgenltd.ledgerserver.platform.ApplicationException;
+import com.evgenltd.ledgerserver.platform.common.ApplicationException;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;

@@ -6,7 +6,7 @@ import com.evgenltd.ledgerserver.platform.browser.record.descriptor.FieldType;
 import com.evgenltd.ledgerserver.platform.browser.record.descriptor.MetaField;
 import com.evgenltd.ledgerserver.platform.browser.record.descriptor.MetaModel;
 import com.evgenltd.ledgerserver.reference.ReferenceModel;
-import com.evgenltd.ledgerserver.reference.entity.Account;
+import com.evgenltd.ledgerserver.platform.entities.reference.account.Account;
 import com.evgenltd.ledgerserver.reference.repository.AccountRepository;
 import com.evgenltd.ledgerserver.util.Utils;
 import org.springframework.beans.factory.annotation.Qualifier;

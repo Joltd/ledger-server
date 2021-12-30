@@ -1,0 +1,34 @@
+{
+  "name": "BuyCurrency",
+  "table": "document_buy_currency",
+  "fields": [
+    {
+      "name": "amount",
+      "type": "BigDecimal"
+    },
+    {
+      "name": "account",
+      "type": "Account"
+    },
+    {
+      "name": "currency",
+      "type": "Currency"
+    },
+    {
+      "name": "currencyRate",
+      "type": "BigDecimal"
+    },
+    {
+      "name": "currencyAmount",
+      "type": "BigDecimal"
+    },
+    {
+      "name": "commission",
+      "type": "ExpenseItem"
+    },
+    {
+      "name": "commissionAmount",
+      "type": "BigDecimal"
+    }
+  ]
+}

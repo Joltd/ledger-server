@@ -4,9 +4,9 @@ import com.evgenltd.ledgerserver.builder.SettingInfoBuilder;
 import com.evgenltd.ledgerserver.record.SettingInfo;
 import com.evgenltd.ledgerserver.constants.Settings;
 import com.evgenltd.ledgerserver.entity.*;
-import com.evgenltd.ledgerserver.reference.repository.ExpenseItemRepository;
-import com.evgenltd.ledgerserver.reference.repository.IncomeItemRepository;
-import com.evgenltd.ledgerserver.reference.repository.PersonRepository;
+import com.evgenltd.ledgerserver.platform.entities.reference.expenseitem.ExpenseItemRepository;
+import com.evgenltd.ledgerserver.platform.entities.reference.incomeitem.IncomeItemRepository;
+import com.evgenltd.ledgerserver.platform.entities.reference.person.PersonRepository;
 import com.evgenltd.ledgerserver.repository.SettingRepository;
 import org.springframework.stereotype.Service;
 

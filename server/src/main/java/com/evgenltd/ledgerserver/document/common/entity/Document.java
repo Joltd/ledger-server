@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.document.common.entity;
 
-import com.evgenltd.ledgerserver.platform.ApplicationException;
+import com.evgenltd.ledgerserver.platform.common.ApplicationException;
 import com.evgenltd.ledgerserver.service.bot.activity.document.*;
 import lombok.*;
 

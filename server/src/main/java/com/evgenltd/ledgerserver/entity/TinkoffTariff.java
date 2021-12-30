@@ -1,6 +1,6 @@
 package com.evgenltd.ledgerserver.entity;
 
-import com.evgenltd.ledgerserver.reference.entity.Account;
+import com.evgenltd.ledgerserver.platform.entities.reference.account.Account;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

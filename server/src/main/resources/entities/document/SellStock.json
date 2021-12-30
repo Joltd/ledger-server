@@ -1,0 +1,38 @@
+{
+  "name": "SellStock",
+  "table": "document_sell_stock",
+  "fields": [
+    {
+      "name": "account",
+      "type": "Account"
+    },
+    {
+      "name": "ticker",
+      "type": "TickerSymbol"
+    },
+    {
+      "name": "price",
+      "type": "BigDecimal"
+    },
+    {
+      "name": "count",
+      "type": "Long"
+    },
+    {
+      "name": "commission",
+      "type": "ExpenseItem"
+    },
+    {
+      "name": "commissionAmount",
+      "type": "BigDecimal"
+    },
+    {
+      "name": "stockSaleIncome",
+      "type": "IncomeItem"
+    },
+    {
+      "name": "stockSaleExpense",
+      "type": "ExpenseItem"
+    }
+  ]
+}

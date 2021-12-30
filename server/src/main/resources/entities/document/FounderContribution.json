@@ -1,0 +1,14 @@
+{
+  "name": "FounderContribution",
+  "table": "document_founder_contribution",
+  "fields": [
+    {
+      "name": "amount",
+      "type": "BigDecimal"
+    },
+    {
+      "name": "account",
+      "type": "Account"
+    }
+  ]
+}

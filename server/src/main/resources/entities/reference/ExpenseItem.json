@@ -1,0 +1,4 @@
+{
+  "name": "ExpenseItem",
+  "table": "expense_items"
+}

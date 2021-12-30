@@ -1,9 +1,6 @@
 package com.evgenltd.ledgerserver.service.bot.activity;
 
-import com.evgenltd.ledgerserver.entity.*;
-import com.evgenltd.ledgerserver.reference.entity.*;
 import com.evgenltd.ledgerserver.util.Tokenizer;
-import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;
 import com.evgenltd.ledgerserver.service.bot.activity.document.DocumentListActivity;
 import org.springframework.beans.factory.BeanFactory;

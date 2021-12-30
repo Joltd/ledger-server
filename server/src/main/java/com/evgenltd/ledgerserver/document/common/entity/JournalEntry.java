@@ -1,6 +1,11 @@
 package com.evgenltd.ledgerserver.document.common.entity;
 
-import com.evgenltd.ledgerserver.reference.entity.*;
+import com.evgenltd.ledgerserver.platform.entities.reference.account.Account;
+import com.evgenltd.ledgerserver.platform.entities.reference.currency.Currency;
+import com.evgenltd.ledgerserver.platform.entities.reference.expenseitem.ExpenseItem;
+import com.evgenltd.ledgerserver.platform.entities.reference.incomeitem.IncomeItem;
+import com.evgenltd.ledgerserver.platform.entities.reference.person.Person;
+import com.evgenltd.ledgerserver.platform.entities.reference.tickersymbol.TickerSymbol;
 import lombok.*;
 
 import javax.persistence.*;
@@ -32,7 +37,8 @@ public class JournalEntry {
     @ManyToOne
     @JoinColumn(name = "person_id")
     private Person person;
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "currency_id")
     private Currency currency;
     private BigDecimal currencyRate;
     private BigDecimal currencyAmount;

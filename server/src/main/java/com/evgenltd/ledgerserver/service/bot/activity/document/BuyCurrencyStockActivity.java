@@ -1,8 +1,8 @@
 package com.evgenltd.ledgerserver.service.bot.activity.document;
 
-import com.evgenltd.ledgerserver.reference.entity.Account;
-import com.evgenltd.ledgerserver.reference.entity.Currency;
-import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.platform.entities.reference.account.Account;
+import com.evgenltd.ledgerserver.platform.entities.reference.currency.Currency;
+import com.evgenltd.ledgerserver.platform.entities.reference.tickersymbol.TickerSymbol;
 import com.evgenltd.ledgerserver.record.StockBalance;
 import com.evgenltd.ledgerserver.service.JournalService;
 import org.springframework.beans.factory.BeanFactory;
@@ -44,7 +44,7 @@ public class BuyCurrencyStockActivity extends DocumentActivity {
 
     @Override
     protected void onDefaults() {
-        document().set(CURRENCY, Currency.USD);
+//        document().set(CURRENCY, Currency.USD);
         document().set(CURRENCY_AMOUNT, BigDecimal.ZERO);
     }
 

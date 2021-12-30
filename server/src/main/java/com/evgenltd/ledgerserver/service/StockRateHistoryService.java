@@ -1,8 +1,8 @@
 package com.evgenltd.ledgerserver.service;
 
-import com.evgenltd.ledgerserver.reference.entity.Currency;
+import com.evgenltd.ledgerserver.platform.entities.reference.currency.Currency;
 import com.evgenltd.ledgerserver.entity.StockRate;
-import com.evgenltd.ledgerserver.reference.entity.TickerSymbol;
+import com.evgenltd.ledgerserver.platform.entities.reference.tickersymbol.TickerSymbol;
 import com.evgenltd.ledgerserver.repository.StockRateRepository;
 import com.evgenltd.ledgerserver.reference.repository.TickerSymbolRepository;
 import org.springframework.data.domain.Sort;
