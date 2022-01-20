@@ -15,18 +15,10 @@ import {MatIconModule} from "@angular/material/icon";
 import {MatSidenavModule} from "@angular/material/sidenav";
 import {MatListModule} from "@angular/material/list";
 import {MatMenuModule} from "@angular/material/menu";
-import {CommonBrowserComponent} from "./common/common-browser/common-browser.component";
-import { CommonEditorComponent } from './common/common-editor/common-editor.component';
-import { DocumentEditorComponent } from './common/document-editor/document-editor.component';
-import { DocumentBrowserComponent } from './common/document-browser/document-browser.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    CommonBrowserComponent,
-    CommonEditorComponent,
-    DocumentEditorComponent,
-    DocumentBrowserComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -48,4 +40,4 @@ import { DocumentBrowserComponent } from './common/document-browser/document-bro
   ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

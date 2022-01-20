@@ -1,0 +1,5 @@
+<mat-card>
+  <mat-nav-list>
+    <a mat-list-item [routerLink]="['/entity', entity.fullName]" *ngFor="let entity of entityProviderService.entities">{{ entity.localization | transloco }}</a>
+  </mat-nav-list>
+</mat-card>

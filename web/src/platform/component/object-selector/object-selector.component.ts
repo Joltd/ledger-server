@@ -2,7 +2,7 @@ import {Component, ElementRef, HostBinding, Input, OnDestroy, Optional, Self, Vi
 import {ControlValueAccessor, FormControl, NgControl} from "@angular/forms";
 import {Observable, Subject} from "rxjs";
 import {Reference} from "../../model/entity";
-import {debounceTime, distinctUntilChanged, map, startWith, switchMap, tap} from "rxjs/operators";
+import {debounceTime, startWith, switchMap} from "rxjs/operators";
 import {HttpClient} from "@angular/common/http";
 import {TypeUtils} from "../../../core/type-utils";
 import {MatFormFieldControl} from "@angular/material/form-field";

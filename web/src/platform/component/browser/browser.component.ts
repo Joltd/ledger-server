@@ -1,7 +1,4 @@
 import {Component, Input, OnInit, ViewEncapsulation} from '@angular/core';
-import {HttpClient} from "@angular/common/http";
-import {BrowserDescriptor, DtoField, DtoModel, FieldType, MetaField} from "../../model/descriptor";
-import {TypeUtils} from "../../../core/type-utils";
 import {CollectionViewer, DataSource} from "@angular/cdk/collections";
 import {BehaviorSubject, Observable} from "rxjs";
 import {PageEvent} from "@angular/material/paginator";
@@ -11,7 +8,7 @@ import {TranslocoService} from "@ngneat/transloco";
 import {OverlayService} from "../../service/overlay.service";
 import {BrowserSettingsComponent} from "../browser-settings/browser-settings.component";
 import {OverlayCommand} from "../../model/overlay-command";
-import {Router} from "@angular/router";
+import {BrowserProvider, RowField} from "../../model/browser-provider";
 
 @Component({
   selector: 'browser',
@@ -22,19 +19,17 @@ import {Router} from "@angular/router";
 export class BrowserComponent implements OnInit {
 
   @Input()
-  descriptor!: BrowserDescriptor
+  browserProvider!: BrowserProvider
 
   private decimalPipe: DecimalPipe
   private datePipe: DatePipe
 
-  dtoModel!: DtoModel
+  rowFields: RowField[] = []
   dataSource: RemoteDateSource = new RemoteDateSource()
   config: LoadConfig = new LoadConfig()
   private columns: string[] = []
 
   constructor(
-    private http: HttpClient,
-    private router: Router,
     private translocoService: TranslocoService,
     private overlayService: OverlayService
   ) {
@@ -50,33 +45,30 @@ export class BrowserComponent implements OnInit {
   }
 
   private loadDescriptor() {
-    this.http.get<DtoModel>(this.descriptor.dtoModel(), TypeUtils.of(DtoModel))
-      .subscribe(result => {
-        this.dtoModel = result
-        this.columns = this.dtoModel.fields.map(entry => entry.reference);
-        this.setupCommonCommands()
-      })
+    this.rowFields = this.browserProvider.rowModel()
+    this.columns = this.rowFields.map(entry => entry.name);
+    this.setupCommonCommands()
   }
 
   private loadData() {
-    this.http.post<number>(this.descriptor.count(), this.config)
+    this.browserProvider.count(this.config)
       .subscribe(result => {
         this.config.page.length = result
-        this.http.post<any[]>(this.descriptor.read(), this.config)
+        this.browserProvider.load(this.config)
           .subscribe(result => this.dataSource.setData(result))
       })
   }
 
   add() {
-    this.router.navigate([this.descriptor.create()]).then()
+    this.browserProvider.add()
   }
 
   edit(entry: any) {
-    this.router.navigate([this.descriptor.update(entry)]).then()
+    this.browserProvider.edit(entry)
   }
 
   remove(id: number) {
-    this.http.delete(this.descriptor.delete(id))
+    this.browserProvider.delete(id)
       .subscribe(() => this.loadData())
   }
 
@@ -86,13 +78,13 @@ export class BrowserComponent implements OnInit {
     return columns
   }
 
-  format(value: string, field: DtoField): string {
+  format(value: string, field: RowField): string {
     if (field.type == 'NUMBER') {
       return this.decimalPipe.transform(value, field.format)!
-    } else if (field.type == 'DATE') {
-      return this.datePipe.transform(value, field.format)!
-    } else if (field.type == 'ENUM') {
-      return this.translocoService.translate(field.localizationKey + value)
+    // } else if (field.type == 'DATE') {
+    //   return this.datePipe.transform(value, field.format)!
+    // } else if (field.type == 'ENUM') {
+    //   return this.translocoService.translate(field.localizationKey + value)
     } else {
       return value
     }
@@ -132,7 +124,7 @@ export class BrowserComponent implements OnInit {
     this.overlayService.openSide(BrowserSettingsComponent)
       .subscribe(component => {
         this.setupSettingsCommand(component)
-        component.setup(this.descriptor, this.dtoModel, this.columns, this.config.filter.expression)
+        component.setup(this.browserProvider, this.columns, this.config.filter.expression)
       })
   }
 

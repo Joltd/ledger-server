@@ -26,6 +26,11 @@ import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatNativeDateModule} from "@angular/material/core";
 import { EnumSelectorComponent } from './component/enum-selector/enum-selector.component';
+import {EntityBrowserComponent} from "./component/entity-browser/entity-browser.component";
+import { EntityEditorComponent } from './component/entity-editor/entity-editor.component';
+import {EntityProviderService} from "./service/entity-provider.service";
+import { EntityListComponent } from './component/entity-list/entity-list.component';
+import {RouterModule} from "@angular/router";
 
 @NgModule({
   declarations: [
@@ -33,11 +38,15 @@ import { EnumSelectorComponent } from './component/enum-selector/enum-selector.c
     BrowserSettingsComponent,
     EditorComponent,
     ObjectSelectorComponent,
-    EnumSelectorComponent
+    EnumSelectorComponent,
+    EntityBrowserComponent,
+    EntityEditorComponent,
+    EntityListComponent
   ],
   exports: [
     BrowserComponent,
-    EditorComponent
+    EditorComponent,
+    EntityBrowserComponent
   ],
   imports: [
     CommonModule,
@@ -61,10 +70,12 @@ import { EnumSelectorComponent } from './component/enum-selector/enum-selector.c
     ReactiveFormsModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    RouterModule
   ],
   providers: [
-    OverlayService
+    OverlayService,
+    EntityProviderService
   ]
 })
 export class PlatformModule {}

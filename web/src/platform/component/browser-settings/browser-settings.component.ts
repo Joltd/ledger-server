@@ -1,10 +1,8 @@
 import {Component, OnInit, ViewEncapsulation} from '@angular/core';
-import {BrowserDescriptor, DtoModel, MetaField, MetaModel} from "../../model/descriptor";
 import {FilterExpression, FilterExpressionType, OperatorType} from "../../model/load-config";
 import {NestedTreeControl} from "@angular/cdk/tree";
 import {MatTreeNestedDataSource} from "@angular/material/tree";
-import {TypeUtils} from "../../../core/type-utils";
-import {HttpClient} from "@angular/common/http";
+import {BrowserProvider, FilterField, RowField} from "../../model/browser-provider";
 
 @Component({
   selector: 'browser-settings',
@@ -14,34 +12,29 @@ import {HttpClient} from "@angular/common/http";
 })
 export class BrowserSettingsComponent implements OnInit {
 
-  descriptor!: BrowserDescriptor
-  dtoModel!: DtoModel
-  metaModel!: MetaModel
+  browserProvider!: BrowserProvider
   columns: string[] = []
 
   private filter: FilterExpression[] = []
   treeControl: NestedTreeControl<FilterExpression> = new NestedTreeControl<FilterExpression>(node => node.expressions)
   dataSource: MatTreeNestedDataSource<FilterExpression> = new MatTreeNestedDataSource<FilterExpression>()
-  fields: string[] = []
+  filterFields: FilterField[] = []
+  rowFields: RowField[] = []
   operators: OperatorType[] = Object.values(OperatorType)
   types: FilterExpressionType[] = Object.values(FilterExpressionType)
   structureTypes: FilterExpressionType[] = this.types.filter(type => type != FilterExpressionType.STATEMENT)
 
-  constructor(private http: HttpClient) {}
+  constructor() {}
 
   ngOnInit(): void {}
 
-  setup(descriptor: BrowserDescriptor, dtoModel: DtoModel, columns: string[], filterExpression?: FilterExpression) {
-    this.descriptor = descriptor
-    this.dtoModel = dtoModel
+  setup(browserProvider: BrowserProvider, columns: string[], filterExpression?: FilterExpression) {
+    this.browserProvider = browserProvider
     this.columns = columns
     this.filter = filterExpression ? [filterExpression] : []
-    this.http.get<MetaModel>(this.descriptor.metModel(), TypeUtils.of(MetaModel))
-      .subscribe(result => {
-        this.metaModel = result
-        this.fields = this.extractFields(this.metaModel.fields, '')
-        this.updateFilterDataSource()
-      })
+    this.filterFields = this.browserProvider.filterModel()
+    this.updateFilterDataSource()
+    this.rowFields = this.browserProvider.rowModel()
   }
 
   hasChild(index: number, node: FilterExpression) {
@@ -55,19 +48,6 @@ export class BrowserSettingsComponent implements OnInit {
   private updateFilterDataSource() {
     this.dataSource.data = []
     this.dataSource.data = this.filter
-  }
-
-  private extractFields(metaFields: MetaField[], prefix: string): string[] {
-    let fields: string[] = []
-    for (let metaField of metaFields) {
-      if (metaField.fields?.length > 0) {
-        this.extractFields(metaField.fields, prefix + metaField.reference + '.')
-          .forEach(field => fields.push(field))
-      } else {
-        fields.push(prefix + metaField.reference)
-      }
-    }
-    return fields
   }
 
   private seekParent(current: FilterExpression, target: FilterExpression): FilterExpression | null {

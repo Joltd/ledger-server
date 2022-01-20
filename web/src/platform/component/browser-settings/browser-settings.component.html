@@ -2,7 +2,7 @@
 
   <mat-tab label="Columns">
     <mat-selection-list [(ngModel)]="columns">
-      <mat-list-option *ngFor="let field of dtoModel?.fields || []" [value]="field.reference">{{ this.descriptor.localizationKey(field.reference) | transloco }}</mat-list-option>
+      <mat-list-option *ngFor="let field of rowFields || []" [value]="field.name">{{ field.localization | transloco }}</mat-list-option>
     </mat-selection-list>
   </mat-tab>
 
@@ -28,7 +28,7 @@
           <mat-form-field appearance="outline" class="reference-field">
             <mat-label>Field</mat-label>
             <mat-select [(ngModel)]="node.reference">
-              <mat-option *ngFor="let field of fields" [value]="field">{{field}}</mat-option>
+              <mat-option *ngFor="let field of filterFields" [value]="field.name">{{field.name}}</mat-option>
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="outline" class="operator-field">
