@@ -1,6 +1,7 @@
 package com.evgenltd.ledgerserver.stonks.service;
 
 import com.evgenltd.ledgerserver.common.service.ReferenceService;
+import com.evgenltd.ledgerserver.settings.service.SettingService;
 import com.evgenltd.ledgerserver.stonks.entity.TickerSymbol;
 import com.evgenltd.ledgerserver.stonks.record.TickerSymbolRecord;
 import com.evgenltd.ledgerserver.stonks.record.TickerSymbolRow;
@@ -10,8 +11,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class TickerSymbolService extends ReferenceService<TickerSymbol, TickerSymbolRecord, TickerSymbolRow> {
 
-    public TickerSymbolService(final TickerSymbolRepository tickerSymbolRepository) {
-        super(tickerSymbolRepository);
+    public TickerSymbolService(
+            final SettingService settingService,
+            final TickerSymbolRepository tickerSymbolRepository
+    ) {
+        super(settingService, tickerSymbolRepository);
     }
 
     @Override

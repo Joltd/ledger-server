@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 @Inheritance(strategy = InheritanceType.JOINED)
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Document extends Reference {
 
@@ -19,4 +17,9 @@ public class Document extends Reference {
 
     private LocalDateTime date;
 
+    public Document(final Long id, final String name, final Boolean approved, final LocalDateTime date) {
+        super(id, name);
+        this.approved = approved;
+        this.date = date;
+    }
 }

@@ -1,16 +1,15 @@
 package com.evgenltd.ledgerserver.common.service;
 
+import com.evgenltd.ledgerserver.base.entity.*;
 import com.evgenltd.ledgerserver.common.entity.*;
 import com.evgenltd.ledgerserver.common.repository.ReferenceRepository;
-import com.evgenltd.ledgerserver.common.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.base.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.settings.service.SettingService;
 import com.evgenltd.ledgerserver.stonks.entity.TickerSymbol;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -22,10 +21,11 @@ public abstract class DocumentService<T extends Document, D, W> extends Referenc
     private final ThreadLocal<Context> context = new ThreadLocal<>();
 
     public DocumentService(
+            final SettingService settingService,
             final ReferenceRepository<T> referenceRepository,
             final JournalEntryRepository journalEntryRepository
     ) {
-        super(referenceRepository);
+        super(settingService, referenceRepository);
         this.journalEntryRepository = journalEntryRepository;
     }
 

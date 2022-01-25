@@ -1,9 +1,10 @@
 package com.evgenltd.ledgerserver.stonks.service;
 
-import com.evgenltd.ledgerserver.common.entity.Account;
+import com.evgenltd.ledgerserver.base.entity.Account;
 import com.evgenltd.ledgerserver.common.repository.ReferenceRepository;
-import com.evgenltd.ledgerserver.common.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.base.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.common.service.DocumentService;
+import com.evgenltd.ledgerserver.settings.service.SettingService;
 import com.evgenltd.ledgerserver.stonks.entity.Transfer;
 import com.evgenltd.ledgerserver.stonks.record.TransferRecord;
 import com.evgenltd.ledgerserver.stonks.record.TransferRow;
@@ -14,10 +15,11 @@ import org.springframework.stereotype.Service;
 public class TransferService extends DocumentService<Transfer, TransferRecord, TransferRow> {
 
     public TransferService(
+            final SettingService settingService,
             final ReferenceRepository<Transfer> referenceRepository,
             final JournalEntryRepository journalEntryRepository
     ) {
-        super(referenceRepository, journalEntryRepository);
+        super(settingService, referenceRepository, journalEntryRepository);
     }
 
     @Override

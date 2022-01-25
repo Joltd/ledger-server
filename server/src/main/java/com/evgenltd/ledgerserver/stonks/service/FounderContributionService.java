@@ -1,8 +1,9 @@
 package com.evgenltd.ledgerserver.stonks.service;
 
-import com.evgenltd.ledgerserver.common.entity.Account;
-import com.evgenltd.ledgerserver.common.repository.JournalEntryRepository;
+import com.evgenltd.ledgerserver.base.entity.Account;
+import com.evgenltd.ledgerserver.base.repository.JournalEntryRepository;
 import com.evgenltd.ledgerserver.common.service.DocumentService;
+import com.evgenltd.ledgerserver.settings.service.SettingService;
 import com.evgenltd.ledgerserver.stonks.entity.FounderContribution;
 import com.evgenltd.ledgerserver.stonks.record.FounderContributionRecord;
 import com.evgenltd.ledgerserver.stonks.record.FounderContributionRow;
@@ -14,10 +15,11 @@ import org.springframework.stereotype.Service;
 public class FounderContributionService extends DocumentService<FounderContribution, FounderContributionRecord, FounderContributionRow> {
 
     public FounderContributionService(
+            final SettingService settingService,
             final FounderContributionRepository founderContributionRepository,
             final JournalEntryRepository journalEntryRepository
     ) {
-        super(founderContributionRepository, journalEntryRepository);
+        super(settingService, founderContributionRepository, journalEntryRepository);
     }
 
     @Override

@@ -5,14 +5,14 @@ import lombok.*;
 import javax.persistence.*;
 import java.lang.String;
 import java.math.BigDecimal;
-import com.evgenltd.ledgerserver.common.entity.Account;
+import java.time.LocalDateTime;
+
+import com.evgenltd.ledgerserver.base.entity.Account;
 
 @Entity
 @Table(name = "document_transfer")
 @Getter
 @Setter
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
 public class Transfer extends Document {
 
@@ -25,5 +25,21 @@ public class Transfer extends Document {
     @ManyToOne
     @JoinColumn(name = "to_id")
     private Account to;
+
+    @Builder
+    public Transfer(
+            final Long id,
+            final String name,
+            final Boolean approved,
+            final LocalDateTime date,
+            final BigDecimal amount,
+            final Account from,
+            final Account to
+    ) {
+        super(id, name, approved, date);
+        this.amount = amount;
+        this.from = from;
+        this.to = to;
+    }
 
 }

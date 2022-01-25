@@ -2,6 +2,7 @@ package com.evgenltd.ledgerserver.common.service;
 
 import com.evgenltd.ledgerserver.common.entity.Reference;
 import com.evgenltd.ledgerserver.common.repository.ReferenceRepository;
+import com.evgenltd.ledgerserver.settings.service.SettingService;
 import com.evgenltd.ledgerserver.util.ApplicationException;
 import com.evgenltd.ledgerserver.util.ReferenceRecord;
 import com.evgenltd.ledgerserver.util.filter.LoadConfig;
@@ -10,11 +11,12 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public abstract class ReferenceService<T extends Reference, D, W> {
+public abstract class ReferenceService<T extends Reference, D, W> extends BaseService {
 
     protected final ReferenceRepository<T> referenceRepository;
 
-    public ReferenceService(final ReferenceRepository<T> referenceRepository) {
+    public ReferenceService(final SettingService settingService, final ReferenceRepository<T> referenceRepository) {
+        super(settingService);
         this.referenceRepository = referenceRepository;
     }
 

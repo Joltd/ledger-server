@@ -13,12 +13,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class Application extends SpringBootServletInitializer {
 
     // todo LogAspect нацелить на аннотированные классы (Service, Controller, Repository)
-    // todo TickerSymbol перенести в common пространство
     // todo Заполнить проводки для двух документов
     // todo скрипты миграции для бд
     // todo генерализировать контролеры
-    // todo реализация сеттингов
+    // todo наполнение сетингами базы, реализация контроллера
     // todo реимплементация отчетов
+    // todo реализация остальных документов
+    // todo импорт банковских выписок
+    // todo импорт брокерского отчета
+    // todo реализация UI для документов
+    // todo реализация разделителя счета
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
