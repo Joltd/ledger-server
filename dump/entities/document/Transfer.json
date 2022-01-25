@@ -1,0 +1,22 @@
+{
+  "name": "Transfer",
+  "table": "document_transfer",
+  "parent": "Document",
+  "fields": [
+    {
+      "name": "amount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "from",
+      "type": "OBJECT",
+      "className": "Account"
+    },
+    {
+      "name": "to",
+      "type": "OBJECT",
+      "className": "Account"
+    }
+  ]
+}

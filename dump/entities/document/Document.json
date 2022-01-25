@@ -1,0 +1,14 @@
+{
+  "name": "Document",
+  "table": "documents",
+  "fields": [
+    {
+      "name": "date",
+      "type": "DATETIME"
+    },
+    {
+      "name": "comment",
+      "type": "STRING"
+    }
+  ]
+}

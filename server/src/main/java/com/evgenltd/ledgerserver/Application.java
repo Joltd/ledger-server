@@ -12,6 +12,14 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableScheduling
 public class Application extends SpringBootServletInitializer {
 
+    // todo LogAspect нацелить на аннотированные классы (Service, Controller, Repository)
+    // todo TickerSymbol перенести в common пространство
+    // todo Заполнить проводки для двух документов
+    // todo скрипты миграции для бд
+    // todo генерализировать контролеры
+    // todo реализация сеттингов
+    // todo реимплементация отчетов
+
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
     }

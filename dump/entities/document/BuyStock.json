@@ -1,0 +1,42 @@
+{
+  "name": "BuyStock",
+  "table": "document_buy_stock",
+  "parent": "Document",
+  "fields": [
+    {
+      "name": "amount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "account",
+      "type": "OBJECT",
+      "className": "Account"
+    },
+    {
+      "name": "ticker",
+      "type": "OBJECT",
+      "className": "TickerSymbol"
+    },
+    {
+      "name": "price",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "count",
+      "type": "NUMBER",
+      "className": "Long"
+    },
+    {
+      "name": "commission",
+      "type": "OBJECT",
+      "className": "ExpenseItem"
+    },
+    {
+      "name": "commissionAmount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    }
+  ]
+}

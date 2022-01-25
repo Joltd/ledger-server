@@ -1,0 +1,47 @@
+{
+  "name": "SellCurrency",
+  "table": "document_sell_currency",
+  "parent": "Document",
+  "fields": [
+    {
+      "name": "account",
+      "type": "OBJECT",
+      "className": "Account"
+    },
+    {
+      "name": "currency",
+      "type": "OBJECT",
+      "className": "Currency"
+    },
+    {
+      "name": "currencyRate",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "currencyAmount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "commission",
+      "type": "OBJECT",
+      "className": "ExpenseItem"
+    },
+    {
+      "name": "commissionAmount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "currencySaleIncome",
+      "type": "OBJECT",
+      "className": "IncomeItem"
+    },
+    {
+      "name": "currencySaleExpense",
+      "type": "OBJECT",
+      "className": "ExpenseItem"
+    }
+  ]
+}

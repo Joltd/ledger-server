@@ -1,6 +1,0 @@
-{
-  "pack": "com.evgenltd.ledgerserver.platform",
-  "entities": [
-    "entities/**.json"
-  ]
-}

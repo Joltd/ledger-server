@@ -1,0 +1,37 @@
+{
+  "name": "BuyCurrencyStock",
+  "table": "document_buy_currency_stock",
+  "parent": "Document",
+  "fields": [
+    {
+      "name": "account",
+      "type": "OBJECT",
+      "className": "Account"
+    },
+    {
+      "name": "ticker",
+      "type": "OBJECT",
+      "className": "TickerSymbol"
+    },
+    {
+      "name": "price",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "count",
+      "type": "NUMBER",
+      "className": "Long"
+    },
+    {
+      "name": "currency",
+      "type": "OBJECT",
+      "className": "Currency"
+    },
+    {
+      "name": "currencyAmount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    }
+  ]
+}

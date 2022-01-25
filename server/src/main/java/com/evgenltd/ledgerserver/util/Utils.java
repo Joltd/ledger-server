@@ -1,8 +1,5 @@
 package com.evgenltd.ledgerserver.util;
 
-import com.evgenltd.ledgerserver.platform.common.ApplicationException;
-import com.evgenltd.ledgerserver.service.bot.BotState;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
@@ -53,7 +50,7 @@ public class Utils {
         try {
             return (Class<T>) Class.forName(name);
         } catch (final ClassNotFoundException e) {
-            BotState.sendMessage("Unknown class [%s]", name);
+//            BotState.sendMessage("Unknown class [%s]", name);
             throw new RuntimeException(e);
         }
     }
@@ -63,7 +60,7 @@ public class Utils {
             final Constructor<T> constructor = type.getConstructor();
             return constructor.newInstance();
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
-            BotState.sendMessage("Unable to instantiate [%s]", type.getName());
+//            BotState.sendMessage("Unable to instantiate [%s]", type.getName());
             throw new RuntimeException(e);
         }
     }

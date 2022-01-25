@@ -1,0 +1,86 @@
+[
+  {
+    "name": "Account",
+    "endpoint": "/entities/common/account",
+    "localization": "com.evgenltd.ledgerserver.common.Account",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true}
+    ]
+  },
+  {
+    "name": "Currency",
+    "endpoint": "/entities/common/currency",
+    "localization": "com.evgenltd.ledgerserver.common.Currency",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true}
+    ]
+  },
+  {
+    "name": "ExpenseItem",
+    "endpoint": "/entities/common/expense-item",
+    "localization": "com.evgenltd.ledgerserver.common.ExpenseItem",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true}
+    ]
+  },
+  {
+    "name": "IncomeItem",
+    "endpoint": "/entities/common/income-item",
+    "localization": "com.evgenltd.ledgerserver.common.IncomeItem",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true}
+    ]
+  },
+  {
+    "name": "Person",
+    "endpoint": "/entities/common/person",
+    "localization": "com.evgenltd.ledgerserver.common.Person",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true}
+    ]
+  },
+
+
+  {
+    "name": "TickerSymbol",
+    "endpoint": "/entities/stonks/ticker-symbol",
+    "localization": "com.evgenltd.ledgerserver.stonks.TickerSymbol",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true},
+      {"name": "figi", "type": "STRING"},
+      {"name": "withoutCommission", "type": "BOOLEAN"}
+    ]
+  },
+  {
+    "name": "FounderContribution",
+    "endpoint": "/entities/stonks/founder-contribution",
+    "localization": "com.evgenltd.ledgerserver.stonks.FounderContribution",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true},
+      {"name": "date", "type": "DATETIME", "sort:": true},
+      {"name": "approved", "type": "BOOLEAN"},
+      {"name": "amount", "type": "NUMBER"},
+      {"name": "account", "type": "OBJECT"}
+    ]
+  },
+  {
+    "name": "Transfer",
+    "endpoint": "/entities/stonks/transfer",
+    "localization": "com.evgenltd.ledgerserver.stonks.Transfer",
+    "fields": [
+      {"name": "id", "type": "NUMBER"},
+      {"name": "name", "type": "STRING", "sort": true},
+      {"name": "date", "type": "DATETIME", "sort:": true},
+      {"name": "approved", "type": "BOOLEAN"},
+      {"name": "from", "type": "OBJECT"},
+      {"name": "to", "type": "OBJECT"}
+    ]
+  }
+]

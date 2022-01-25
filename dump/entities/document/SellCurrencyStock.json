@@ -1,0 +1,61 @@
+{
+  "name": "SellCurrencyStock",
+  "table": "document_sell_currency_stock",
+  "parent": "Document",
+  "fields": [
+    {
+      "name": "account",
+      "type": "OBJECT",
+      "className": "Account"
+    },
+    {
+      "name": "ticker",
+      "type": "OBJECT",
+      "className": "TickerSymbol"
+    },
+    {
+      "name": "price",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "count",
+      "type": "NUMBER",
+      "className": "Long"
+    },
+    {
+      "name": "currencyRate",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "currency",
+      "type": "OBJECT",
+      "className": "Currency"
+    },
+    {
+      "name": "commission",
+      "type": "OBJECT",
+      "className": "ExpenseItem"
+    },
+    {
+      "name": "commissionAmount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "stockSaleIncome",
+      "type": "OBJECT",
+      "className": "IncomeItem"
+    },
+    {
+      "name": "stockSaleExpense",
+      "type": "OBJECT",
+      "className": "ExpenseItem"
+    },
+    {
+      "name": "directSelling",
+      "type": "BOOLEAN"
+    }
+  ]
+}

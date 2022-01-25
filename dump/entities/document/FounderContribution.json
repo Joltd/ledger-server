@@ -1,0 +1,17 @@
+{
+  "name": "FounderContribution",
+  "table": "document_founder_contribution",
+  "parent": "Document",
+  "fields": [
+    {
+      "name": "amount",
+      "type": "NUMBER",
+      "className": "BigDecimal"
+    },
+    {
+      "name": "account",
+      "type": "OBJECT",
+      "className": "Account"
+    }
+  ]
+}
