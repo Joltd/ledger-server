@@ -11,6 +11,8 @@ import com.evgenltd.ledgerserver.stonks.record.TransferRow;
 import com.evgenltd.ledgerserver.util.ReferenceRecord;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class TransferService extends DocumentService<Transfer, TransferRecord, TransferRow> {
 
@@ -69,4 +71,14 @@ public class TransferService extends DocumentService<Transfer, TransferRecord, T
         return transfer;
     }
 
+    @Override
+    protected void approve(final Transfer entity) {
+        final BigDecimal amount = entity.getAmount();
+        final Account from = entity.getFrom();
+        final Account to = entity.getTo();
+
+        dt51(amount, to);
+        ct51(amount, from);
+        comment("Move %s from '%s' to '%s'", formatMoney(amount), from.getName(), to.getName());
+    }
 }

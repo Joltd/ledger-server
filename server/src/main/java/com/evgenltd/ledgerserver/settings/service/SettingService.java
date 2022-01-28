@@ -3,6 +3,7 @@ package com.evgenltd.ledgerserver.settings.service;
 import com.evgenltd.ledgerserver.base.entity.ExpenseItem;
 import com.evgenltd.ledgerserver.base.entity.IncomeItem;
 import com.evgenltd.ledgerserver.base.entity.Person;
+import com.evgenltd.ledgerserver.common.entity.Reference;
 import com.evgenltd.ledgerserver.settings.entity.Setting;
 import com.evgenltd.ledgerserver.settings.record.SettingRecord;
 import com.evgenltd.ledgerserver.settings.repository.SettingRepository;
@@ -22,15 +23,12 @@ public class SettingService {
         return settingRepository.findAll()
                 .stream()
                 .findFirst()
-                .orElse(null);
+                .orElse(new Setting());
     }
 
     public SettingRecord loadRecord() {
-        return settingRepository.findAll()
-                .stream()
-                .findFirst()
-                .map(this::toRecord)
-                .orElse(null);
+        final Setting setting = load();
+        return toRecord(setting);
     }
 
     public void update(final SettingRecord settingRecord) {
@@ -41,33 +39,88 @@ public class SettingService {
     private SettingRecord toRecord(final Setting entity) {
         return new SettingRecord(
                 entity.getId(),
-                new ReferenceRecord(entity.getBroker().getId(), entity.getBroker().getName()),
-                new ReferenceRecord(entity.getBrokerCommissionExpenseItem().getId(), entity.getBrokerCommissionExpenseItem().getName()),
-                new ReferenceRecord(entity.getCurrencyReassessmentExpenseItem().getId(), entity.getCurrencyReassessmentExpenseItem().getName()),
-                new ReferenceRecord(entity.getCurrencyReassessmentIncomeItem().getId(), entity.getCurrencyReassessmentIncomeItem().getName()),
-                new ReferenceRecord(entity.getCurrencySaleExpenseItem().getId(), entity.getCurrencySaleExpenseItem().getName()),
-                new ReferenceRecord(entity.getCurrencySaleIncomeItem().getId(), entity.getCurrencySaleIncomeItem().getName()),
-                new ReferenceRecord(entity.getStockReassessmentExpenseItem().getId(), entity.getStockReassessmentExpenseItem().getName()),
-                new ReferenceRecord(entity.getStockReassessmentIncomeItem().getId(), entity.getStockReassessmentIncomeItem().getName()),
-                new ReferenceRecord(entity.getStockSaleExpenseItem().getId(), entity.getStockSaleExpenseItem().getName()),
-                new ReferenceRecord(entity.getStockSaleIncomeItem().getId(), entity.getStockSaleIncomeItem().getName())
+                toReferenceRecord(entity.getBroker()),
+                toReferenceRecord(entity.getBrokerCommissionExpenseItem()),
+                toReferenceRecord(entity.getCurrencyReassessmentExpenseItem()),
+                toReferenceRecord(entity.getCurrencyReassessmentIncomeItem()),
+                toReferenceRecord(entity.getCurrencySaleExpenseItem()),
+                toReferenceRecord(entity.getCurrencySaleIncomeItem()),
+                toReferenceRecord(entity.getStockReassessmentExpenseItem()),
+                toReferenceRecord(entity.getStockReassessmentIncomeItem()),
+                toReferenceRecord(entity.getStockSaleExpenseItem()),
+                toReferenceRecord(entity.getStockSaleIncomeItem())
         );
+    }
+
+    private ReferenceRecord toReferenceRecord(final Reference reference) {
+        return reference == null
+                ? null
+                : new ReferenceRecord(reference.getId(), reference.getName());
     }
 
     private Setting toEntity(final SettingRecord record) {
         final Setting setting = new Setting();
         setting.setId(record.id());
-        setting.setBroker(Person.builder().id(record.broker().id()).name(record.broker().name()).build());
-        setting.setBrokerCommissionExpenseItem(ExpenseItem.builder().id(record.brokerCommissionExpenseItem().id()).name(record.brokerCommissionExpenseItem().name()).build());
-        setting.setCurrencyReassessmentExpenseItem(ExpenseItem.builder().id(record.currencyReassessmentExpenseItem().id()).name(record.currencyReassessmentExpenseItem().name()).build());
-        setting.setCurrencyReassessmentIncomeItem(IncomeItem.builder().id(record.currencyReassessmentIncomeItem().id()).name(record.currencyReassessmentIncomeItem().name()).build());
-        setting.setCurrencySaleExpenseItem(ExpenseItem.builder().id(record.currencySaleExpenseItem().id()).name(record.currencySaleExpenseItem().name()).build());
-        setting.setCurrencySaleIncomeItem(IncomeItem.builder().id(record.currencySaleIncomeItem().id()).name(record.currencySaleIncomeItem().name()).build());
-        setting.setStockReassessmentExpenseItem(ExpenseItem.builder().id(record.stockReassessmentExpenseItem().id()).name(record.stockReassessmentExpenseItem().name()).build());
-        setting.setStockReassessmentIncomeItem(IncomeItem.builder().id(record.stockReassessmentIncomeItem().id()).name(record.stockReassessmentIncomeItem().name()).build());
-        setting.setStockSaleExpenseItem(ExpenseItem.builder().id(record.stockSaleExpenseItem().id()).name(record.stockSaleExpenseItem().name()).build());
-        setting.setStockSaleIncomeItem(IncomeItem.builder().id(record.stockSaleIncomeItem().id()).name(record.stockSaleIncomeItem().name()).build());
+        if (record.broker() != null) {
+            setting.setBroker(Person.builder().id(record.broker().id()).name(record.broker().name()).build());
+        }
+        if (record.brokerCommissionExpenseItem() != null) {
+            setting.setBrokerCommissionExpenseItem(ExpenseItem.builder()
+                    .id(record.brokerCommissionExpenseItem().id())
+                    .name(record.brokerCommissionExpenseItem().name())
+                    .build());
+        }
+        if (record.currencyReassessmentExpenseItem() != null) {
+            setting.setCurrencyReassessmentExpenseItem(ExpenseItem.builder()
+                    .id(record.currencyReassessmentExpenseItem().id())
+                    .name(record.currencyReassessmentExpenseItem().name())
+                    .build());
+        }
+        if (record.currencyReassessmentIncomeItem() != null) {
+            setting.setCurrencyReassessmentIncomeItem(IncomeItem.builder()
+                    .id(record.currencyReassessmentIncomeItem().id())
+                    .name(record.currencyReassessmentIncomeItem().name())
+                    .build());
+        }
+        if (record.currencySaleExpenseItem() != null) {
+            setting.setCurrencySaleExpenseItem(ExpenseItem.builder()
+                    .id(record.currencySaleExpenseItem().id())
+                    .name(record.currencySaleExpenseItem().name())
+                    .build());
+        }
+        if (record.currencySaleIncomeItem() != null) {
+            setting.setCurrencySaleIncomeItem(IncomeItem.builder()
+                    .id(record.currencySaleIncomeItem().id())
+                    .name(record.currencySaleIncomeItem().name())
+                    .build());
+        }
+        if (record.stockReassessmentExpenseItem() != null) {
+            setting.setStockReassessmentExpenseItem(ExpenseItem.builder()
+                    .id(record.stockReassessmentExpenseItem().id())
+                    .name(record.stockReassessmentExpenseItem().name())
+                    .build());
+        }
+        if (record.stockReassessmentIncomeItem() != null) {
+            setting.setStockReassessmentIncomeItem(IncomeItem.builder()
+                    .id(record.stockReassessmentIncomeItem().id())
+                    .name(record.stockReassessmentIncomeItem().name())
+                    .build());
+        }
+        if (record.stockSaleExpenseItem() != null) {
+            setting.setStockSaleExpenseItem(ExpenseItem.builder()
+                    .id(record.stockSaleExpenseItem().id())
+                    .name(record.stockSaleExpenseItem().name())
+                    .build());
+        }
+        if (record.stockSaleIncomeItem() != null) {
+            setting.setStockSaleIncomeItem(IncomeItem.builder()
+                    .id(record.stockSaleIncomeItem().id())
+                    .name(record.stockSaleIncomeItem().name())
+                    .build());
+        }
         return setting;
     }
+
+
 
 }

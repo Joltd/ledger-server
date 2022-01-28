@@ -40,6 +40,7 @@ export class BrowserComponent implements OnInit {
 
   ngOnInit(): void {
     this.config.page.size = 50
+    this.setupCommonCommands()
     this.loadDescriptor()
     this.loadData()
   }
@@ -47,7 +48,6 @@ export class BrowserComponent implements OnInit {
   private loadDescriptor() {
     this.rowFields = this.browserProvider.rowModel()
     this.columns = this.rowFields.map(entry => entry.name);
-    this.setupCommonCommands()
   }
 
   private loadData() {
@@ -81,8 +81,8 @@ export class BrowserComponent implements OnInit {
   format(value: string, field: RowField): string {
     if (field.type == 'NUMBER') {
       return this.decimalPipe.transform(value, field.format)!
-    // } else if (field.type == 'DATE') {
-    //   return this.datePipe.transform(value, field.format)!
+    } else if (field.type == 'DATETIME') {
+      return this.datePipe.transform(value, field.format)!
     // } else if (field.type == 'ENUM') {
     //   return this.translocoService.translate(field.localizationKey + value)
     } else {

@@ -1,1 +1,1 @@
-export type FieldType = 'BOOLEAN' | 'STRING' | 'NUMBER' | 'OBJECT'
+export type FieldType = 'BOOLEAN' | 'STRING' | 'NUMBER' | 'DATETIME' | 'OBJECT'

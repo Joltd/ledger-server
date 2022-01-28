@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import {EntityProviderService} from "../../service/entity-provider.service";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'app-entity-editor',
@@ -7,8 +9,16 @@ import { Component, OnInit } from '@angular/core';
 })
 export class EntityEditorComponent implements OnInit {
 
-  constructor() {}
+  constructor(
+    public entityProvider: EntityProviderService,
+    private activatedRoute: ActivatedRoute
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.activatedRoute.params
+      .subscribe(params => {
+        this.entityProvider.setupEntity(params['entity'], params['id'])
+      })
+  }
 
 }

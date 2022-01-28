@@ -17,7 +17,9 @@ public class Document extends Reference {
 
     private LocalDateTime date;
 
-    public Document(final Long id, final String name, final Boolean approved, final LocalDateTime date) {
+    private String comment;
+
+    public Document(final Long id, final String name, final Boolean approved, final LocalDateTime date, final String comment) {
         super(id, name);
         this.approved = approved;
         this.date = date;

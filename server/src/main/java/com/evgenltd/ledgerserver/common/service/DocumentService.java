@@ -54,6 +54,10 @@ public abstract class DocumentService<T extends Document, D, W> extends Referenc
 
     protected void approve(final T entity) {}
 
+    protected void comment(final String comment, final Object... args) {
+        context.get().getDocument().setComment(String.format(comment, args));
+    }
+
     protected void dt51(final BigDecimal amount, final Account account) {
         final JournalEntry entry = create(JournalEntry.Type.DEBIT, Codes.C51, amount);
         entry.setAccount(account);

@@ -44,7 +44,7 @@ export class EditorComponent implements OnInit {
   }
 
   private load() {
-    this.editorProvider.loadById()
+    this.editorProvider.byId()
       .subscribe(result => {
         this.fillForm(result)
       })

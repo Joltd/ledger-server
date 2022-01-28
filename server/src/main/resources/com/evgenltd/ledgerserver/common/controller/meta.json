@@ -1,7 +1,8 @@
 [
   {
     "name": "Account",
-    "endpoint": "/entities/common/account",
+    "key": "account",
+    "endpoint": "/entity/common/account",
     "localization": "com.evgenltd.ledgerserver.common.Account",
     "fields": [
       {"name": "id", "type": "NUMBER"},
@@ -10,7 +11,8 @@
   },
   {
     "name": "Currency",
-    "endpoint": "/entities/common/currency",
+    "key": "currency",
+    "endpoint": "/entity/common/currency",
     "localization": "com.evgenltd.ledgerserver.common.Currency",
     "fields": [
       {"name": "id", "type": "NUMBER"},
@@ -19,7 +21,8 @@
   },
   {
     "name": "ExpenseItem",
-    "endpoint": "/entities/common/expense-item",
+    "key": "expense-item",
+    "endpoint": "/entity/common/expense-item",
     "localization": "com.evgenltd.ledgerserver.common.ExpenseItem",
     "fields": [
       {"name": "id", "type": "NUMBER"},
@@ -28,7 +31,8 @@
   },
   {
     "name": "IncomeItem",
-    "endpoint": "/entities/common/income-item",
+    "key": "income-item",
+    "endpoint": "/entity/common/income-item",
     "localization": "com.evgenltd.ledgerserver.common.IncomeItem",
     "fields": [
       {"name": "id", "type": "NUMBER"},
@@ -37,7 +41,8 @@
   },
   {
     "name": "Person",
-    "endpoint": "/entities/common/person",
+    "key": "person",
+    "endpoint": "/entity/common/person",
     "localization": "com.evgenltd.ledgerserver.common.Person",
     "fields": [
       {"name": "id", "type": "NUMBER"},
@@ -48,7 +53,8 @@
 
   {
     "name": "TickerSymbol",
-    "endpoint": "/entities/stonks/ticker-symbol",
+    "key": "ticker-symbol",
+    "endpoint": "/entity/stonks/ticker-symbol",
     "localization": "com.evgenltd.ledgerserver.stonks.TickerSymbol",
     "fields": [
       {"name": "id", "type": "NUMBER"},
@@ -59,7 +65,8 @@
   },
   {
     "name": "FounderContribution",
-    "endpoint": "/entities/stonks/founder-contribution",
+    "key": "founder-contribution",
+    "endpoint": "/entity/stonks/founder-contribution",
     "localization": "com.evgenltd.ledgerserver.stonks.FounderContribution",
     "fields": [
       {"name": "id", "type": "NUMBER"},
@@ -72,7 +79,8 @@
   },
   {
     "name": "Transfer",
-    "endpoint": "/entities/stonks/transfer",
+    "key": "transfer",
+    "endpoint": "/entity/stonks/transfer",
     "localization": "com.evgenltd.ledgerserver.stonks.Transfer",
     "fields": [
       {"name": "id", "type": "NUMBER"},

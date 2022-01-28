@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import {BrowserProvider, FilterField, RowField} from "../model/browser-provider";
-import {Observable} from "rxjs";
+import {BehaviorSubject, forkJoin, from, Observable, of, Subject} from "rxjs";
 import {LoadConfig} from "../model/load-config";
 import {EditorProvider, EntityField} from "../model/editor-provider";
-import {UrlMatchResult, UrlSegment} from "@angular/router";
+import {Router, UrlMatchResult, UrlSegment} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {Type} from "class-transformer";
 import {environment} from "../../environments/environment";
 import {TypeUtils} from "../../core/type-utils";
 import {FieldType} from "../model/field-type";
+import {map} from "rxjs/operators";
 
 @Injectable({
   providedIn: 'root'
@@ -16,20 +17,24 @@ import {FieldType} from "../model/field-type";
 export class EntityProviderService implements BrowserProvider,EditorProvider {
 
   entities: MetaEntity[] = []
+  private entity!: MetaEntity
+  private id?: string
 
-  private entity!: string
-  private id?: number
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
-  constructor(private http: HttpClient) {}
-
-  loadMeta() {
-    this.http.get<MetaEntity[]>(environment.api + '/meta', TypeUtils.of(MetaEntity))
-      .subscribe(result => this.entities = result)
-  }
-
-  setupEntity(entity: string, id: number | undefined) {
-    this.entity = entity
-    this.id = id
+  setupEntity(entityName: string, id: string | undefined) {
+    this.loadMeta()
+      .subscribe(() => {
+        let entity = this.entities.find(entity => entity.key == entityName)
+        if (!entity) {
+          throw `Unknown entity [${entity}]`
+        }
+        this.entity = entity
+        this.id = id
+      })
   }
 
   hasEntity(): boolean {
@@ -40,17 +45,19 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
     return this.id != undefined
   }
 
-  private metaEntity(): MetaEntity {
-    let metaEntity = this.entities.find(entity => entity.fullName == this.entity)
-    if (!metaEntity) {
-      throw `Unknown entity [${this.entity}]`
+  loadMeta(): Observable<MetaEntity[]> {
+    if (this.entities.length > 0) {
+      return of(this.entities).pipe(map(entities => {
+        return entities
+      }))
+    } else {
+      return this.http.get<MetaEntity[]>(environment.api + '/meta', TypeUtils.of(MetaEntity))
+        .pipe(map(result => this.entities = result))
     }
-    return metaEntity
   }
 
   filterModel(): FilterField[] {
-    let metaEntity = this.metaEntity()
-    return metaEntity.fields
+    return this.entity.fields
       .map(field => {
         let filterField = new FilterField();
         filterField.name = field.name
@@ -62,8 +69,7 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
   }
 
   rowModel(): RowField[] {
-    let metaEntity = this.metaEntity();
-    return metaEntity.fields
+    return this.entity.fields
       .map(field => {
         let rowField = new RowField()
         rowField.name = field.name
@@ -76,28 +82,29 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
   }
 
   count(config: LoadConfig): Observable<number> {
-    return new Observable<number>()
+    return this.http.post<number>(environment.api + this.entity.endpoint + '/count', config)
   }
 
   load(config: LoadConfig): Observable<any[]> {
-    return new Observable<any[]>()
+    return this.http.post<any[]>(environment.api + this.entity.endpoint + '/', config)
   }
 
   delete(id: number): Observable<void> {
-    return new Observable<void>()
+    return this.http.delete<void>(environment.api + this.entity.endpoint + '/' + id)
   }
 
   add(): void {
-
+    this.router.navigate(['entity', this.entity.key, 'new'])
+      .then()
   }
 
   edit(entity: any): void {
-
+    this.router.navigate(['entity', this.entity.key, entity.id])
+      .then()
   }
 
   entityModel(): EntityField[] {
-    let metaEntity = this.metaEntity();
-    return metaEntity.fields
+    return this.entity.fields
       .map(field => {
         let entityField = new EntityField();
         entityField.name = field.name
@@ -107,24 +114,30 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
       })
   }
 
-  loadById(): Observable<any> {
-    return new Observable<any>()
+  byId(): Observable<any> {
+    if (this.id == 'new') {
+      return of({})
+    } else {
+      return this.http.get(environment.api + this.entity.endpoint + '/' + this.id)
+    }
   }
 
   update(entity: any): Observable<void> {
-    return new Observable<void>()
+    return this.http.post<void>(environment.api + this.entity.endpoint, entity)
   }
 
   done(): void {
-
+    this.router.navigate(['entity', this.entity.key])
+      .then()
   }
 
 }
 
 export class MetaEntity {
   name: string = ''
-  fullName: string = ''
+  key: string = ''
   localization: string = ''
+  endpoint: string = ''
   @Type(() => MetaEntityField)
   fields: MetaEntityField[] = []
 }
@@ -146,6 +159,11 @@ export function entityBrowserMatcher(segments: UrlSegment[]): UrlMatchResult | n
     return null
   }
 
+  let entity = segments.slice(1).join("/")
+  if (entity.length == 0) {
+    return null
+  }
+
   let last = segments[segments.length - 1].path;
   if (last == 'new') {
     return null
@@ -159,7 +177,7 @@ export function entityBrowserMatcher(segments: UrlSegment[]): UrlMatchResult | n
   return {
     consumed: segments,
     posParams: {
-      entity: new UrlSegment(segments.slice(1).join("/"), {})
+      entity: new UrlSegment(entity, {})
     }
   }
 }
@@ -173,12 +191,18 @@ export function entityEditorMatcher(segments: UrlSegment[]): UrlMatchResult | nu
     return null
   }
 
+  let entity = segments.slice(1, segments.length - 1).join("/")
+  if (entity.length == 0) {
+    return null
+  }
+
   let last = segments[segments.length - 1].path;
   if (last == 'new') {
     return {
       consumed: segments,
       posParams: {
-        entity: new UrlSegment(segments.slice(1, segments.length - 1).join("/"), {})
+        entity: new UrlSegment(entity, {}),
+        id: new UrlSegment(last, {})
       }
     }
   }
@@ -191,7 +215,7 @@ export function entityEditorMatcher(segments: UrlSegment[]): UrlMatchResult | nu
   return {
     consumed: segments,
     posParams: {
-      entity: new UrlSegment(segments.slice(1, segments.length - 1).join("/"), {}),
+      entity: new UrlSegment(entity, {}),
       id: new UrlSegment(id.toString(), {})
     }
   }

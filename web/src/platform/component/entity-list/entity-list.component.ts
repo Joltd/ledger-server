@@ -16,6 +16,7 @@ export class EntityListComponent implements OnInit {
 
   ngOnInit(): void {
     this.entityProviderService.loadMeta()
+      .subscribe()
   }
 
 }

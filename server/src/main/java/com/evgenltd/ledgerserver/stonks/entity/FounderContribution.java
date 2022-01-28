@@ -28,10 +28,11 @@ public class FounderContribution extends Document {
             final String name,
             final Boolean approved,
             final LocalDateTime date,
+            final String comment,
             final BigDecimal amount,
             final Account account
     ) {
-        super(id, name, approved, date);
+        super(id, name, approved, date, comment);
         this.amount = amount;
         this.account = account;
     }

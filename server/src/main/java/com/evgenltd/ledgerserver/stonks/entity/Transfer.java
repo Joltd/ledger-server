@@ -32,11 +32,12 @@ public class Transfer extends Document {
             final String name,
             final Boolean approved,
             final LocalDateTime date,
+            final String comment,
             final BigDecimal amount,
             final Account from,
             final Account to
     ) {
-        super(id, name, approved, date);
+        super(id, name, approved, date, comment);
         this.amount = amount;
         this.from = from;
         this.to = to;

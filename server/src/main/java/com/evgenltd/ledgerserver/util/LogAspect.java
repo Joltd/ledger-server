@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @Aspect
 public class LogAspect {
 
-//    @Pointcut("within(com.evgenltd.ledgerserver.service.*) || within(com.evgenltd.ledgerserver.controller.*) || within(com.evgenltd.lt.repository.*)")
+    @Pointcut("@annotation(org.springframework.stereotype.Service)")
     public void businessMethodCall() {}
 
     @Around("businessMethodCall()")

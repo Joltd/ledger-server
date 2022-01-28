@@ -11,6 +11,8 @@ import com.evgenltd.ledgerserver.stonks.repository.FounderContributionRepository
 import com.evgenltd.ledgerserver.util.ReferenceRecord;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 public class FounderContributionService extends DocumentService<FounderContribution, FounderContributionRecord, FounderContributionRow> {
 
@@ -59,4 +61,17 @@ public class FounderContributionService extends DocumentService<FounderContribut
         return founderContribution;
     }
 
+    @Override
+    protected void approve(final FounderContribution entity) {
+        final BigDecimal amount = entity.getAmount();
+        final Account account = entity.getAccount();
+
+        dt75(amount);
+        ct80(amount);
+
+        dt51(amount, account);
+        ct75(amount);
+
+        comment("Contribution %s", formatMoney(amount));
+    }
 }

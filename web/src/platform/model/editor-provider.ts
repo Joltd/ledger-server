@@ -5,7 +5,7 @@ export interface EditorProvider {
 
   entityModel(): EntityField[]
 
-  loadById(): Observable<any>
+  byId(): Observable<any>
 
   update(entity: any): Observable<void>
 

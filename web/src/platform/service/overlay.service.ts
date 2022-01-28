@@ -20,7 +20,7 @@ export class OverlayService {
         command.nested = true
       }
     }
-    this.commands = commands
+    setTimeout(() => this.commands = commands, 1) // ugly hack
   }
 
   toolbarCommands(): OverlayCommand[] {

@@ -4,5 +4,6 @@ public enum FieldType {
     BOOLEAN,
     STRING,
     NUMBER,
+    DATETIME,
     OBJECT
 }
