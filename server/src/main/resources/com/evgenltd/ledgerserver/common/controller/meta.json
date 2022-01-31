@@ -1,6 +1,7 @@
 [
   {
     "name": "Account",
+    "entityType": "REFERENCE",
     "key": "account",
     "endpoint": "/entity/common/account",
     "localization": "com.evgenltd.ledgerserver.common.Account",
@@ -11,6 +12,7 @@
   },
   {
     "name": "Currency",
+    "entityType": "REFERENCE",
     "key": "currency",
     "endpoint": "/entity/common/currency",
     "localization": "com.evgenltd.ledgerserver.common.Currency",
@@ -21,6 +23,7 @@
   },
   {
     "name": "ExpenseItem",
+    "entityType": "REFERENCE",
     "key": "expense-item",
     "endpoint": "/entity/common/expense-item",
     "localization": "com.evgenltd.ledgerserver.common.ExpenseItem",
@@ -31,6 +34,7 @@
   },
   {
     "name": "IncomeItem",
+    "entityType": "REFERENCE",
     "key": "income-item",
     "endpoint": "/entity/common/income-item",
     "localization": "com.evgenltd.ledgerserver.common.IncomeItem",
@@ -41,6 +45,7 @@
   },
   {
     "name": "Person",
+    "entityType": "REFERENCE",
     "key": "person",
     "endpoint": "/entity/common/person",
     "localization": "com.evgenltd.ledgerserver.common.Person",
@@ -53,6 +58,7 @@
 
   {
     "name": "TickerSymbol",
+    "entityType": "REFERENCE",
     "key": "ticker-symbol",
     "endpoint": "/entity/stonks/ticker-symbol",
     "localization": "com.evgenltd.ledgerserver.stonks.TickerSymbol",
@@ -65,6 +71,7 @@
   },
   {
     "name": "FounderContribution",
+    "entityType": "DOCUMENT",
     "key": "founder-contribution",
     "endpoint": "/entity/stonks/founder-contribution",
     "localization": "com.evgenltd.ledgerserver.stonks.FounderContribution",
@@ -74,11 +81,12 @@
       {"name": "date", "type": "DATETIME", "sort:": true},
       {"name": "approved", "type": "BOOLEAN"},
       {"name": "amount", "type": "NUMBER"},
-      {"name": "account", "type": "OBJECT"}
+      {"name": "account", "type": "OBJECT", "typeName": "Account"}
     ]
   },
   {
     "name": "Transfer",
+    "entityType": "DOCUMENT",
     "key": "transfer",
     "endpoint": "/entity/stonks/transfer",
     "localization": "com.evgenltd.ledgerserver.stonks.Transfer",
@@ -87,8 +95,8 @@
       {"name": "name", "type": "STRING", "sort": true},
       {"name": "date", "type": "DATETIME", "sort:": true},
       {"name": "approved", "type": "BOOLEAN"},
-      {"name": "from", "type": "OBJECT"},
-      {"name": "to", "type": "OBJECT"}
+      {"name": "from", "type": "OBJECT", "typeName": "Account"},
+      {"name": "to", "type": "OBJECT", "typeName": "Account"}
     ]
   }
 ]

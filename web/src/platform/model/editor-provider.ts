@@ -11,10 +11,13 @@ export interface EditorProvider {
 
   done(): void
 
+  endpoint(entityName: string): string
+
 }
 
 export class EntityField {
   name: string = ''
+  typeName!: string
   type!: FieldType
   localization: string = ''
 }

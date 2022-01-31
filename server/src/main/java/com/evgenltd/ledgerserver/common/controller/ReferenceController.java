@@ -26,7 +26,7 @@ public abstract class ReferenceController<T extends Reference, D, W> {
         return referenceService.list(loadConfig);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<ReferenceRecord> filter(final String filter) {
         return referenceService.filter(filter);
     }

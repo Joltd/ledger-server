@@ -195,15 +195,6 @@
             <version>${telegram-bot-api.version}</version>
         </dependency>
 
-        <!-- code gen -->
-
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>stringtemplate</artifactId>
-            <version>4.0.2</version>
-            <scope>compile</scope>
-        </dependency>
-
     </dependencies>
 
 </project>

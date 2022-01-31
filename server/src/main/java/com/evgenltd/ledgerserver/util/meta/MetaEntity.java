@@ -10,6 +10,7 @@ import java.util.List;
 @NoArgsConstructor
 public class MetaEntity {
     private String name;
+    private EntityType entityType;
     private String key;
     private String endpoint;
     private String localization;

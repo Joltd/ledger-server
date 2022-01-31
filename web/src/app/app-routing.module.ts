@@ -1,9 +1,9 @@
 import {NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-import {EntityBrowserComponent} from "../platform/component/entity-browser/entity-browser.component";
-import {EntityEditorComponent} from "../platform/component/entity-editor/entity-editor.component";
-import {entityBrowserMatcher, entityEditorMatcher} from "../platform/service/entity-provider.service";
-import {EntityListComponent} from "../platform/component/entity-list/entity-list.component";
+import {EntityBrowserComponent} from "./component/entity-browser/entity-browser.component";
+import {EntityEditorComponent} from "./component/entity-editor/entity-editor.component";
+import {entityBrowserMatcher, entityEditorMatcher} from "./service/entity-provider.service";
+import {EntityListComponent} from "./component/entity-list/entity-list.component";
 
 const routes: Routes = [
   { path: 'entity', component: EntityListComponent },

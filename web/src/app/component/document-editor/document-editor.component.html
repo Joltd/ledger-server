@@ -14,10 +14,10 @@
         <object-selector [api]="endpoint(field)" [formControlName]="field.name"></object-selector>
       </mat-form-field>
 
-<!--        <mat-form-field *ngIf="field.type == 'ENUM'">-->
-<!--          <mat-label>{{ field.localization | transloco }}</mat-label>-->
-<!--          <enum-selector [api]="field.endpoint" [localizationKey]="field.localization" [formControlName]="field.reference"></enum-selector>-->
-<!--        </mat-form-field>-->
+      <!--        <mat-form-field *ngIf="field.type == 'ENUM'">-->
+      <!--          <mat-label>{{ field.localization | transloco }}</mat-label>-->
+      <!--          <enum-selector [api]="field.endpoint" [localizationKey]="field.localization" [formControlName]="field.reference"></enum-selector>-->
+      <!--        </mat-form-field>-->
 
       <mat-form-field *ngIf="field.type == 'DATETIME'">
         <mat-label>{{ field.localization | transloco }}</mat-label>

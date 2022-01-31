@@ -23,6 +23,13 @@ export class FilterField {
   type!: FieldType
   endpoint!: string
   localization: string = ''
+
+  constructor(name: string, type: FieldType, endpoint: string, localization: string) {
+    this.name = name;
+    this.type = type;
+    this.endpoint = endpoint;
+    this.localization = localization;
+  }
 }
 
 export class RowField {

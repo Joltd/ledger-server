@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import {BrowserProvider, FilterField, RowField} from "../model/browser-provider";
-import {BehaviorSubject, forkJoin, from, Observable, of, Subject} from "rxjs";
-import {LoadConfig} from "../model/load-config";
-import {EditorProvider, EntityField} from "../model/editor-provider";
+import {BrowserProvider, FilterField, RowField} from "../../platform/model/browser-provider";
+import {Observable, of} from "rxjs";
+import {LoadConfig} from "../../platform/model/load-config";
+import {EditorProvider, EntityField} from "../../platform/model/editor-provider";
 import {Router, UrlMatchResult, UrlSegment} from "@angular/router";
 import {HttpClient} from "@angular/common/http";
 import {Type} from "class-transformer";
 import {environment} from "../../environments/environment";
 import {TypeUtils} from "../../core/type-utils";
-import {FieldType} from "../model/field-type";
+import {FieldType} from "../../platform/model/field-type";
 import {map} from "rxjs/operators";
+import {EntityType} from "../model/entity-type";
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +31,7 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
       .subscribe(() => {
         let entity = this.entities.find(entity => entity.key == entityName)
         if (!entity) {
-          throw `Unknown entity [${entity}]`
+          throw `Unknown entity [${entityName}]`
         }
         this.entity = entity
         this.id = id
@@ -41,8 +42,12 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
     return this.entity != undefined
   }
 
-  hasId(): boolean {
-    return this.id != undefined
+  isReference(): boolean {
+    return this.id != undefined && this.entity.entityType == 'REFERENCE'
+  }
+
+  isDocument(): boolean {
+    return this.id != undefined && this.entity.entityType == 'DOCUMENT'
   }
 
   loadMeta(): Observable<MetaEntity[]> {
@@ -57,15 +62,39 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
   }
 
   filterModel(): FilterField[] {
-    return this.entity.fields
-      .map(field => {
-        let filterField = new FilterField();
-        filterField.name = field.name
-        filterField.type = field.type
-        filterField.endpoint = ''
-        filterField.localization = field.localization
-        return filterField
-      })
+    let result = [];
+    for (let field of this.entity.fields) {
+
+      let entity = this.findEntity(field.typeName)
+      let localization = this.entity.localization + '.' + field.name;
+
+      if (field.type == 'OBJECT') {
+
+        let idField = new FilterField(
+          field.name + 'Id',
+          'NUMBER',
+          this.endpoint(field.typeName),
+          entity.localization + '.id'
+        );
+        result.push(idField);
+
+        let nameField = new FilterField(
+          field.name + 'Name',
+          'STRING',
+          this.endpoint(field.typeName),
+          entity.localization + '.name'
+        );
+        result.push(nameField)
+
+      } else {
+
+        let filterField = new FilterField(field.name, field.type, this.endpoint(field.typeName), localization);
+        result.push(filterField);
+
+      }
+
+    }
+    return result
   }
 
   rowModel(): RowField[] {
@@ -74,7 +103,7 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
         let rowField = new RowField()
         rowField.name = field.name
         rowField.type = field.type
-        rowField.localization = field.localization
+        rowField.localization = this.entity.localization + '.' + field.name
         rowField.sort = field.sort
         rowField.format = field.format
         return rowField
@@ -109,7 +138,8 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
         let entityField = new EntityField();
         entityField.name = field.name
         entityField.type = field.type
-        entityField.localization = field.localization
+        entityField.typeName = field.typeName
+        entityField.localization = this.entity.localization + '.' + field.name
         return entityField
       })
   }
@@ -131,10 +161,27 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
       .then()
   }
 
+  endpoint(entityName: string): string {
+    if (!entityName) {
+      return ''
+    }
+
+    return this.findEntity(entityName).endpoint
+  }
+
+  private findEntity(name: string) {
+    let entity = this.entities.find(entity => entity.name == name)
+    if (!entity) {
+      throw `Unknown entity [${name}]`
+    }
+    return entity
+  }
+
 }
 
 export class MetaEntity {
   name: string = ''
+  entityType: EntityType = 'REFERENCE'
   key: string = ''
   localization: string = ''
   endpoint: string = ''
@@ -145,9 +192,9 @@ export class MetaEntity {
 export class MetaEntityField {
   name: string = ''
   type!: FieldType
+  typeName!: string
   sort: boolean = false
   format: string = ''
-  localization: string = ''
 }
 
 export function entityBrowserMatcher(segments: UrlSegment[]): UrlMatchResult | null {

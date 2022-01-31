@@ -36,9 +36,13 @@ export class EditorComponent implements OnInit {
     return this.breakpointObserver.isMatched(Breakpoints.Handset)
   }
 
+  endpoint(field: EntityField): string {
+    return this.editorProvider.endpoint(field.typeName)
+  }
+
   private setupCommands() {
     this.overlayService.setupCommands([
-      new OverlayCommand('', 'save', () => this.apply()),
+      new OverlayCommand('', 'done', () => this.apply()),
       new OverlayCommand('', 'close', () => this.close())
     ])
   }

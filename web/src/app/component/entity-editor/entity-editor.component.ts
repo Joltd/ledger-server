@@ -3,7 +3,7 @@ import {EntityProviderService} from "../../service/entity-provider.service";
 import {ActivatedRoute} from "@angular/router";
 
 @Component({
-  selector: 'app-entity-editor',
+  selector: 'entity-editor',
   templateUrl: './entity-editor.component.html',
   styleUrls: ['./entity-editor.component.scss']
 })

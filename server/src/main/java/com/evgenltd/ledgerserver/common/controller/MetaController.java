@@ -27,15 +27,7 @@ public class MetaController {
     @GetMapping
     public List<MetaEntity> meta() {
         try (final InputStream stream = getClass().getResourceAsStream("meta.json")) {
-            final List<MetaEntity> meta = mapper.readValue(stream, new TypeReference<ArrayList<MetaEntity>>() {});
-
-            for (final MetaEntity metaEntity : meta) {
-                for (final MetaEntityField field : metaEntity.getFields()) {
-                    field.setLocalization(metaEntity.getLocalization() + "." + field.getName());
-                }
-            }
-
-            return meta;
+            return mapper.readValue(stream, new TypeReference<ArrayList<MetaEntity>>() {});
         } catch (final IOException e) {
             throw new ApplicationException(e, "Unable to read meta info");
         }

@@ -10,7 +10,7 @@ import lombok.*;
 public class MetaEntityField {
     private String name;
     private FieldType type;
+    private String typeName;
     private boolean sort;
     private String format;
-    private String localization;
 }

@@ -1,0 +1,1 @@
+alter table documents add comment text(1024);
