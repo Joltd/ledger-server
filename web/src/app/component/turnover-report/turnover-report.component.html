@@ -1,0 +1,69 @@
+<mat-card>
+  <div class="table-container">
+    <table mat-table [dataSource]="dataSource" [class.table-handset]="isHandset()">
+
+      <ng-container matColumnDef="code" sticky>
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let entry">{{entry.code}}</td>
+        <td mat-footer-row *matFooterCellDef>Total</td>
+      </ng-container>
+
+      <ng-container matColumnDef="beforeDt">
+        <th mat-header-cell *matHeaderCellDef>Dt</th>
+        <td mat-cell *matCellDef="let entry">{{entry.beforeDt}}</td>
+        <td mat-footer-row *matFooterCellDef>{{total.beforeDt}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="beforeCt">
+        <th mat-header-cell *matHeaderCellDef>Ct</th>
+        <td mat-cell *matCellDef="let entry">{{entry.beforeCt}}</td>
+        <td mat-footer-row *matFooterCellDef>{{total.beforeCt}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="turnoverDt">
+        <th mat-header-cell *matHeaderCellDef>Dt</th>
+        <td mat-cell *matCellDef="let entry">{{entry.turnoverDt}}</td>
+        <td mat-footer-row *matFooterCellDef>{{total.turnoverDt}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="turnoverCt">
+        <th mat-header-cell *matHeaderCellDef>Ct</th>
+        <td mat-cell *matCellDef="let entry">{{entry.turnoverCt}}</td>
+        <td mat-footer-row *matFooterCellDef>{{total.turnoverCt}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="afterDt">
+        <th mat-header-cell *matHeaderCellDef>Dt</th>
+        <td mat-cell *matCellDef="let entry">{{entry.afterDt}}</td>
+        <td mat-footer-row *matFooterCellDef>{{total.afterDt}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="afterCt">
+        <th mat-header-cell *matHeaderCellDef>Ct</th>
+        <td mat-cell *matCellDef="let entry">{{entry.afterCt}}</td>
+        <td mat-footer-row *matFooterCellDef>{{total.afterCt}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="spacer" sticky>
+        <th mat-header-cell *matHeaderCellDef class="no-border"></th>
+      </ng-container>
+
+      <ng-container matColumnDef="before-group">
+        <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="no-border">Before</th>
+      </ng-container>
+
+      <ng-container matColumnDef="turnover-group">
+        <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="no-border">Turnover</th>
+      </ng-container>
+
+      <ng-container matColumnDef="after-group">
+        <th mat-header-cell *matHeaderCellDef [attr.colspan]="2" class="no-border">After</th>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="['spacer','before-group','turnover-group','after-group']; sticky: true"></tr>
+      <tr mat-header-row *matHeaderRowDef="['code', 'beforeDt', 'beforeCt', 'turnoverDt', 'turnoverCt','afterDt','afterCt']; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: ['code', 'beforeDt', 'beforeCt', 'turnoverDt', 'turnoverCt','afterDt','afterCt'];"></tr>
+      <tr mat-footer-row *matFooterRowDef="['code', 'beforeDt', 'beforeCt', 'turnoverDt', 'turnoverCt','afterDt','afterCt']; sticky: true"></tr>
+    </table>
+  </div>
+</mat-card>

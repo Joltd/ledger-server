@@ -113,7 +113,15 @@ public class Filter {
         }
     }
 
-    public static record Expression(String reference, Operator operator, String value, ExpressionType type, List<Expression> expressions) {}
+    public static record Expression(String reference, Operator operator, String value, ExpressionType type, List<Expression> expressions) {
+        public Expression(final String reference, final Operator operator, final String value) {
+            this(reference, operator, value, ExpressionType.STATEMENT, null);
+        }
+
+        public Expression(final ExpressionType type, final List<Expression> expressions) {
+            this(null, null, null, type, expressions);
+        }
+    }
 
     public enum ExpressionType {
         STATEMENT,

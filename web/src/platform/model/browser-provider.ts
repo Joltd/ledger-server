@@ -1,4 +1,4 @@
-import {Observable} from "rxjs";
+import {Observable, of} from "rxjs";
 import {LoadConfig} from "./load-config";
 import {FieldType} from "./field-type";
 
@@ -16,6 +16,32 @@ export interface BrowserProvider {
   add(): void
 
   edit(entity: any): void
+}
+
+export abstract class BrowserProviderImpl implements BrowserProvider {
+  filterModel(): FilterField[] {
+    return []
+  }
+
+  rowModel(): RowField[] {
+    return []
+  }
+
+  count(config: LoadConfig): Observable<number> {
+    return of()
+  }
+
+  load(config: LoadConfig): Observable<any[]> {
+    return of()
+  }
+
+  delete(id: number): Observable<void> {
+    return of()
+  }
+
+  add(): void {}
+
+  edit(entity: any): void {}
 }
 
 export class FilterField {

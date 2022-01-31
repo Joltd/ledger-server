@@ -34,6 +34,15 @@
   "com.evgenltd.ledgerserver.common.Person.id": "Id",
   "com.evgenltd.ledgerserver.common.Person.name": "Name",
 
+  "com.evgenltd.ledgerserver.common.TurnoverReport.from": "From",
+  "com.evgenltd.ledgerserver.common.TurnoverReport.to": "To",
+  "com.evgenltd.ledgerserver.common.TurnoverReport.account": "Account",
+  "com.evgenltd.ledgerserver.common.TurnoverReport.person": "Person",
+  "com.evgenltd.ledgerserver.common.TurnoverReport.currency": "Currency",
+  "com.evgenltd.ledgerserver.common.TurnoverReport.expenseItem": "Expense Item",
+  "com.evgenltd.ledgerserver.common.TurnoverReport.incomeItem": "Income Item",
+  "com.evgenltd.ledgerserver.common.TurnoverReport.tickerSymbol": "Ticker Symbol",
+
   "com.evgenltd.ledgerserver.stonks.TickerSymbol": "Ticker Symbol",
   "com.evgenltd.ledgerserver.stonks.TickerSymbol.id": "Id",
   "com.evgenltd.ledgerserver.stonks.TickerSymbol.name": "Name",

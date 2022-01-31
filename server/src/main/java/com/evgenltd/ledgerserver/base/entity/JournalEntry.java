@@ -45,7 +45,6 @@ public class JournalEntry {
 
     @ManyToOne
     @JoinColumn(name = "currency_id")
-
     private Currency currency;
 
     private BigDecimal currencyRate;

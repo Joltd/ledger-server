@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
 import {BrowserComponent} from './component/browser/browser.component';
+import {HttpClientModule} from "@angular/common/http";
 import {OverlayService} from "./service/overlay.service";
 import {BrowserSettingsComponent} from './component/browser-settings/browser-settings.component';
 import {EditorComponent} from './component/editor/editor.component';
@@ -24,6 +25,7 @@ import {MatInputModule} from "@angular/material/input";
 import {MatDatepickerModule} from "@angular/material/datepicker";
 import {MatSlideToggleModule} from "@angular/material/slide-toggle";
 import {MatAutocompleteModule} from "@angular/material/autocomplete";
+import { FilterExpressionComponentComponent } from './component/filter-expression-component/filter-expression-component.component';
 
 @NgModule({
   declarations: [
@@ -31,14 +33,17 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
     BrowserSettingsComponent,
     EditorComponent,
     ObjectSelectorComponent,
-    EnumSelectorComponent
+    EnumSelectorComponent,
+    FilterExpressionComponentComponent
   ],
   exports: [
     BrowserComponent,
     EditorComponent,
-    ObjectSelectorComponent
+    ObjectSelectorComponent,
+    FilterExpressionComponentComponent
   ],
   imports: [
+    HttpClientModule,
     MatCardModule,
     MatTableModule,
     CommonModule,
@@ -59,7 +64,6 @@ import {MatAutocompleteModule} from "@angular/material/autocomplete";
     MatDatepickerModule,
     MatSlideToggleModule,
     MatAutocompleteModule
-
   ],
   providers: [
     OverlayService

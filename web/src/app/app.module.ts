@@ -1,5 +1,7 @@
 import {NgModule} from '@angular/core';
-
+import {BrowserModule} from '@angular/platform-browser';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {restInterceptorProvider} from "./service/rest-interceptor.service";
 import {EntityBrowserComponent} from "./component/entity-browser/entity-browser.component";
@@ -8,7 +10,7 @@ import {EntityListComponent} from "./component/entity-list/entity-list.component
 import {DocumentEditorComponent} from "./component/document-editor/document-editor.component";
 import {EntityProviderService} from "./service/entity-provider.service";
 import {MatCardModule} from "@angular/material/card";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {MatInputModule} from "@angular/material/input";
 import {PlatformModule} from "../platform/platform.module";
@@ -23,6 +25,10 @@ import {MatButtonModule} from "@angular/material/button";
 import {MatIconModule} from "@angular/material/icon";
 import {MatMenuModule} from "@angular/material/menu";
 import {MatSidenavModule} from "@angular/material/sidenav";
+import {TurnoverReportComponent} from './component/turnover-report/turnover-report.component';
+import {MatTableModule} from "@angular/material/table";
+import {TurnoverReportSettingsComponent} from './component/turnover-report-settings-component/turnover-report-settings.component';
+import {MatNativeDateModule} from "@angular/material/core";
 
 @NgModule({
   declarations: [
@@ -30,9 +36,14 @@ import {MatSidenavModule} from "@angular/material/sidenav";
     EntityBrowserComponent,
     EntityEditorComponent,
     EntityListComponent,
-    DocumentEditorComponent
+    DocumentEditorComponent,
+    TurnoverReportComponent,
+    TurnoverReportSettingsComponent
   ],
   imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    AppRoutingModule,
     MatCardModule,
     ReactiveFormsModule,
     MatFormFieldModule,
@@ -48,7 +59,10 @@ import {MatSidenavModule} from "@angular/material/sidenav";
     MatButtonModule,
     MatIconModule,
     MatMenuModule,
-    MatSidenavModule
+    MatSidenavModule,
+    MatTableModule,
+    FormsModule,
+    MatNativeDateModule
 
   ],
   providers: [

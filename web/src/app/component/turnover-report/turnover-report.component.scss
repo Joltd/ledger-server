@@ -1,0 +1,36 @@
+:host {
+  overflow: hidden;
+}
+
+mat-card {
+  overflow: hidden;
+  display: grid!important;
+  grid-template-rows: 1fr;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.table-container {
+  overflow-y: scroll;
+}
+
+table {
+  width: 100%;
+}
+//
+//.table-handset {
+//  width: 200%;
+//}
+
+.no-border {
+  border-style: none;
+}
+
+tr.mat-footer-row {
+  font-weight: bold;
+}
+
+td, td.mat-cell, th.mat-header-cell {
+  padding: 0 1rem;
+  white-space: nowrap;
+}

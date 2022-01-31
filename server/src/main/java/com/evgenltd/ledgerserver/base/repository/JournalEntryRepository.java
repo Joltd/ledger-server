@@ -6,13 +6,14 @@ import com.evgenltd.ledgerserver.base.entity.Account;
 import com.evgenltd.ledgerserver.base.entity.ExpenseItem;
 import com.evgenltd.ledgerserver.stonks.entity.TickerSymbol;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long> {
+public interface JournalEntryRepository extends JpaRepository<JournalEntry, Long>, JpaSpecificationExecutor<JournalEntry> {
 
     List<JournalEntry> findByDateGreaterThanEqualAndDateLessThanEqualAndCodeAndTypeAndAccountAndExpenseItem(
             LocalDateTime from,

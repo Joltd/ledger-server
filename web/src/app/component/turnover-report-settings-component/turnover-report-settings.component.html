@@ -1,0 +1,13 @@
+<mat-form-field>
+  <mat-label>{{ 'com.evgenltd.ledgerserver.common.TurnoverReport.from' | transloco }}</mat-label>
+  <input matInput [matDatepicker]="from" [(ngModel)]="fromDate">
+  <mat-datepicker-toggle matSuffix [for]="from"></mat-datepicker-toggle>
+  <mat-datepicker #from></mat-datepicker>
+</mat-form-field>
+<mat-form-field>
+  <mat-label>{{ 'com.evgenltd.ledgerserver.common.TurnoverReport.to' | transloco }}</mat-label>
+  <input matInput [matDatepicker]="to" [(ngModel)]="toDate">
+  <mat-datepicker-toggle matSuffix [for]="to"></mat-datepicker-toggle>
+  <mat-datepicker #to></mat-datepicker>
+</mat-form-field>
+<filter-expression-component [filter]="filter" [filterFields]="filterFields"></filter-expression-component>

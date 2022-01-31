@@ -65,33 +65,33 @@ export class EntityProviderService implements BrowserProvider,EditorProvider {
     let result = [];
     for (let field of this.entity.fields) {
 
-      let entity = this.findEntity(field.typeName)
       let localization = this.entity.localization + '.' + field.name;
 
-      if (field.type == 'OBJECT') {
-
-        let idField = new FilterField(
-          field.name + 'Id',
-          'NUMBER',
-          this.endpoint(field.typeName),
-          entity.localization + '.id'
-        );
-        result.push(idField);
-
-        let nameField = new FilterField(
-          field.name + 'Name',
-          'STRING',
-          this.endpoint(field.typeName),
-          entity.localization + '.name'
-        );
-        result.push(nameField)
-
-      } else {
+      if (field.type != 'OBJECT') {
 
         let filterField = new FilterField(field.name, field.type, this.endpoint(field.typeName), localization);
         result.push(filterField);
+        continue
 
       }
+
+      let entity = this.findEntity(field.typeName)
+
+      let idField = new FilterField(
+        field.name + 'Id',
+        'NUMBER',
+        this.endpoint(field.typeName),
+        entity.localization + '.id'
+      );
+      result.push(idField);
+
+      let nameField = new FilterField(
+        field.name + 'Name',
+        'STRING',
+        this.endpoint(field.typeName),
+        entity.localization + '.name'
+      );
+      result.push(nameField)
 
     }
     return result
