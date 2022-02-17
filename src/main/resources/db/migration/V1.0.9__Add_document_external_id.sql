@@ -1,0 +1,1 @@
+alter table documents add external_id varchar(255);

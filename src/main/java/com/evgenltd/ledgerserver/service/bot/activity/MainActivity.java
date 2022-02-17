@@ -1,6 +1,7 @@
 package com.evgenltd.ledgerserver.service.bot.activity;
 
 import com.evgenltd.ledgerserver.entity.*;
+import com.evgenltd.ledgerserver.service.bot.activity.doimport.ImportListActivity;
 import com.evgenltd.ledgerserver.util.Tokenizer;
 import com.evgenltd.ledgerserver.util.Utils;
 import com.evgenltd.ledgerserver.service.bot.BotActivity;
@@ -27,6 +28,7 @@ public class MainActivity extends BotActivity {
         command(this::reference, "ref", "reference", "refs");
         command(this::settings, "settings", "options");
         command(this::documents, "documents", "docs");
+        command(this::imports, "import");
     }
 
     private void reference(final Tokenizer tokenizer) {
@@ -65,6 +67,11 @@ public class MainActivity extends BotActivity {
     private void documents(final Tokenizer tokenizer) {
         final DocumentListActivity documentListActivity = beanFactory.getBean(DocumentListActivity.class);
         activityNew(documentListActivity);
+    }
+
+    private void imports(final Tokenizer tokenizer) {
+        final ImportListActivity importListActivity = beanFactory.getBean(ImportListActivity.class);
+        activityNew(importListActivity);
     }
 
 }

@@ -23,6 +23,8 @@ public class Document {
 
     private String comment;
 
+    private String externalId;
+
     public Long getId() {
         return id;
     }
@@ -63,6 +65,14 @@ public class Document {
         this.comment = comment;
     }
 
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(final String externalId) {
+        this.externalId = externalId;
+    }
+
     public enum Type {
         TRANSFER(TransferActivity.class),
         FOUNDER_CONTRIBUTION(FounderContributionActivity.class),
@@ -71,7 +81,8 @@ public class Document {
         BUY_STOCK(BuyStockActivity.class),
         SELLS_STOCK(SellStockActivity.class),
         BUY_CURRENCY_STOCK(BuyCurrencyStockActivity.class),
-        SELL_CURRENCY_STOCK(SellCurrencyStockActivity.class);
+        SELL_CURRENCY_STOCK(SellCurrencyStockActivity.class),
+        BROKER_COMMISSION(BrokerCommission.class);
 
         private final Class<? extends DocumentActivity> activity;
 

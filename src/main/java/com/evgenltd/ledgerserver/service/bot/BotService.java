@@ -1,12 +1,16 @@
 package com.evgenltd.ledgerserver.service.bot;
 
+import com.evgenltd.ledgerserver.ApplicationException;
 import com.evgenltd.ledgerserver.service.bot.activity.MainActivity;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
+import org.telegram.telegrambots.meta.api.methods.GetFile;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.File;
+import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
@@ -22,6 +26,9 @@ public class BotService extends TelegramLongPollingBot {
 
     @Value("${bot.token}")
     private String botToken;
+
+    @Value("${downloads.directory}")
+    private String downloads;
 
     private final BeanFactory beanFactory;
 
@@ -48,15 +55,35 @@ public class BotService extends TelegramLongPollingBot {
 
     @Override
     public void onUpdateReceived(final Update update) {
-        if (update.getMessage() == null) {
+        Message message;
+        if (update.hasMessage()) {
+            message = update.getMessage();
+        } else if (update.hasEditedMessage()) {
+            message = update.getEditedMessage();
+        } else {
             return;
         }
 
-        final Long chatId = update.getMessage().getChatId();
+        final Long chatId = message.getChatId();
         BotState.setup(chatId);
 
-        final String text = update.getMessage().getText();
-        getActivityStack(chatId).current().messageReceived(text);
+        if (message.hasDocument()) {
+            final String fileId = message.getDocument().getFileId();
+            final String fileName = message.getDocument().getFileName();
+            final GetFile getFile = new GetFile(fileId);
+            final File result = execute(getFile);
+            try {
+                final java.io.File output = new java.io.File(downloads + java.io.File.separator + BotState.chatId(), fileName);
+                downloadFile(result, output);
+            } catch (TelegramApiException e) {
+                throw new ApplicationException(e, "");
+            }
+        }
+
+        if (message.hasText()) {
+            final String text = message.getText();
+            getActivityStack(chatId).current().messageReceived(text);
+        }
 
         BotState.reset();
     }

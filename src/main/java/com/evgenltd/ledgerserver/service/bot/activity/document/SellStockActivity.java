@@ -38,7 +38,7 @@ public class SellStockActivity extends DocumentActivity {
             final SettingService settingService,
             final JournalService journalService
     ) {
-        super( beanFactory);
+        super(beanFactory);
         this.settingService = settingService;
         this.journalService = journalService;
 

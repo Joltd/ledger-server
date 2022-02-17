@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class FounderContributionActivity extends DocumentActivity {
 
-    private final static String AMOUNT = "amount";
-    private final static String ACCOUNT = "account";
+    public final static String AMOUNT = "amount";
+    public final static String ACCOUNT = "account";
 
     public FounderContributionActivity(final BeanFactory beanFactory) {
         super(beanFactory);
